@@ -12,7 +12,12 @@
 <div th:replace="~{backoffice/fragments/sidebar :: sidebar}"></div>
 <div class="flex min-h-screen flex-1 flex-col">
     <div th:replace="~{backoffice/fragments/topbar :: topbar(emailConnecte=${emailConnecte})}"></div>
-    <main class="flex-1 px-4 py-6 md:px-10 md:py-10" layout:fragment="contenu"></main>
+    <!-- Le Thymeleaf Layout Dialect remplace entièrement cette balise (et ses
+         classes) par l'élément layout:fragment="contenu" de la page décorée : le
+         padding/la largeur max vivent donc dans la classe .page-conteneur
+         (frontend/backoffice.css), à poser sur l'élément racine de chaque page,
+         pas ici. -->
+    <main layout:fragment="contenu"></main>
 </div>
 </body>
 </html>

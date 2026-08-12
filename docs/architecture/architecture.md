@@ -229,6 +229,14 @@ partagés. Un fragment réutilisé à plus d'un endroit (ex. carte livre affich�
 l'accueil, la collection et l'univers) vit dans `presentation.<domaine>` du domaine
 propriétaire du contenu, sous `fragments/`, jamais dupliqué.
 
+> **Piège du Layout Dialect** : l'élément `layout:fragment="contenu"` du layout est
+> **entièrement remplacé** (balise et attributs compris, pas seulement son contenu)
+> par l'élément correspondant de la page décorée. Les classes de marge/largeur posées
+> sur le `<main>` du layout n'ont donc **aucun effet** — chaque page doit poser le
+> conteneur (gouttières + largeur max) sur son propre élément racine, via la classe
+> partagée `.page-conteneur` (back-office) / équivalent public, jamais en classes
+> ad hoc répétées à chaque page.
+
 ### 12.3 Tailwind CSS
 
 Tailwind CSS (v4, CLI standalone, cf. [ADR-0006](decisions/0006-tailwind-cli-standalone.md))
