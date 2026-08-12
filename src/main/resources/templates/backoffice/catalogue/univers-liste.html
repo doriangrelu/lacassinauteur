@@ -47,7 +47,7 @@
             <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un univers</h2>
         </div>
 
-        <form th:action="@{/backoffice/univers}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+        <form th:action="@{/backoffice/univers}" th:object="${formulaire}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
             <div>
                 <label class="champ-label" for="nom">Nom</label>
                 <input class="champ-texte" type="text" id="nom" th:field="*{nom}"/>
@@ -62,8 +62,8 @@
                 <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
             </div>
             <div>
-                <label class="champ-label" for="photoUrl">Photo (chemin ou URL)</label>
-                <input class="champ-texte" type="text" id="photoUrl" th:field="*{photoUrl}"/>
+                <label class="champ-label" for="photo">Photo</label>
+                <input class="champ-texte" type="file" id="photo" th:field="*{photo}" accept="image/*"/>
             </div>
             <div>
                 <label class="champ-label" for="ordre">Ordre d'affichage</label>

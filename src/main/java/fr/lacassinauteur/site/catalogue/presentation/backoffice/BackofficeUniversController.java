@@ -18,7 +18,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.UUID;
 
 @Controller
@@ -60,23 +63,25 @@ public class BackofficeUniversController {
         }
 
         creerUniversUseCase.execute(new CreerUniversCommand(
-                formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(), formulaire.getPhotoUrl(), formulaire.getOrdre()));
+                formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(),
+                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), formulaire.getOrdre()));
 
         return "redirect:/backoffice/univers";
     }
 
     @GetMapping("/{id}/modifier")
     public String formulaireModification(@PathVariable UUID id, Model model) {
+        UniversResult univers = consulterUniversUseCase.execute(id);
+
         if (!model.containsAttribute("formulaire")) {
-            UniversResult univers = consulterUniversUseCase.execute(id);
             UniversForm formulaire = new UniversForm();
             formulaire.setNom(univers.nom());
             formulaire.setSousTitre(univers.sousTitre());
             formulaire.setTexte(univers.texte());
-            formulaire.setPhotoUrl(univers.photoUrl());
             formulaire.setOrdre(univers.ordre());
             model.addAttribute("formulaire", formulaire);
         }
+        model.addAttribute("univers", univers);
         model.addAttribute("universId", id);
         return "backoffice/catalogue/univers-modifier";
     }
@@ -89,8 +94,24 @@ public class BackofficeUniversController {
         }
 
         modifierUniversUseCase.execute(new ModifierUniversCommand(
-                id, formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(), formulaire.getPhotoUrl(), formulaire.getOrdre()));
+                id, formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(),
+                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), formulaire.getOrdre()));
 
         return "redirect:/backoffice/univers";
+    }
+
+    private byte[] octets(MultipartFile fichier) {
+        if (fichier == null || fichier.isEmpty()) {
+            return null;
+        }
+        try {
+            return fichier.getBytes();
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
+    private String nomOriginal(MultipartFile fichier) {
+        return fichier == null ? null : fichier.getOriginalFilename();
     }
 }

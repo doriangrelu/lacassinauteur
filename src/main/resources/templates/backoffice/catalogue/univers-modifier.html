@@ -15,7 +15,7 @@
     <div class="card max-w-lg p-6">
         <h1 class="mb-5 text-lg font-semibold tracking-tight text-slate-900">Modifier l'univers</h1>
 
-        <form th:action="@{'/backoffice/univers/' + ${universId}}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+        <form th:action="@{'/backoffice/univers/' + ${universId}}" th:object="${formulaire}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
             <div>
                 <label class="champ-label" for="nom">Nom</label>
                 <input class="champ-texte" type="text" id="nom" th:field="*{nom}"/>
@@ -30,8 +30,10 @@
                 <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
             </div>
             <div>
-                <label class="champ-label" for="photoUrl">Photo (chemin ou URL)</label>
-                <input class="champ-texte" type="text" id="photoUrl" th:field="*{photoUrl}"/>
+                <label class="champ-label" for="photo">Photo</label>
+                <img th:if="${univers.photoUrl}" th:src="@{${univers.photoUrl}}" alt="Photo actuelle" class="mb-2 h-24 w-24 rounded object-cover"/>
+                <input class="champ-texte" type="file" id="photo" th:field="*{photo}" accept="image/*"/>
+                <p class="mt-1 text-xs text-slate-400">Laisser vide pour conserver la photo actuelle.</p>
             </div>
             <div>
                 <label class="champ-label" for="ordre">Ordre d'affichage</label>

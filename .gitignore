@@ -10,3 +10,6 @@ tools/
 
 # CSS Tailwind généré (cf. docs/architecture/decisions/0006-tailwind-cli-standalone.md)
 src/main/resources/static/css/*.css
+
+# Images uploadées en local (cf. app.stockage.images.chemin, ADR-0010)
+/data/

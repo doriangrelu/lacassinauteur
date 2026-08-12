@@ -12,6 +12,8 @@
 <div th:replace="~{backoffice/fragments/sidebar :: sidebar}"></div>
 <div class="flex min-h-screen flex-1 flex-col">
     <div th:replace="~{backoffice/fragments/topbar :: topbar(emailConnecte=${emailConnecte})}"></div>
+    <p th:if="${erreurFichier}" th:text="${erreurFichier}"
+       class="mx-4 mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 md:mx-10"></p>
     <!-- Le Thymeleaf Layout Dialect remplace entièrement cette balise (et ses
          classes) par l'élément layout:fragment="contenu" de la page décorée : le
          padding/la largeur max vivent donc dans la classe .page-conteneur

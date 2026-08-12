@@ -26,7 +26,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -94,7 +97,8 @@ public class BackofficeLivreController {
 
         creerLivreUseCase.execute(new CreerLivreCommand(
                 formulaire.getCollectionId(), formulaire.getTitre(), formulaire.getSousTitre(),
-                formulaire.getCouvertureUrl(), formulaire.getPitchCourt(), formulaire.getResume(), formulaire.getOrdre()));
+                octets(formulaire.getCouverture()), nomOriginal(formulaire.getCouverture()),
+                formulaire.getPitchCourt(), formulaire.getResume(), formulaire.getOrdre()));
 
         return "redirect:/backoffice/livres";
     }
@@ -108,7 +112,6 @@ public class BackofficeLivreController {
             formulaire.setCollectionId(livre.collectionId());
             formulaire.setTitre(livre.titre());
             formulaire.setSousTitre(livre.sousTitre());
-            formulaire.setCouvertureUrl(livre.couvertureUrl());
             formulaire.setPitchCourt(livre.pitchCourt());
             formulaire.setResume(livre.resume());
             formulaire.setOrdre(livre.ordre());
@@ -132,9 +135,25 @@ public class BackofficeLivreController {
 
         modifierLivreUseCase.execute(new ModifierLivreCommand(
                 id, formulaire.getCollectionId(), formulaire.getTitre(), formulaire.getSousTitre(),
-                formulaire.getCouvertureUrl(), formulaire.getPitchCourt(), formulaire.getResume(), formulaire.getOrdre()));
+                octets(formulaire.getCouverture()), nomOriginal(formulaire.getCouverture()),
+                formulaire.getPitchCourt(), formulaire.getResume(), formulaire.getOrdre()));
 
         return "redirect:/backoffice/livres";
+    }
+
+    private byte[] octets(MultipartFile fichier) {
+        if (fichier == null || fichier.isEmpty()) {
+            return null;
+        }
+        try {
+            return fichier.getBytes();
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
+    private String nomOriginal(MultipartFile fichier) {
+        return fichier == null ? null : fichier.getOriginalFilename();
     }
 
     @PostMapping("/{id}/publier")

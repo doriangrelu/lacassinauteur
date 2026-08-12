@@ -25,8 +25,12 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/site
       SPRING_DATASOURCE_USERNAME: site
       SPRING_DATASOURCE_PASSWORD: site
+      STOCKAGE_IMAGES_CHEMIN: /data/images
+    volumes:
+      - images-data:/data/images
     ports:
       - "8080:8080"
 
 volumes:
   db-data:
+  images-data:

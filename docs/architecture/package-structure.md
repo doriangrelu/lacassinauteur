@@ -138,18 +138,28 @@ newsletter/infrastructure/
 fr.lacassinauteur.site
 ├── shared
 │   ├── domain
+│   │   ├── port
+│   │   │   └── StockageFichierPort.java        (upload de fichiers, cf. ADR-0010)
 │   │   └── exception
-│   │       └── ConflitMetierException.java
+│   │       └── FichierInvalideException.java
+│   ├── infrastructure
+│   │   └── stockage
+│   │       ├── StockageFichierLocal.java       (implémente StockageFichierPort)
+│   │       └── StockageImagesProperties.java   (@ConfigurationProperties)
 │   └── web
-│       └── GestionnaireErreursGlobal.java   (@ControllerAdvice commun)
+│       └── GestionnaireErreursGlobal.java      (@ControllerAdvice commun)
 │
 ├── config
 │   ├── SecurityConfig.java
-│   ├── WebConfig.java
-│   └── DataSourceConfig.java
+│   └── WebConfig.java   (sert /media/** depuis le dossier de stockage configuré)
 │
 └── SiteApplication.java   (classe main Spring Boot)
 ```
+
+`shared` reste réservé aux capacités réellement transverses (aucune logique métier
+d'un domaine ne doit s'y échapper) — le stockage de fichiers en est un exemple
+légitime : catalogue en a besoin aujourd'hui (photos, couvertures), d'autres domaines
+pourront le réutiliser (ex. visuels d'actualités) sans dupliquer l'infrastructure.
 
 ## Ressources (hors code Java)
 

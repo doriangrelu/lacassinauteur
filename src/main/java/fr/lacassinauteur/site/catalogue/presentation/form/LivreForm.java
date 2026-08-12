@@ -2,6 +2,7 @@ package fr.lacassinauteur.site.catalogue.presentation.form;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -15,7 +16,7 @@ public class LivreForm {
 
     private String sousTitre;
 
-    private String couvertureUrl;
+    private MultipartFile couverture;
 
     private String pitchCourt;
 
@@ -47,12 +48,12 @@ public class LivreForm {
         this.sousTitre = sousTitre;
     }
 
-    public String getCouvertureUrl() {
-        return couvertureUrl;
+    public MultipartFile getCouverture() {
+        return couverture;
     }
 
-    public void setCouvertureUrl(String couvertureUrl) {
-        this.couvertureUrl = couvertureUrl;
+    public void setCouverture(MultipartFile couverture) {
+        this.couverture = couverture;
     }
 
     public String getPitchCourt() {

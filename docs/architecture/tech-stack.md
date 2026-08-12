@@ -69,6 +69,20 @@
 - Spring Data JPA + Hibernate comme couche d'accès aux données, encapsulée dans
   `infrastructure.persistence` de chaque domaine (jamais exposée en dehors).
 
+## Stockage de fichiers (images)
+
+- Upload d'images (photos d'univers, couvertures de livres) via
+  `shared.domain.port.StockageFichierPort`, implémenté par un adaptateur **disque
+  local** (`StockageFichierLocal`) — chemin configurable via
+  `app.stockage.images.chemin` (variable d'environnement `STOCKAGE_IMAGES_CHEMIN`),
+  cf. [ADR-0010](decisions/0010-upload-images-stockage-local.md).
+- Servi via un préfixe d'URL dédié (`/media/**` par défaut,
+  `app.stockage.images.prefixe-url`), distinct des visuels du seed initial
+  (`/images/**`, packagés dans le jar).
+- Taille max 5 Mo par fichier, formats acceptés : jpg/jpeg/png/webp/gif.
+- **Docker Compose** : volume nommé (`images-data`) monté sur ce chemin dans le
+  service `app`, pour survivre aux redéploiements.
+
 ## Sécurité
 
 - **Spring Security** pour le back-office (`/backoffice/**`), formulaire de connexion

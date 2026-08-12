@@ -1,6 +1,7 @@
 package fr.lacassinauteur.site.catalogue.presentation.form;
 
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.web.multipart.MultipartFile;
 
 public class UniversForm {
 
@@ -11,7 +12,7 @@ public class UniversForm {
 
     private String texte;
 
-    private String photoUrl;
+    private MultipartFile photo;
 
     private int ordre;
 
@@ -39,12 +40,12 @@ public class UniversForm {
         this.texte = texte;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
+    public MultipartFile getPhoto() {
+        return photo;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
+    public void setPhoto(MultipartFile photo) {
+        this.photo = photo;
     }
 
     public int getOrdre() {

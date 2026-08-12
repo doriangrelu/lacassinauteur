@@ -59,7 +59,7 @@
             <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un livre</h2>
         </div>
 
-        <form th:action="@{/backoffice/livres}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+        <form th:action="@{/backoffice/livres}" th:object="${formulaire}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
             <div>
                 <label class="champ-label" for="collectionId">Collection</label>
                 <select class="champ-select" id="collectionId" th:field="*{collectionId}">
@@ -76,8 +76,8 @@
                 <input class="champ-texte" type="text" id="sousTitre" th:field="*{sousTitre}"/>
             </div>
             <div>
-                <label class="champ-label" for="couvertureUrl">Couverture (chemin ou URL)</label>
-                <input class="champ-texte" type="text" id="couvertureUrl" th:field="*{couvertureUrl}"/>
+                <label class="champ-label" for="couverture">Couverture</label>
+                <input class="champ-texte" type="file" id="couverture" th:field="*{couverture}" accept="image/*"/>
             </div>
             <div>
                 <label class="champ-label" for="pitchCourt">Pitch court</label>

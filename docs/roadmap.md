@@ -47,8 +47,9 @@
 - [x] Use case « définir la dernière parution » (bloc accueil), transactionnel
 - [x] Pages publiques : accueil, univers, collection, livre — layout public
       (Cormorant Garamond/Aptos), vérifiées dans le navigateur avec le vrai contenu
-- [x] Back-office : gestion univers/collections/livres (CRUD complet), couverture
-      via chemin/URL texte (pas d'upload de fichier en v1)
+- [x] Back-office : gestion univers/collections/livres (CRUD complet), upload réel
+      des photos/couvertures (stockage local, chemin configurable — cf.
+      [ADR-0010](architecture/decisions/0010-upload-images-stockage-local.md))
 - [ ] Page professionnelle (route non listée, accessible par QR code) — fiche
       technique des livres publiés — **non fait dans cette passe**
 - [ ] Use cases avis lecteurs (soumission publique + modération back-office),
@@ -97,7 +98,10 @@
 - [ ] Provisionnement VPS Hetzner
 - [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr`
 - [ ] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS)
-- [ ] Sauvegardes automatiques de la base (dump planifié + rétention)
+- [ ] Sauvegarde/restauration : `scripts/backup.sh` (`pg_dump` + archive du dossier
+      d'images `STOCKAGE_IMAGES_CHEMIN`) et `scripts/restore.sh`, planifiés via cron
+      sur le VPS — approche proposée le 2026-08-12, **à valider avec l'utilisateur**
+      avant implémentation (cf. décision en attente ci-dessous)
 - [ ] Mise en ligne, vérification SEO de base (sitemap, meta descriptions, balises OG)
 
 ## Phase 8 — Recette avec l'auteur
@@ -116,3 +120,8 @@
 - Fournisseur d'email transactionnel pour le formulaire de contact (Gmail existant vs
   SMTP transactionnel dédié) — à trancher en Phase 5.
 - Nom exact du prestataire ESP newsletter (Brevo vs Mailjet) — à confirmer en Phase 4.
+- Sauvegarde/restauration (base + images) : approche recommandée `pg_dump`/
+  `pg_restore` + archive du dossier d'images via des scripts ops (`scripts/backup.sh`
+  / `scripts/restore.sh`), restauration volontairement **non** exposée en
+  self-service dans le back-office (opération destructive). À valider avec
+  l'utilisateur avant implémentation.
