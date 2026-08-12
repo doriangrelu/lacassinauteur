@@ -91,14 +91,27 @@
 
 ## Phase 4 — Domaine `newsletter`
 
-- [ ] Choix définitif de l'ESP (Brevo par défaut, cf.
-      [ADR-0002](architecture/decisions/0002-fournisseur-emailing.md)), création du
-      compte, clé API
-- [ ] Modèle domaine (`AbonneNewsletter`) + persistance + migrations
-- [ ] Use cases inscription (double opt-in), confirmation, désinscription
-- [ ] Adaptateur `infrastructure.email` vers l'ESP
-- [ ] Page publique Newsletter
-- [ ] Back-office : liste des abonnés, déclenchement/consultation des campagnes
+- [x] Modèle domaine (`AbonneNewsletter`, `StatutAbonnement`) + persistance JPA +
+      migration Flyway (V5) — jeton unique réutilisé confirmation/désinscription,
+      cf. [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
+- [x] Use cases inscription (double opt-in, idempotente), confirmation,
+      désinscription — testés unitairement avec repository fake (pas de
+      `CampagneNewsletter` ni de synchronisation ESP dans ce lot, hors périmètre v1
+      cf. domain-model.md)
+- [x] Adaptateur `infrastructure.email` vers l'ESP : `BrevoEmailAdapter` (par défaut/
+      prod) + `LogEmailAdapter` (profil `dev`, parcours testable en local sans
+      compte externe) — cf. [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
+- [x] Page publique Newsletter (`/newsletter`) : formulaire d'inscription protégé par
+      honeypot, liens de confirmation/désinscription (`/newsletter/confirmer`,
+      `/newsletter/desinscrire`)
+- [x] Back-office : liste des abonnés (`/backoffice/abonnes`) — lecture seule en v1,
+      pas d'ajout manuel (les abonnés s'inscrivent eux-mêmes) ; pas de
+      déclenchement/consultation de campagnes (hors périmètre v1)
+- [ ] **Compte Brevo réel + clé API** (`BREVO_API_KEY`) — `BrevoEmailAdapter` est
+      implémenté d'après la documentation publique de l'API mais **non vérifié
+      contre l'API réelle**, aucun compte n'étant disponible au moment de
+      l'implémentation. À tester manuellement dès que la clé est disponible, cf.
+      [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
 
 ## Phase 5 — Domaine `contact`
 
@@ -145,4 +158,8 @@
 
 - Fournisseur d'email transactionnel pour le formulaire de contact (Gmail existant vs
   SMTP transactionnel dédié) — à trancher en Phase 5.
-- Nom exact du prestataire ESP newsletter (Brevo vs Mailjet) — à confirmer en Phase 4.
+- Prestataire ESP newsletter : implémenté avec Brevo (cf.
+  [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)), mais
+  non vérifié contre l'API réelle faute de compte — reste à créer le compte Brevo et
+  fournir `BREVO_API_KEY`, ou basculer vers Mailjet si Brevo ne convient finalement
+  pas (seul `infrastructure.email` serait à changer, le port restant identique).

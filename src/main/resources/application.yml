@@ -21,6 +21,16 @@ app:
     images:
       chemin: ${STOCKAGE_IMAGES_CHEMIN:./data/images}
       prefixe-url: /media
+  newsletter:
+    # Base des liens absolus (confirmation/désinscription) insérés dans les emails
+    # transactionnels — un email n'a pas de "current origin" comme un navigateur.
+    url-base: ${APP_URL_BASE:http://localhost:8080}
+    brevo:
+      # Cf. ADR-0002 / ADR-0013 : jamais commitée, à fournir en variable
+      # d'environnement une fois le compte Brevo créé.
+      api-key: ${BREVO_API_KEY:}
+      expediteur-email: ${BREVO_EXPEDITEUR_EMAIL:newsletter@thierrylacassin-auteur.fr}
+      expediteur-nom: ${BREVO_EXPEDITEUR_NOM:Thierry Lacassin}
 
 server:
   port: 8080

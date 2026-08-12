@@ -8,6 +8,10 @@ server:
   # anti brute-force (ADR-0008).
   forward-headers-strategy: framework
 
+app:
+  newsletter:
+    url-base: ${APP_URL_BASE:https://thierrylacassin-auteur.fr}
+
 logging:
   level:
     root: WARN

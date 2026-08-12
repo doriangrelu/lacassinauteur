@@ -1,6 +1,6 @@
 /**
- * Cas d'usage et services applicatifs de la newsletter : inscription (double
- * opt-in), confirmation, désinscription, synchronisation avec le fournisseur
- * d'emailing tiers. Voir docs/architecture/decisions/0002-fournisseur-emailing.md.
+ * Cas d'usage de la newsletter (inscription, confirmation, désinscription,
+ * listing back-office). Orchestration du domaine, aucune dépendance à la
+ * persistance ou à la présentation. Voir docs/architecture/architecture.md.
  */
 package fr.lacassinauteur.site.newsletter.application;
