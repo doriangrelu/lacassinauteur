@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Actualités</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Actualités</h1>
+            <p class="mt-1 text-sm text-slate-500">Salons, dédicaces et autres événements.</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-ouvrir-modale="modale-creer-actualite">
+            <span th:replace="~{backoffice/fragments/icons :: plus('h-4 w-4')}"></span>
+            Ajouter une actualité
+        </button>
+    </header>
+
+    <div class="card overflow-x-auto">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
+            <tr>
+                <th class="px-6 py-3">Date</th>
+                <th class="px-6 py-3">Titre</th>
+                <th class="px-6 py-3">Type</th>
+                <th class="px-6 py-3">Mis en avant</th>
+                <th class="px-6 py-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="actualite : ${actualites}" class="hover:bg-slate-50">
+                <td class="px-6 py-4 text-slate-500" th:text="${actualite.dateAffichage}">1 janvier 2026</td>
+                <td class="px-6 py-4 font-medium text-slate-900" th:text="${actualite.titre}">Titre</td>
+                <td class="px-6 py-4">
+                    <span th:if="${actualite.type.name() == 'EVENEMENT_A_VENIR'}" class="badge badge-actif">À venir</span>
+                    <span th:unless="${actualite.type.name() == 'EVENEMENT_A_VENIR'}" class="badge badge-inactif">Passée</span>
+                </td>
+                <td class="px-6 py-4 text-slate-500" th:text="${actualite.misEnAvant} ? 'Oui' : '—'">—</td>
+                <td class="px-6 py-4">
+                    <div class="flex flex-wrap items-center gap-4">
+                        <a th:href="@{'/backoffice/actualites/' + ${actualite.id} + '/modifier'}" class="link-action text-slate-600 hover:text-slate-900">
+                            <span th:replace="~{backoffice/fragments/icons :: pencilSquare('h-4 w-4')}"></span>
+                            Modifier
+                        </a>
+                        <form th:action="@{'/backoffice/actualites/' + ${actualite.id} + '/supprimer'}" method="post"
+                              onsubmit="return confirm('Supprimer définitivement cette actualité ?');">
+                            <button type="submit" class="link-action text-red-600 hover:text-red-700">
+                                <span th:replace="~{backoffice/fragments/icons :: trash('h-4 w-4')}"></span>
+                                Supprimer
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(actualites)}">
+                <td colspan="5" class="px-6 py-8 text-center text-slate-400">Aucune actualité pour l'instant.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <dialog id="modale-creer-actualite" class="modale" th:object="${formulaire}"
+            th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
+        <div class="modale-entete">
+            <div class="flex items-center gap-2">
+                <span th:replace="~{backoffice/fragments/icons :: calendar('h-5 w-5 text-indigo-600')}"></span>
+                <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer une actualité</h2>
+            </div>
+            <button type="button" class="btn-ghost rounded-lg p-1.5" data-fermer-modale aria-label="Fermer">
+                <span th:replace="~{backoffice/fragments/icons :: xMark('h-5 w-5')}"></span>
+            </button>
+        </div>
+
+        <form th:action="@{/backoffice/actualites}" method="post" enctype="multipart/form-data" class="modale-corps">
+            <div>
+                <label class="champ-label" for="titre">Titre</label>
+                <input class="champ-texte" type="text" id="titre" th:field="*{titre}"/>
+                <p th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="date">Date</label>
+                <input class="champ-texte" type="date" id="date" th:field="*{date}"/>
+                <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="lieu">Lieu</label>
+                <input class="champ-texte" type="text" id="lieu" th:field="*{lieu}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="lienBilletterie">Lien billetterie / organisateur</label>
+                <input class="champ-texte" type="text" id="lienBilletterie" th:field="*{lienBilletterie}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="texte">Texte</label>
+                <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
+            </div>
+            <div>
+                <label class="champ-label" for="image">Photo</label>
+                <input class="champ-texte" type="file" id="image" th:field="*{image}" accept="image/*"/>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" th:field="*{misEnAvant}" class="h-4 w-4 rounded border-slate-300"/>
+                Mettre en avant dans « dernières actualités » (une fois la date passée)
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" th:field="*{archiveeManuellement}" class="h-4 w-4 rounded border-slate-300"/>
+                Archiver manuellement (considérer comme passée dès maintenant)
+            </label>
+            <button type="submit" class="btn btn-primary mt-1">
+                <span th:replace="~{backoffice/fragments/icons :: calendar('h-4 w-4')}"></span>
+                Créer l'actualité
+            </button>
+        </form>
+    </dialog>
+</section>
+</body>
+</html>

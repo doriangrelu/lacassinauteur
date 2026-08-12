@@ -70,10 +70,24 @@
 
 ## Phase 3 — Domaine `actualite`
 
-- [ ] Modèle domaine + persistance + migrations
-- [ ] Use cases CRUD + listing (à venir / passées)
-- [ ] Page publique Actualités
-- [ ] Back-office gestion des actualités
+- [x] Modèle domaine (`Actualite`) + port + persistance JPA + migration Flyway (V5) —
+      le type (`EVENEMENT_A_VENIR`/`ACTUALITE_PASSEE`) est **dérivé de la date**, pas
+      stocké, sauf archivage manuel (`archiveeManuellement`) qui le force ; une
+      « mise en avant » (`misEnAvant`) distincte contrôle quelles actualités passées
+      apparaissent en public (sélection manuelle, pas tout l'historique)
+- [x] Use cases CRUD (création/modification/suppression réelle, contrairement au
+      catalogue) + listing (événements à venir triés du plus proche, actualités
+      passées mises en avant)
+- [x] Page publique Actualités (`/actualites`), lien ajouté au footer public
+- [x] Back-office gestion des actualités (`/backoffice/actualites`), même patron de
+      modale native que le catalogue, lien ajouté à la sidebar
+- [x] Vérifié dans le navigateur (création/modification/suppression réelles) — a
+      révélé un bug réel : un champ texte optionnel laissé vide (`lienBilletterie`)
+      est stocké comme chaîne vide, que Thymeleaf `th:if` traite comme « présent »,
+      affichant un lien mort sur la page publique. Corrigé en normalisant les champs
+      optionnels vides en `null` dans le constructeur du domaine (`Actualite`), pas
+      seulement dans les use cases, pour que l'invariant tienne quel que soit le
+      point d'entrée (formulaire, mapper de persistance, tests).
 
 ## Phase 4 — Domaine `newsletter`
 

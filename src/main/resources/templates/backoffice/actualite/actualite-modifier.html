@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Modifier une actualité</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-6">
+    <a th:href="@{/backoffice/actualites}" class="link-action self-start text-slate-600 hover:text-slate-900">
+        <span th:replace="~{backoffice/fragments/icons :: arrowUturnLeft('h-4 w-4')}"></span>
+        Retour aux actualités
+    </a>
+
+    <div class="card max-w-lg p-6">
+        <h1 class="mb-5 text-lg font-semibold tracking-tight text-slate-900">Modifier l'actualité</h1>
+
+        <form th:action="@{'/backoffice/actualites/' + ${actualiteId}}" th:object="${formulaire}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+            <div>
+                <label class="champ-label" for="titre">Titre</label>
+                <input class="champ-texte" type="text" id="titre" th:field="*{titre}"/>
+                <p th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="date">Date</label>
+                <input class="champ-texte" type="date" id="date" th:field="*{date}"/>
+                <p th:if="${#fields.hasErrors('date')}" th:errors="*{date}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="lieu">Lieu</label>
+                <input class="champ-texte" type="text" id="lieu" th:field="*{lieu}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="lienBilletterie">Lien billetterie / organisateur</label>
+                <input class="champ-texte" type="text" id="lienBilletterie" th:field="*{lienBilletterie}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="texte">Texte</label>
+                <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
+            </div>
+            <div>
+                <label class="champ-label" for="image">Photo</label>
+                <img th:if="${actualite.imageUrl}" th:src="@{${actualite.imageUrl}}" alt="Image actuelle" class="mb-2 h-24 w-24 rounded object-cover"/>
+                <input class="champ-texte" type="file" id="image" th:field="*{image}" accept="image/*"/>
+                <p class="mt-1 text-xs text-slate-400">Laisser vide pour conserver l'image actuelle.</p>
+            </div>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" th:field="*{misEnAvant}" class="h-4 w-4 rounded border-slate-300"/>
+                Mettre en avant dans « dernières actualités » (une fois la date passée)
+            </label>
+            <label class="flex items-center gap-2 text-sm text-slate-700">
+                <input type="checkbox" th:field="*{archiveeManuellement}" class="h-4 w-4 rounded border-slate-300"/>
+                Archiver manuellement (considérer comme passée dès maintenant)
+            </label>
+            <button type="submit" class="btn btn-primary mt-1">Enregistrer</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

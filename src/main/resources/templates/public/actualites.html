@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Actualités</title>
+    <meta name="description" th:content="${metaDescription}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Actualités — Thierry Lacassin"/>
+    <meta property="og:description" th:content="${metaDescription}"/>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col items-center gap-4 py-10 text-center">
+        <h1 class="font-display text-3xl font-bold tracking-tight">Actualités</h1>
+        <p class="max-w-xl text-sm text-mist">Salons, dédicaces et rencontres à venir.</p>
+    </section>
+
+    <section class="page-conteneur flex flex-col gap-6 pb-12">
+        <div th:each="evenement : ${evenementsAVenir}" class="flex flex-col gap-3 border-t border-black/5 py-8 sm:flex-row sm:items-start sm:gap-8">
+            <div class="shrink-0 sm:w-32">
+                <p class="font-display text-lg font-bold" th:text="${evenement.dateAffichage}">Date</p>
+                <p th:if="${evenement.lieu}" class="text-sm text-mist" th:text="${evenement.lieu}">Lieu</p>
+            </div>
+            <div class="flex flex-1 flex-col gap-2">
+                <h2 class="font-display text-xl font-bold" th:text="${evenement.titre}">Titre</h2>
+                <p th:if="${evenement.texte}" class="text-sm text-mist" th:text="${evenement.texte}">Texte</p>
+                <a th:if="${evenement.lienBilletterie}" th:href="${evenement.lienBilletterie}" target="_blank" rel="noopener" class="lien-souligne self-start">Billetterie / informations</a>
+            </div>
+            <img th:if="${evenement.imageUrl}" th:src="@{${evenement.imageUrl}}" th:alt="${evenement.titre}" class="h-28 w-28 shrink-0 rounded object-cover"/>
+        </div>
+        <p th:if="${#lists.isEmpty(evenementsAVenir)}" class="border-t border-black/5 py-8 text-center text-sm text-mist">
+            Aucun événement à venir pour le moment.
+        </p>
+    </section>
+
+    <section th:if="${not #lists.isEmpty(actualitesPassees)}" class="border-t border-black/10 bg-black/[0.02]">
+        <div class="page-conteneur flex flex-col gap-6 py-12">
+            <h2 class="font-display text-2xl font-bold">Dernières actualités</h2>
+            <div class="grid gap-6 sm:grid-cols-2">
+                <div th:each="actualite : ${actualitesPassees}" class="flex flex-col gap-2">
+                    <p class="text-sm text-mist" th:text="${actualite.dateAffichage}">Date</p>
+                    <h3 class="font-display text-lg font-bold" th:text="${actualite.titre}">Titre</h3>
+                    <p th:if="${actualite.texte}" class="text-sm text-mist" th:text="${actualite.texte}">Texte</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="page-conteneur flex flex-col items-center gap-4 py-12 text-center">
+        <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
+    </section>
+</div>
+</body>
+</html>
