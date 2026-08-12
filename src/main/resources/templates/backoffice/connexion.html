@@ -5,29 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Connexion — Back-office Thierry Lacassin</title>
     <link rel="stylesheet" th:href="@{/css/backoffice.css}"/>
-    <script type="module" src="https://esm.run/@material/web@2/all.js"></script>
 </head>
-<body class="flex min-h-screen items-center justify-center bg-gray-50 text-gray-900">
-<div class="w-full max-w-sm rounded-lg bg-white p-8 shadow">
-    <h1 class="mb-6 font-display text-2xl font-bold">Back-office</h1>
+<body class="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+<div class="w-full max-w-sm card p-8">
+    <div class="mb-6 flex flex-col items-center gap-2 text-center">
+        <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-8 w-8 text-indigo-600')}"></span>
+        <h1 class="text-xl font-semibold tracking-tight">Back-office</h1>
+        <p class="text-sm text-slate-500">Thierry Lacassin — auteur</p>
+    </div>
 
-    <p th:if="${param.erreur}" class="mb-4 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+    <p th:if="${param.erreur}" class="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
         Identifiants incorrects, ou trop de tentatives.
     </p>
-    <p th:if="${param.deconnecte}" class="mb-4 rounded bg-gray-50 px-3 py-2 text-sm text-gray-700">
+    <p th:if="${param.deconnecte}" class="mb-4 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
         Vous avez été déconnecté.
     </p>
 
-    <form th:action="@{/backoffice/connexion}" method="post" class="flex flex-col gap-4">
+    <form th:action="@{/backoffice/connexion}" method="post" class="flex flex-col gap-5">
         <div>
             <label class="champ-label" for="username">Email</label>
-            <input class="champ-texte" type="email" id="username" name="username" required autofocus/>
+            <div class="champ-avec-icone">
+                <span th:replace="~{backoffice/fragments/icons :: envelope('h-5 w-5')}"></span>
+                <input class="champ-texte" type="email" id="username" name="username" required autofocus/>
+            </div>
         </div>
         <div>
             <label class="champ-label" for="password">Mot de passe</label>
-            <input class="champ-texte" type="password" id="password" name="password" required/>
+            <div class="champ-avec-icone">
+                <span th:replace="~{backoffice/fragments/icons :: lockClosed('h-5 w-5')}"></span>
+                <input class="champ-texte" type="password" id="password" name="password" required/>
+            </div>
         </div>
-        <md-filled-button type="submit">Se connecter</md-filled-button>
+        <button type="submit" class="btn btn-primary mt-1 w-full">Se connecter</button>
     </form>
 </div>
 </body>

@@ -2,10 +2,16 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
 <header th:fragment="topbar(emailConnecte)"
-        class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 md:px-8">
-    <span class="text-sm text-gray-600" th:text="${emailConnecte}">utilisateur@example.com</span>
+        class="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 md:px-10">
+    <div class="flex items-center gap-2 text-sm text-slate-600">
+        <span th:replace="~{backoffice/fragments/icons :: userCircle('h-5 w-5 text-slate-400')}"></span>
+        <span th:text="${emailConnecte}">utilisateur@example.com</span>
+    </div>
     <form th:action="@{/backoffice/deconnexion}" method="post">
-        <button type="submit" class="text-sm font-medium text-gray-700 hover:text-black">Se déconnecter</button>
+        <button type="submit" class="btn btn-ghost">
+            <span th:replace="~{backoffice/fragments/icons :: logout('h-4 w-4')}"></span>
+            Se déconnecter
+        </button>
     </form>
 </header>
 </body>

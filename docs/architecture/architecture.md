@@ -201,9 +201,9 @@ src/main/resources/templates/
 │   ├── layout/
 │   ├── fragments/
 │   └── ...
-└── backoffice/       ← espace de gestion, Material Design (ADR-0007)
+└── backoffice/       ← espace de gestion, design system Tailwind (ADR-0009)
     ├── layout/
-    ├── fragments/
+    ├── fragments/     ← dont icons.html (icônes SVG inline)
     └── ...
 
 src/main/resources/static/css/
@@ -212,10 +212,10 @@ src/main/resources/static/css/
 ```
 
 Un template de `templates/public/**` n'étend jamais `templates/backoffice/layout/**`
-et inversement. Chaque espace charge sa propre feuille Tailwind compilée et, pour le
-back-office uniquement, Material Web Components (cf.
-[ADR-0007](decisions/0007-material-web-backoffice.md)) — jamais chargé sur le site
-public.
+et inversement. Chaque espace charge sa propre feuille Tailwind compilée et ses
+propres icônes SVG inline (cf. §12.5) — aucune dépendance JS externe partagée entre
+les deux, ni au sein d'un même espace (cf. [ADR-0009](decisions/0009-abandon-material-web.md)
+sur l'abandon de Material Web).
 
 ### 12.2 Découpage des vues et layouts
 
@@ -233,9 +233,17 @@ propriétaire du contenu, sous `fragments/`, jamais dupliqué.
 
 Tailwind CSS (v4, CLI standalone, cf. [ADR-0006](decisions/0006-tailwind-cli-standalone.md))
 pour les deux espaces, avec deux points d'entrée séparés (voir §12.1). Pas de classes
-Tailwind arbitraires dispersées sans cohérence : les tokens de thème (couleurs de la
-charte, typographies Cormorant Garamond/Aptos pour le site public) sont définis une
-fois dans le CSS d'entrée de chaque espace, pas répétés en dur dans chaque template.
+Tailwind arbitraires dispersées sans cohérence : les tokens de thème sont définis une
+fois, dans le `@theme` du CSS d'entrée de chaque espace, pas répétés en dur dans
+chaque template :
+- **Site public** : typographies Cormorant Garamond (titres) / Aptos (texte courant),
+  palette de la charte (cf. [brief §8](../business/brief.md#8-identité-graphique-contraintes-pour-lintégration)).
+- **Back-office** : un seul empilement de polices système harmonisé (`--font-sans`),
+  pas de police « display » séparée — la hiérarchie visuelle vient du poids et de la
+  taille, pas d'un changement de police (cf. [ADR-0009](decisions/0009-abandon-material-web.md)).
+  Un jeu de composants Tailwind (`@layer components` : `.btn`, `.card`, `.badge`,
+  `.champ-texte`...) factorise l'apparence des éléments récurrents plutôt que de
+  répéter de longues listes de classes utilitaires dans chaque template.
 
 ### 12.4 Responsive
 
@@ -244,6 +252,22 @@ ajoute les adaptations desktop via les breakpoints Tailwind (`sm:`, `md:`, `lg:`
 site public est prioritaire sur ce point (majorité de trafic lecteur attendu sur
 mobile), mais le back-office doit rester utilisable sur smartphone/tablette (Thierry
 pouvant vouloir publier une actualité ou modérer un avis depuis son téléphone).
+
+### 12.5 Icônes
+
+Icônes en **SVG inline**, jamais en police d'icônes ni en librairie JS chargée à
+l'exécution (cf. [ADR-0009](decisions/0009-abandon-material-web.md)). Sourcées depuis
+[Heroicons](https://heroicons.com/) (MIT), intégrées comme fragments Thymeleaf
+paramétrés dans `templates/<espace>/fragments/icons.html` :
+
+```html
+<span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>
+```
+
+Un fragment par icône, nommé d'après le nom Heroicons (camelCase). Le paramètre
+`clazz` fixe la taille/couleur via des classes Tailwind (`h-5 w-5 text-slate-400`) ;
+la couleur suit `currentColor` par défaut, donc hérite naturellement de la couleur du
+texte environnant sauf classe `text-*` explicite.
 
 ## 13. Documentation vivante
 

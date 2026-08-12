@@ -1,6 +1,7 @@
 # ADR-0007 — Material Web Components pour le back-office
 
-**Statut** : Acté
+**Statut** : Remplacé par [ADR-0009](0009-abandon-material-web.md) (2026-08-12) —
+conservé pour l'historique de la décision et de son premier amendement.
 **Date** : 2026-08-12
 
 ## Contexte

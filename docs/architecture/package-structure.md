@@ -181,6 +181,7 @@ src/main/resources
 │       ├── fragments
 │       │   ├── sidebar.html
 │       │   ├── topbar.html
+│       │   ├── icons.html               (icônes SVG inline, cf. ADR-0009)
 │       │   └── ...
 │       ├── connexion.html
 │       └── ...                          (un template par écran de gestion)
@@ -188,8 +189,8 @@ src/main/resources
 │   ├── css
 │   │   ├── public.css                  (généré par Tailwind, cf. ADR-0006)
 │   │   └── backoffice.css              (généré par Tailwind, cf. ADR-0006)
-│   ├── js                              (htmx, imports Material Web, JS minimal)
-│   ├── vendor                          (librairies figées en local : htmx, material web)
+│   ├── js                              (JS vanilla minimal, si besoin)
+│   ├── vendor                          (librairies figées en local : htmx.min.js)
 │   └── images
 ├── db/migration          (scripts Flyway, voir tech-stack.md)
 │   └── V1__init.sql, V2__catalogue_init.sql, ...

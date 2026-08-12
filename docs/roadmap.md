@@ -6,32 +6,35 @@
 
 ## Phase 0 — Socle technique
 
-- [ ] Scaffolding projet Maven (Spring Boot 3.x, Java 21), arborescence de packages
-      conforme à [package-structure.md](architecture/package-structure.md)
-- [ ] Configuration `application.yml` (profils `dev`/`prod`), connexion PostgreSQL
-- [ ] Docker Compose local (app + PostgreSQL) pour le développement
-- [ ] Mise en place Flyway + première migration (schéma vide)
-- [ ] CI minimale (build + tests sur push)
-- [ ] Squelette Spring Security (login back-office, rôles `ADMIN`/`AUTEUR`, aucun
+- [x] Scaffolding projet Maven (Spring Boot 4.1 / Java 25 — mis à jour depuis la
+      cible initiale 3.x/21, cf. [tech-stack.md](architecture/tech-stack.md)),
+      arborescence de packages conforme à [package-structure.md](architecture/package-structure.md)
+- [x] Configuration `application.yml` (profils `dev`/`prod`), connexion PostgreSQL
+- [x] Docker Compose local (app + PostgreSQL) pour le développement
+- [x] Mise en place Flyway + première migration (schéma vide)
+- [x] CI minimale (build + tests sur push)
+- [x] Squelette Spring Security (login back-office, rôles `ADMIN`/`AUTEUR`, aucun
       écran métier encore protégé)
 
 ## Phase 1 — Domaine `identity`
 
-- [ ] Entité `Utilisateur`, port `UtilisateurRepository`, persistance JPA
-- [ ] Authentification effective (`UserDetailsService`, hachage BCrypt), suppression
+- [x] Entité `Utilisateur`, port `UtilisateurRepository`, persistance JPA
+- [x] Authentification effective (`UserDetailsService`, hachage BCrypt), suppression
       de l'utilisateur en mémoire temporaire (`application-dev.yml`)
-- [ ] Anti brute-force Bucket4j sur `/backoffice/connexion`
-      ([ADR-0008](architecture/decisions/0008-anti-bruteforce-bucket4j.md))
-- [ ] Use case création de compte back-office (réservé `ADMIN`)
-- [ ] Mise en place Tailwind CLI standalone (`frontend/public.css`,
+- [x] Anti brute-force Bucket4j sur `/backoffice/connexion`
+      ([ADR-0008](architecture/decisions/0008-anti-bruteforce-bucket4j.md)) — vérifié
+      manuellement (429 après quelques tentatives ratées)
+- [x] Use case création de compte back-office (réservé `ADMIN`)
+- [x] Mise en place Tailwind CLI standalone (`frontend/public.css`,
       `frontend/backoffice.css`, script de build local documenté) —
       [ADR-0006](architecture/decisions/0006-tailwind-cli-standalone.md)
-- [ ] Layout back-office (`layout-backoffice.html`) + intégration Material Web
-      ([ADR-0007](architecture/decisions/0007-material-web-backoffice.md))
+- [x] Layout back-office (`layout-backoffice.html`) + design system Tailwind natif +
+      icônes SVG inline (Material Web essayé puis abandonné pour fiabilité, cf.
+      [ADR-0009](architecture/decisions/0009-abandon-material-web.md))
 - [ ] Layout public minimal (`layout-public.html`), même s'il n'est pas encore
       rempli de contenu (préparé pour la Phase 2)
-- [ ] Écran de connexion back-office
-- [ ] Écran back-office de gestion des comptes (liste, création, changement de rôle,
+- [x] Écran de connexion back-office
+- [x] Écran back-office de gestion des comptes (liste, création, changement de rôle,
       désactivation, réactivation)
 
 ## Phase 2 — Domaine `catalogue`

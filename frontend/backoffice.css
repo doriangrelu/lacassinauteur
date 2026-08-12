@@ -1,13 +1,86 @@
 @import "tailwindcss";
 @source "../src/main/resources/templates/backoffice";
 
+@theme {
+  /* Empilement de polices système harmonisé, cf. ADR-0009 : pas de police
+     "display" séparée dans le back-office, la hiérarchie vient du poids/de la taille. */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-slate-900 antialiased;
+  }
+}
+
 @layer components {
-  .champ-label {
-    @apply mb-1 block text-sm font-medium text-gray-700;
+  /* Boutons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium
+           transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-indigo-600 text-white shadow-sm hover:bg-indigo-500 focus-visible:ring-indigo-600;
+  }
+  .btn-ghost {
+    @apply text-slate-600 hover:bg-slate-100 focus-visible:ring-slate-400;
   }
 
+  /* Liens d'action discrets (lignes de tableau) */
+  .link-action {
+    @apply inline-flex items-center gap-1 text-sm font-medium hover:underline;
+  }
+
+  /* Formulaires */
+  .champ-label {
+    @apply mb-1.5 block text-sm font-medium text-slate-700;
+  }
   .champ-texte {
-    @apply w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-900
-           placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500;
+    @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900
+           placeholder-slate-400 shadow-sm transition-colors
+           focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500;
+  }
+  .champ-select {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900
+           shadow-sm transition-colors
+           focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500;
+  }
+  .champ-erreur {
+    @apply mt-1.5 text-xs text-red-600;
+  }
+  .champ-avec-icone {
+    @apply relative;
+  }
+  .champ-avec-icone svg {
+    @apply pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400;
+  }
+  .champ-avec-icone input {
+    @apply pl-10;
+  }
+
+  /* Cartes */
+  .card {
+    @apply rounded-xl border border-slate-200 bg-white shadow-sm;
+  }
+
+  /* Badges */
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+  .badge-actif {
+    @apply bg-emerald-50 text-emerald-700;
+  }
+  .badge-inactif {
+    @apply bg-slate-100 text-slate-500;
+  }
+  .badge-role {
+    @apply bg-indigo-50 text-indigo-700;
+  }
+
+  /* Navigation latérale */
+  .nav-lien {
+    @apply flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-600
+           transition-colors hover:bg-slate-100 hover:text-slate-900;
   }
 }

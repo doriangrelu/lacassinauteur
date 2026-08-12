@@ -42,19 +42,24 @@
     ```
   - **Build Docker/CI** : le `Dockerfile` télécharge le binaire Linux et compile les
     deux CSS (`--minify`) avant `mvn package`.
-- **Material Web Components** (`@material/web`) pour l'apparence des composants du
-  back-office uniquement — jamais chargé sur le site public (cf.
-  [ADR-0007](decisions/0007-material-web-backoffice.md)).
+- **Icônes SVG inline** (Heroicons, MIT) via des fragments Thymeleaf dans
+  `templates/<espace>/fragments/icons.html` — pas de police d'icônes ni de librairie
+  JS (cf. [ADR-0009](decisions/0009-abandon-material-web.md), qui documente
+  l'abandon de Material Web après deux problèmes de fiabilité/cohérence constatés en
+  test réel).
 - Typographie du site public : Cormorant Garamond / Aptos, palette blanc/noir/gris,
   cf. [brief fonctionnel §8](../business/brief.md#8-identité-graphique-contraintes-pour-lintégration),
   déclarée en tokens de thème Tailwind (`@theme` dans `frontend/public.css`).
   Auto-hébergement des polices recommandé (licences le permettant) plutôt que Google
   Fonts, pour la performance et la confidentialité (pas de tiers appelé au
-  chargement).
-- Pas de framework JS ni de bundler (React/Vue/webpack/vite) : htmx + Material Web
-  (web components natifs) + JS vanilla minimal suffisent au périmètre v1, cohérent
-  avec le choix « petit monolithe ». Le CLI Tailwind standalone n'introduit aucune
-  dépendance Node/npm dans le projet (cf. ADR-0006).
+  chargement). Le back-office utilise un empilement de polices système harmonisé
+  (`--font-sans` dans `frontend/backoffice.css`), volontairement distinct de
+  l'identité éditoriale du site public.
+- Pas de framework JS ni de bundler (React/Vue/webpack/vite), et **aucune dépendance
+  JS externe** dans le back-office : htmx (vendorisé en local) + JS vanilla minimal
+  suffisent au périmètre v1, cohérent avec le choix « petit monolithe ». Le CLI
+  Tailwind standalone n'introduit aucune dépendance Node/npm dans le projet (cf.
+  ADR-0006).
 
 ## Base de données
 

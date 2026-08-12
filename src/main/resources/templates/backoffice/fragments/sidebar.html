@@ -2,10 +2,18 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
 <nav th:fragment="sidebar"
-     class="w-full shrink-0 border-b border-gray-200 bg-white p-4 md:h-screen md:w-56 md:border-b-0 md:border-r">
-    <p class="mb-4 font-display text-lg font-bold">Thierry Lacassin</p>
-    <ul class="flex gap-2 text-sm md:flex-col">
-        <li><a th:href="@{/backoffice/comptes}" class="block rounded px-3 py-2 hover:bg-gray-100">Comptes</a></li>
+     class="w-full shrink-0 border-b border-slate-200 bg-white p-4 md:h-screen md:w-60 md:border-b-0 md:border-r md:p-6">
+    <div class="mb-6 flex items-center gap-2 px-1">
+        <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-6 w-6 text-indigo-600')}"></span>
+        <span class="font-semibold tracking-tight text-slate-900">Thierry Lacassin</span>
+    </div>
+    <ul class="flex gap-1 md:flex-col">
+        <li>
+            <a th:href="@{/backoffice/comptes}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>
+                Comptes
+            </a>
+        </li>
     </ul>
 </nav>
 </body>
