@@ -1,6 +1,6 @@
 /**
- * Détails techniques de la newsletter : persistance JPA des abonnés et
- * l'adaptateur vers le fournisseur d'emailing tiers (Brevo pressenti).
- * Voir docs/architecture/decisions/0002-fournisseur-emailing.md.
+ * Détails techniques de la newsletter : persistance JPA des abonnés,
+ * adaptateurs d'envoi d'email (Brevo / log en dev), implémentations des ports
+ * définis en domaine. Voir docs/architecture/package-structure.md.
  */
 package fr.lacassinauteur.site.newsletter.infrastructure;

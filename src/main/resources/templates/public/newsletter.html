@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Newsletter</title>
+    <meta name="description" content="Inscrivez-vous à la newsletter de Thierry Lacassin pour suivre ses parutions et actualités."/>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col items-center gap-6 py-16 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight">Newsletter</h1>
+        <p class="max-w-md text-sm text-mist">
+            Recevez les actualités de Thierry Lacassin : nouvelles parutions, salons et dédicaces.
+        </p>
+
+        <p th:if="${messageInscription == 'merci'}" class="message-info max-w-md">
+            Merci ! Un email vient de vous être envoyé : cliquez sur le lien qu'il contient pour confirmer votre inscription.
+        </p>
+        <p th:if="${messageStatut == 'confirme'}" class="message-info max-w-md">
+            Inscription confirmée : vous recevrez désormais les actualités de Thierry Lacassin.
+        </p>
+        <p th:if="${messageStatut == 'desinscrit'}" class="message-info max-w-md">
+            Vous avez bien été désinscrit de la newsletter. Vous pouvez vous réinscrire à tout moment ci-dessous.
+        </p>
+        <p th:if="${messageStatut == 'lienInvalide'}" class="message-erreur max-w-md">
+            Ce lien n'est plus valide ou a expiré.
+        </p>
+
+        <form th:action="@{/newsletter/inscription}" method="post" th:object="${formulaire}"
+              class="flex w-full max-w-sm flex-col gap-4 text-left">
+            <div>
+                <label class="champ-label" for="prenom">Prénom</label>
+                <input class="champ-texte" type="text" id="prenom" th:field="*{prenom}" autocomplete="given-name"/>
+                <p th:if="${#fields.hasErrors('prenom')}" th:errors="*{prenom}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="email">Email</label>
+                <input class="champ-texte" type="email" id="email" th:field="*{email}" autocomplete="email"/>
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="champ-erreur"></p>
+            </div>
+
+            <!-- Honeypot anti-spam : invisible pour un visiteur humain, cf. frontend/public.css (.piege-anti-spam). -->
+            <div class="piege-anti-spam" aria-hidden="true">
+                <label for="siteWeb">Laissez ce champ vide</label>
+                <input type="text" id="siteWeb" th:field="*{siteWeb}" tabindex="-1" autocomplete="off"/>
+            </div>
+
+            <button type="submit" class="btn self-start">S'inscrire</button>
+        </form>
+
+        <p class="max-w-sm text-xs text-mist">
+            Vos données (prénom, email) ne servent qu'à l'envoi de cette newsletter et ne sont jamais partagées.
+            Double confirmation par email requise. Désinscription possible à tout moment via le lien présent dans
+            chaque envoi.
+        </p>
+    </section>
+</div>
+</body>
+</html>

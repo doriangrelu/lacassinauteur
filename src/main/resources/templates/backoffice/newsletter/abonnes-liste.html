@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Abonnés newsletter</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
+    <header>
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Abonnés newsletter</h1>
+        <p class="mt-1 text-sm text-slate-500">Inscriptions reçues via le formulaire public (double opt-in).</p>
+    </header>
+
+    <div class="card overflow-x-auto">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
+            <tr>
+                <th class="px-6 py-3">Prénom</th>
+                <th class="px-6 py-3">Email</th>
+                <th class="px-6 py-3">Statut</th>
+                <th class="px-6 py-3">Inscrit le</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="abonne : ${abonnes}" class="hover:bg-slate-50">
+                <td class="px-6 py-4 font-medium text-slate-900" th:text="${abonne.prenom}">Prénom</td>
+                <td class="px-6 py-4 text-slate-500" th:text="${abonne.email}">email@exemple.fr</td>
+                <td class="px-6 py-4">
+                    <span th:if="${abonne.statut.name() == 'CONFIRME'}" class="badge badge-actif">Confirmé</span>
+                    <span th:if="${abonne.statut.name() == 'EN_ATTENTE_CONFIRMATION'}" class="badge badge-role">En attente</span>
+                    <span th:if="${abonne.statut.name() == 'DESINSCRIT'}" class="badge badge-inactif">Désinscrit</span>
+                </td>
+                <td class="px-6 py-4 text-slate-500" th:text="${#temporals.format(abonne.dateInscription, 'dd/MM/yyyy')}">01/01/2026</td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(abonnes)}">
+                <td colspan="4" class="px-6 py-8 text-center text-slate-400">Aucun abonné pour l'instant.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

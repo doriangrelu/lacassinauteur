@@ -24,4 +24,35 @@
   .lien-souligne {
     @apply border-b border-ink pb-0.5 text-sm font-semibold uppercase tracking-wide transition-opacity hover:opacity-60;
   }
+
+  /* Formulaires publics (ex. inscription newsletter) */
+  .champ-label {
+    @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-mist;
+  }
+  .champ-texte {
+    @apply w-full border-b border-ink/20 bg-transparent px-1 py-2 text-sm text-ink
+           placeholder-mist/60 transition-colors focus:border-ink focus:outline-none;
+  }
+  .champ-erreur {
+    @apply mt-1.5 text-xs text-red-600;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 border border-ink px-5 py-2.5 text-sm font-semibold
+           uppercase tracking-wide transition-colors hover:bg-ink hover:text-paper
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ink
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  .message-info {
+    @apply rounded border border-ink/10 bg-ink/[0.03] px-4 py-3 text-sm text-ink;
+  }
+  .message-erreur {
+    @apply rounded border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700;
+  }
+
+  /* Honeypot anti-spam (cf. tech-stack.md) : invisible et non focusable pour un
+     visiteur humain, mais présent dans le DOM pour un bot qui remplit tous les
+     champs sans exécuter le CSS. */
+  .piege-anti-spam {
+    @apply absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0;
+  }
 }
