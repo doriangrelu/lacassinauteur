@@ -4,6 +4,11 @@
       layout:decorate="~{public/layout/layout-public}">
 <head>
     <title th:text="${univers.nom}">Univers</title>
+    <meta name="description" th:content="${metaDescription}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" th:content="${univers.nom}"/>
+    <meta property="og:description" th:content="${metaDescription}"/>
+    <meta th:if="${univers.photoUrl}" property="og:image" th:content="${univers.photoUrl}"/>
 </head>
 <body>
 <div layout:fragment="contenu">
@@ -18,22 +23,22 @@
 
     <section class="grid gap-1 sm:grid-cols-2">
         <div th:each="collection : ${collections}" class="flex flex-col gap-6 border-t border-black/5 px-6 py-10 md:px-10">
-            <a th:href="@{'/collections/' + ${collection.id}}" class="flex flex-col gap-1">
+            <a th:href="@{'/collections/' + ${collection.slug}}" class="flex flex-col gap-1">
                 <h2 class="font-display text-2xl font-bold" th:text="${collection.nom}">Collection</h2>
                 <p class="font-display italic text-mist" th:text="${collection.sousTitre}">Sous-titre</p>
             </a>
             <p class="text-sm text-mist" th:text="${collection.texte}">Texte</p>
             <div class="flex gap-3 overflow-x-auto pb-2">
-                <a th:each="livre : ${livresParCollection.get(collection.id)}" th:href="@{'/livres/' + ${livre.id}}" class="shrink-0">
+                <a th:each="livre : ${livresParCollection.get(collection.id)}" th:href="@{'/livres/' + ${livre.slug}}" class="shrink-0">
                     <img th:if="${livre.couvertureUrl}" th:src="@{${livre.couvertureUrl}}" th:alt="${livre.titre}" class="h-40 w-auto rounded shadow"/>
                 </a>
             </div>
-            <a th:href="@{'/collections/' + ${collection.id}}" class="lien-souligne self-start">Découvrir la collection</a>
+            <a th:href="@{'/collections/' + ${collection.slug}}" class="lien-souligne self-start">Découvrir la collection</a>
         </div>
     </section>
 
     <section class="page-conteneur flex flex-col items-center gap-4 py-12 text-center">
-        <a th:if="${autreUnivers}" th:href="@{'/univers/' + ${autreUnivers.id}}" class="lien-souligne">
+        <a th:if="${autreUnivers}" th:href="@{'/univers/' + ${autreUnivers.slug}}" class="lien-souligne">
             Découvrir l'autre univers — <span th:text="${autreUnivers.nom}">Autre univers</span>
         </a>
         <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>

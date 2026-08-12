@@ -14,6 +14,9 @@ public class CollectionJpaEntity {
     @Id
     private UUID id;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Column(name = "univers_id", nullable = false)
     private UUID universId;
 
@@ -32,8 +35,9 @@ public class CollectionJpaEntity {
     protected CollectionJpaEntity() {
     }
 
-    public CollectionJpaEntity(UUID id, UUID universId, String nom, String sousTitre, String texte, int ordre) {
+    public CollectionJpaEntity(UUID id, String slug, UUID universId, String nom, String sousTitre, String texte, int ordre) {
         this.id = id;
+        this.slug = slug;
         this.universId = universId;
         this.nom = nom;
         this.sousTitre = sousTitre;
@@ -43,6 +47,10 @@ public class CollectionJpaEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getSlug() {
+        return slug;
     }
 
     public UUID getUniversId() {

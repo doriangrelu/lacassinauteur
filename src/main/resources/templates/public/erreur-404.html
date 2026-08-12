@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Page introuvable</title>
+    <meta name="robots" content="noindex"/>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col items-center gap-4 py-24 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight">Page introuvable</h1>
+        <p class="max-w-md text-sm text-mist">
+            La page que vous cherchez n'existe pas ou plus, ou l'adresse est incorrecte.
+        </p>
+        <a th:href="@{/}" class="lien-souligne mt-2">Retour à l'accueil</a>
+    </section>
+</div>
+</body>
+</html>

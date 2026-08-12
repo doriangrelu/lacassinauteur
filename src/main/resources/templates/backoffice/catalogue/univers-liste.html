@@ -7,9 +7,15 @@
 </head>
 <body>
 <section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
-    <header>
-        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Univers</h1>
-        <p class="mt-1 text-sm text-slate-500">Les grands ensembles littéraires de Thierry Lacassin.</p>
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Univers</h1>
+            <p class="mt-1 text-sm text-slate-500">Les grands ensembles littéraires de Thierry Lacassin.</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-ouvrir-modale="modale-creer-univers">
+            <span th:replace="~{backoffice/fragments/icons :: plus('h-4 w-4')}"></span>
+            Ajouter un univers
+        </button>
     </header>
 
     <div class="card overflow-x-auto">
@@ -41,13 +47,19 @@
         </table>
     </div>
 
-    <div class="card max-w-lg p-6">
-        <div class="mb-5 flex items-center gap-2">
-            <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-5 w-5 text-indigo-600')}"></span>
-            <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un univers</h2>
+    <dialog id="modale-creer-univers" class="modale" th:object="${formulaire}"
+            th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
+        <div class="modale-entete">
+            <div class="flex items-center gap-2">
+                <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-5 w-5 text-indigo-600')}"></span>
+                <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un univers</h2>
+            </div>
+            <button type="button" class="btn-ghost rounded-lg p-1.5" data-fermer-modale aria-label="Fermer">
+                <span th:replace="~{backoffice/fragments/icons :: xMark('h-5 w-5')}"></span>
+            </button>
         </div>
 
-        <form th:action="@{/backoffice/univers}" th:object="${formulaire}" method="post" enctype="multipart/form-data" class="flex flex-col gap-4">
+        <form th:action="@{/backoffice/univers}" method="post" enctype="multipart/form-data" class="modale-corps">
             <div>
                 <label class="champ-label" for="nom">Nom</label>
                 <input class="champ-texte" type="text" id="nom" th:field="*{nom}"/>
@@ -74,7 +86,7 @@
                 Créer l'univers
             </button>
         </form>
-    </div>
+    </dialog>
 </section>
 </body>
 </html>

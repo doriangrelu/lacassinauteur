@@ -4,9 +4,14 @@ import fr.lacassinauteur.site.catalogue.infrastructure.persistence.entity.Univer
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface SpringDataUniversRepository extends JpaRepository<UniversJpaEntity, UUID> {
+
+    Optional<UniversJpaEntity> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
 
     List<UniversJpaEntity> findAllByOrderByOrdreAsc();
 }

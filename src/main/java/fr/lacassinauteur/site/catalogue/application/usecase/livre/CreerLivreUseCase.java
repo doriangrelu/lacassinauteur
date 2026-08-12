@@ -4,6 +4,7 @@ import fr.lacassinauteur.site.catalogue.application.command.CreerLivreCommand;
 import fr.lacassinauteur.site.catalogue.application.result.LivreResult;
 import fr.lacassinauteur.site.catalogue.domain.model.Livre;
 import fr.lacassinauteur.site.catalogue.domain.port.LivreRepository;
+import fr.lacassinauteur.site.shared.domain.model.Slug;
 import fr.lacassinauteur.site.shared.domain.port.StockageFichierPort;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +28,9 @@ public class CreerLivreUseCase {
                     command.couvertureContenu(), command.couvertureNomFichier(), SOUS_DOSSIER);
         }
 
+        Slug slug = Slug.genererUnique(command.titre(), livreRepository::existsBySlug);
         Livre livre = Livre.creer(
-                command.collectionId(), command.titre(), command.sousTitre(), couvertureUrl,
+                slug.valeur(), command.collectionId(), command.titre(), command.sousTitre(), couvertureUrl,
                 command.pitchCourt(), command.resume(), command.ordre());
         return LivreResult.depuis(livreRepository.save(livre));
     }

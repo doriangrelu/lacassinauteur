@@ -10,7 +10,7 @@ public class LivreEntityMapper {
 
     public LivreJpaEntity versEntite(Livre livre) {
         return new LivreJpaEntity(
-                livre.id(), livre.collectionId(), livre.titre(), livre.sousTitre(), livre.couvertureUrl(),
+                livre.id(), livre.slug(), livre.collectionId(), livre.titre(), livre.sousTitre(), livre.couvertureUrl(),
                 livre.pitchCourt(), livre.resume(),
                 livre.lienAchat().map(LienAchat::url).orElse(null),
                 livre.lienAchat().map(LienAchat::libelleMarchand).orElse(null),
@@ -23,7 +23,7 @@ public class LivreEntityMapper {
                 : new LienAchat(entite.getLienAchatUrl(), entite.getLienAchatLibelle());
 
         return new Livre(
-                entite.getId(), entite.getCollectionId(), entite.getTitre(), entite.getSousTitre(),
+                entite.getId(), entite.getSlug(), entite.getCollectionId(), entite.getTitre(), entite.getSousTitre(),
                 entite.getCouvertureUrl(), entite.getPitchCourt(), entite.getResume(), lienAchat,
                 entite.getOrdre(), entite.isDerniereParution());
     }

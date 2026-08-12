@@ -32,6 +32,16 @@ public class JpaUniversRepository implements UniversRepository {
     }
 
     @Override
+    public Optional<Univers> findBySlug(String slug) {
+        return springDataRepository.findBySlug(slug).map(mapper::versDomaine);
+    }
+
+    @Override
+    public boolean existsBySlug(String slug) {
+        return springDataRepository.existsBySlug(slug);
+    }
+
+    @Override
     public List<Univers> findAllOrderByOrdre() {
         return springDataRepository.findAllByOrderByOrdreAsc().stream()
                 .map(mapper::versDomaine)

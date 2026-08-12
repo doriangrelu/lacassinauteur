@@ -3,7 +3,11 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{public/layout/layout-public}">
 <head>
-    <title>Accueil</title>
+    <title>Romans noirs et récits de trajectoires humaines</title>
+    <meta name="description" th:content="${metaDescription}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Thierry Lacassin — Auteur"/>
+    <meta property="og:description" th:content="${metaDescription}"/>
 </head>
 <body>
 <div layout:fragment="contenu">
@@ -14,7 +18,7 @@
     </section>
 
     <section class="grid gap-1 sm:grid-cols-2">
-        <a th:each="univers : ${universList}" th:href="@{'/univers/' + ${univers.id}}"
+        <a th:each="univers : ${universList}" th:href="@{'/univers/' + ${univers.slug}}"
            class="group relative block aspect-[4/5] overflow-hidden bg-slate-900">
             <img th:if="${univers.photoUrl}" th:src="@{${univers.photoUrl}}" th:alt="${univers.nom}"
                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"/>
@@ -31,7 +35,7 @@
         <h2 class="font-display text-2xl font-bold" th:text="${derniereParution.titre}">Titre</h2>
         <p class="max-w-md text-sm text-mist" th:text="${derniereParution.pitchCourt}">Pitch</p>
         <div class="flex flex-wrap justify-center gap-6">
-            <a th:href="@{'/livres/' + ${derniereParution.id}}" class="lien-souligne">Découvrir le livre</a>
+            <a th:href="@{'/livres/' + ${derniereParution.slug}}" class="lien-souligne">Découvrir le livre</a>
             <a th:if="${derniereParution.disponible}" th:href="${derniereParution.lienAchatUrl}" target="_blank" rel="noopener"
                class="lien-souligne" th:text="'Acheter sur ' + ${derniereParution.lienAchatLibelle}">Acheter</a>
         </div>

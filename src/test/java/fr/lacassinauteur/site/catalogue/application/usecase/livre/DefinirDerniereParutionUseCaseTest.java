@@ -14,11 +14,11 @@ class DefinirDerniereParutionUseCaseTest {
     @Test
     void une_seule_derniere_parution_a_la_fois() {
         FakeLivreRepository livreRepository = new FakeLivreRepository();
-        Livre ancien = Livre.creer(UUID.randomUUID(), "Ancien livre", null, "/a.png", "p", "r", 1);
+        Livre ancien = Livre.creer("ancien-livre", UUID.randomUUID(), "Ancien livre", null, "/a.png", "p", "r", 1);
         ancien.marquerCommeDerniereParution();
         livreRepository.save(ancien);
 
-        Livre nouveau = Livre.creer(UUID.randomUUID(), "Nouveau livre", null, "/b.png", "p", "r", 2);
+        Livre nouveau = Livre.creer("nouveau-livre", UUID.randomUUID(), "Nouveau livre", null, "/b.png", "p", "r", 2);
         livreRepository.save(nouveau);
 
         new DefinirDerniereParutionUseCase(livreRepository).execute(new DefinirDerniereParutionCommand(nouveau.id()));

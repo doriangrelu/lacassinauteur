@@ -25,6 +25,16 @@ public class FakeLivreRepository implements LivreRepository {
     }
 
     @Override
+    public Optional<Livre> findBySlug(String slug) {
+        return stockage.values().stream().filter(livre -> livre.slug().equals(slug)).findFirst();
+    }
+
+    @Override
+    public boolean existsBySlug(String slug) {
+        return findBySlug(slug).isPresent();
+    }
+
+    @Override
     public List<Livre> findByCollectionIdOrderByOrdre(UUID collectionId) {
         return stockage.values().stream()
                 .filter(livre -> livre.collectionId().equals(collectionId))

@@ -13,3 +13,6 @@ src/main/resources/static/css/*.css
 
 # Images uploadées en local (cf. app.stockage.images.chemin, ADR-0010)
 /data/
+
+# Archives de sauvegarde locales (cf. scripts/backup.sh, ADR-0012)
+/backups/

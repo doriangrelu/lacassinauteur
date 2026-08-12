@@ -7,9 +7,15 @@
 </head>
 <body>
 <section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
-    <header>
-        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Comptes back-office</h1>
-        <p class="mt-1 text-sm text-slate-500">Gère les accès des administrateurs et de l'auteur.</p>
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Comptes back-office</h1>
+            <p class="mt-1 text-sm text-slate-500">Gère les accès des administrateurs et de l'auteur.</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-ouvrir-modale="modale-creer-compte">
+            <span th:replace="~{backoffice/fragments/icons :: plus('h-4 w-4')}"></span>
+            Ajouter un compte
+        </button>
     </header>
 
     <div class="card overflow-hidden">
@@ -63,13 +69,19 @@
         </table>
     </div>
 
-    <div class="card max-w-md p-6">
-        <div class="mb-5 flex items-center gap-2">
-            <span th:replace="~{backoffice/fragments/icons :: userPlus('h-5 w-5 text-indigo-600')}"></span>
-            <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un compte</h2>
+    <dialog id="modale-creer-compte" class="modale" th:object="${formulaire}"
+            th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
+        <div class="modale-entete">
+            <div class="flex items-center gap-2">
+                <span th:replace="~{backoffice/fragments/icons :: userPlus('h-5 w-5 text-indigo-600')}"></span>
+                <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un compte</h2>
+            </div>
+            <button type="button" class="btn-ghost rounded-lg p-1.5" data-fermer-modale aria-label="Fermer">
+                <span th:replace="~{backoffice/fragments/icons :: xMark('h-5 w-5')}"></span>
+            </button>
         </div>
 
-        <form th:action="@{/backoffice/comptes}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+        <form th:action="@{/backoffice/comptes}" method="post" class="modale-corps">
             <div>
                 <label class="champ-label" for="email">Email</label>
                 <div class="champ-avec-icone">
@@ -100,7 +112,7 @@
                 Créer le compte
             </button>
         </form>
-    </div>
+    </dialog>
 </section>
 </body>
 </html>

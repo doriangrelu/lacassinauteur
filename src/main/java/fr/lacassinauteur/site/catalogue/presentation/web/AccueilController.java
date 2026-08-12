@@ -21,6 +21,9 @@ public class AccueilController {
     public String accueil(Model model) {
         model.addAttribute("universList", listerUniversUseCase.execute());
         model.addAttribute("derniereParution", consulterDerniereParutionUseCase.execute().orElse(null));
+        model.addAttribute("metaDescription",
+                "Thierry Lacassin, auteur de romans noirs et de récits de trajectoires humaines. "
+                        + "Découvrez ses univers, ses collections et ses parutions.");
         return "public/accueil";
     }
 }

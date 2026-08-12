@@ -7,9 +7,15 @@
 </head>
 <body>
 <section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
-    <header>
-        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Collections</h1>
-        <p class="mt-1 text-sm text-slate-500">Les collections regroupent les livres à l'intérieur d'un univers.</p>
+    <header class="flex items-start justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Collections</h1>
+            <p class="mt-1 text-sm text-slate-500">Les collections regroupent les livres à l'intérieur d'un univers.</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-ouvrir-modale="modale-creer-collection">
+            <span th:replace="~{backoffice/fragments/icons :: plus('h-4 w-4')}"></span>
+            Ajouter une collection
+        </button>
     </header>
 
     <div class="card overflow-x-auto">
@@ -45,13 +51,19 @@
         </table>
     </div>
 
-    <div class="card max-w-lg p-6">
-        <div class="mb-5 flex items-center gap-2">
-            <span th:replace="~{backoffice/fragments/icons :: rectangleStack('h-5 w-5 text-indigo-600')}"></span>
-            <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer une collection</h2>
+    <dialog id="modale-creer-collection" class="modale" th:object="${formulaire}"
+            th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
+        <div class="modale-entete">
+            <div class="flex items-center gap-2">
+                <span th:replace="~{backoffice/fragments/icons :: rectangleStack('h-5 w-5 text-indigo-600')}"></span>
+                <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer une collection</h2>
+            </div>
+            <button type="button" class="btn-ghost rounded-lg p-1.5" data-fermer-modale aria-label="Fermer">
+                <span th:replace="~{backoffice/fragments/icons :: xMark('h-5 w-5')}"></span>
+            </button>
         </div>
 
-        <form th:action="@{/backoffice/collections}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+        <form th:action="@{/backoffice/collections}" method="post" class="modale-corps">
             <div>
                 <label class="champ-label" for="universId">Univers</label>
                 <select class="champ-select" id="universId" th:field="*{universId}">
@@ -80,7 +92,7 @@
                 Créer la collection
             </button>
         </form>
-    </div>
+    </dialog>
 </section>
 </body>
 </html>

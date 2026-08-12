@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Page introuvable</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col items-center gap-4 py-24 text-center">
+    <span th:replace="~{backoffice/fragments/icons :: exclamationTriangle('h-10 w-10 text-slate-400')}"></span>
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Page introuvable</h1>
+    <p class="max-w-md text-sm text-slate-500">Cette page n'existe pas ou plus.</p>
+    <a th:href="@{/backoffice/univers}" class="btn btn-primary mt-2">Retour au back-office</a>
+</section>
+</body>
+</html>

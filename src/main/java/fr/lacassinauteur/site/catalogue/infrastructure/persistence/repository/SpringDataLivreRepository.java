@@ -9,6 +9,10 @@ import java.util.UUID;
 
 public interface SpringDataLivreRepository extends JpaRepository<LivreJpaEntity, UUID> {
 
+    Optional<LivreJpaEntity> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
+
     List<LivreJpaEntity> findByCollectionIdOrderByOrdreAsc(UUID collectionId);
 
     List<LivreJpaEntity> findAllByOrderByOrdreAsc();

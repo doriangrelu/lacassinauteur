@@ -32,6 +32,16 @@ public class JpaCollectionRepository implements CollectionRepository {
     }
 
     @Override
+    public Optional<Collection> findBySlug(String slug) {
+        return springDataRepository.findBySlug(slug).map(mapper::versDomaine);
+    }
+
+    @Override
+    public boolean existsBySlug(String slug) {
+        return springDataRepository.existsBySlug(slug);
+    }
+
+    @Override
     public List<Collection> findByUniversIdOrderByOrdre(UUID universId) {
         return springDataRepository.findByUniversIdOrderByOrdreAsc(universId).stream()
                 .map(mapper::versDomaine)

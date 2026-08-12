@@ -6,6 +6,7 @@ import java.util.UUID;
 public class Livre {
 
     private final UUID id;
+    private final String slug;
     private UUID collectionId;
     private String titre;
     private String sousTitre;
@@ -16,9 +17,10 @@ public class Livre {
     private int ordre;
     private boolean derniereParution;
 
-    public Livre(UUID id, UUID collectionId, String titre, String sousTitre, String couvertureUrl,
+    public Livre(UUID id, String slug, UUID collectionId, String titre, String sousTitre, String couvertureUrl,
                  String pitchCourt, String resume, LienAchat lienAchat, int ordre, boolean derniereParution) {
         this.id = id;
+        this.slug = slug;
         this.collectionId = collectionId;
         this.titre = titre;
         this.sousTitre = sousTitre;
@@ -30,9 +32,9 @@ public class Livre {
         this.derniereParution = derniereParution;
     }
 
-    public static Livre creer(UUID collectionId, String titre, String sousTitre, String couvertureUrl,
+    public static Livre creer(String slug, UUID collectionId, String titre, String sousTitre, String couvertureUrl,
                                String pitchCourt, String resume, int ordre) {
-        return new Livre(UUID.randomUUID(), collectionId, titre, sousTitre, couvertureUrl, pitchCourt, resume, null, ordre, false);
+        return new Livre(UUID.randomUUID(), slug, collectionId, titre, sousTitre, couvertureUrl, pitchCourt, resume, null, ordre, false);
     }
 
     public void modifier(UUID collectionId, String titre, String sousTitre, String couvertureUrl,
@@ -64,6 +66,10 @@ public class Livre {
 
     public UUID id() {
         return id;
+    }
+
+    public String slug() {
+        return slug;
     }
 
     public UUID collectionId() {

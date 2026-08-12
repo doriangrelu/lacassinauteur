@@ -14,6 +14,9 @@ public class LivreJpaEntity {
     @Id
     private UUID id;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Column(name = "collection_id", nullable = false)
     private UUID collectionId;
 
@@ -47,10 +50,11 @@ public class LivreJpaEntity {
     protected LivreJpaEntity() {
     }
 
-    public LivreJpaEntity(UUID id, UUID collectionId, String titre, String sousTitre, String couvertureUrl,
+    public LivreJpaEntity(UUID id, String slug, UUID collectionId, String titre, String sousTitre, String couvertureUrl,
                            String pitchCourt, String resume, String lienAchatUrl, String lienAchatLibelle,
                            int ordre, boolean derniereParution) {
         this.id = id;
+        this.slug = slug;
         this.collectionId = collectionId;
         this.titre = titre;
         this.sousTitre = sousTitre;
@@ -65,6 +69,10 @@ public class LivreJpaEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getSlug() {
+        return slug;
     }
 
     public UUID getCollectionId() {

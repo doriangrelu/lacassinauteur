@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Une erreur est survenue</title>
+    <meta name="robots" content="noindex"/>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col items-center gap-4 py-24 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight">Une erreur est survenue</h1>
+        <p class="max-w-md text-sm text-mist">
+            Quelque chose s'est mal passé de notre côté. Merci de réessayer dans quelques instants.
+        </p>
+        <a th:href="@{/}" class="lien-souligne mt-2">Retour à l'accueil</a>
+    </section>
+</div>
+</body>
+</html>

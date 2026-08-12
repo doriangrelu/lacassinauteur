@@ -4,10 +4,11 @@ import fr.lacassinauteur.site.catalogue.domain.model.Univers;
 
 import java.util.UUID;
 
-public record UniversResult(UUID id, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
+public record UniversResult(UUID id, String slug, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
 
     public static UniversResult depuis(Univers univers) {
         return new UniversResult(
-                univers.id(), univers.nom(), univers.sousTitre(), univers.texte(), univers.photoUrl(), univers.ordre());
+                univers.id(), univers.slug(), univers.nom(), univers.sousTitre(), univers.texte(),
+                univers.photoUrl(), univers.ordre());
     }
 }

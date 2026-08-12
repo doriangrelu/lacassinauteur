@@ -12,6 +12,10 @@ public interface CollectionRepository {
 
     Optional<Collection> findById(UUID id);
 
+    Optional<Collection> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
+
     List<Collection> findByUniversIdOrderByOrdre(UUID universId);
 
     List<Collection> findAllOrderByOrdre();

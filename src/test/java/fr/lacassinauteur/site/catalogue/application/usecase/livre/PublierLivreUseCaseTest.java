@@ -15,7 +15,7 @@ class PublierLivreUseCaseTest {
     @Test
     void publier_rend_le_livre_disponible_avec_son_lien_dachat() {
         FakeLivreRepository livreRepository = new FakeLivreRepository();
-        Livre livre = Livre.creer(UUID.randomUUID(), "La rame et la rage", null, "/cover.png", "Pitch", "Résumé", 1);
+        Livre livre = Livre.creer("la-rame-et-la-rage", UUID.randomUUID(), "La rame et la rage", null, "/cover.png", "Pitch", "Résumé", 1);
         livreRepository.save(livre);
 
         LivreResult result = new PublierLivreUseCase(livreRepository)

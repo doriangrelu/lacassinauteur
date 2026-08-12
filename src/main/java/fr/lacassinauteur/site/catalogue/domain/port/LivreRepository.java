@@ -12,6 +12,10 @@ public interface LivreRepository {
 
     Optional<Livre> findById(UUID id);
 
+    Optional<Livre> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
+
     List<Livre> findByCollectionIdOrderByOrdre(UUID collectionId);
 
     List<Livre> findAllOrderByOrdre();

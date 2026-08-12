@@ -9,11 +9,13 @@ public class UniversEntityMapper {
 
     public UniversJpaEntity versEntite(Univers univers) {
         return new UniversJpaEntity(
-                univers.id(), univers.nom(), univers.sousTitre(), univers.texte(), univers.photoUrl(), univers.ordre());
+                univers.id(), univers.slug(), univers.nom(), univers.sousTitre(), univers.texte(),
+                univers.photoUrl(), univers.ordre());
     }
 
     public Univers versDomaine(UniversJpaEntity entite) {
         return new Univers(
-                entite.getId(), entite.getNom(), entite.getSousTitre(), entite.getTexte(), entite.getPhotoUrl(), entite.getOrdre());
+                entite.getId(), entite.getSlug(), entite.getNom(), entite.getSousTitre(), entite.getTexte(),
+                entite.getPhotoUrl(), entite.getOrdre());
     }
 }

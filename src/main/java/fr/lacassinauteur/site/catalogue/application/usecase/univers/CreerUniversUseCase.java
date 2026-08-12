@@ -4,6 +4,7 @@ import fr.lacassinauteur.site.catalogue.application.command.CreerUniversCommand;
 import fr.lacassinauteur.site.catalogue.application.result.UniversResult;
 import fr.lacassinauteur.site.catalogue.domain.model.Univers;
 import fr.lacassinauteur.site.catalogue.domain.port.UniversRepository;
+import fr.lacassinauteur.site.shared.domain.model.Slug;
 import fr.lacassinauteur.site.shared.domain.port.StockageFichierPort;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +27,8 @@ public class CreerUniversUseCase {
             photoUrl = stockageFichierPort.enregistrer(command.photoContenu(), command.photoNomFichier(), SOUS_DOSSIER);
         }
 
-        Univers univers = Univers.creer(command.nom(), command.sousTitre(), command.texte(), photoUrl, command.ordre());
+        Slug slug = Slug.genererUnique(command.nom(), universRepository::existsBySlug);
+        Univers univers = Univers.creer(slug.valeur(), command.nom(), command.sousTitre(), command.texte(), photoUrl, command.ordre());
         return UniversResult.depuis(universRepository.save(univers));
     }
 }

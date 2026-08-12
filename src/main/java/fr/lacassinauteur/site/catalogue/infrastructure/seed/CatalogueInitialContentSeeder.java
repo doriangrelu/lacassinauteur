@@ -40,6 +40,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         }
 
         Univers universNoir = universRepository.save(Univers.creer(
+                "lacassin-noir-territoire",
                 "LACASSIN noir & territoire",
                 "Deux univers. Une seule façon d'écrire.",
                 "Dans cet univers, les histoires remontent aux origines avant de devenir des enquêtes. "
@@ -52,6 +53,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                 1));
 
         Univers universTrajectoire = universRepository.save(Univers.creer(
+                "lacassin-trajectoire-ailleurs",
                 "LACASSIN trajectoire & ailleurs",
                 "Deux univers. Une seule façon d'écrire.",
                 "Dans cet univers, les histoires quittent les cadres établis pour suivre des regards, des "
@@ -64,7 +66,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                 2));
 
         Collection lacassinNoir = collectionRepository.save(Collection.creer(
-                universNoir.id(), "LACASSIN noir", "Les Origines",
+                "lacassin-noir", universNoir.id(), "LACASSIN noir", "Les Origines",
                 "LACASSIN noir explore les origines : celles des familles, des alliances, des fidélités et des "
                         + "ruptures. On y suit des hommes et des femmes façonnés par leur milieu, leurs choix, la "
                         + "violence, le respect et ce qu'ils sont prêts à perdre pour conserver leur place. Ici, le "
@@ -73,7 +75,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                 1));
 
         Collection lacassinTerritoire = collectionRepository.save(Collection.creer(
-                universNoir.id(), "LACASSIN territoire", "Les enquêtes d'Eugène Cazal",
+                "lacassin-territoire", universNoir.id(), "LACASSIN territoire", "Les enquêtes d'Eugène Cazal",
                 "LACASSIN territoire suit les enquêtes d'Eugène Cazal, commissaire attentif aux traces que les "
                         + "hommes laissent derrière eux. D'un territoire à l'autre, il remonte des histoires anciennes, "
                         + "des silences, des secrets et des faits que le temps n'a pas effacés. Ici, les lieux ne sont "
@@ -82,7 +84,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                 2));
 
         Collection lacassinTrajectoire = collectionRepository.save(Collection.creer(
-                universTrajectoire.id(), "LACASSIN trajectoire", "Le monde selon Camille B.",
+                "lacassin-trajectoire", universTrajectoire.id(), "LACASSIN trajectoire", "Le monde selon Camille B.",
                 "LACASSIN trajectoire suit Camille B. au fil des lieux, des rencontres et des époques. "
                         + "Journaliste, observateur, photographe, il avance en regardant le monde autant qu'en s'y "
                         + "laissant entraîner. Chaque récit naît d'un déplacement, d'un visage, d'un détail aperçu au "
@@ -91,7 +93,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                 1));
 
         Collection lacassinAilleurs = collectionRepository.save(Collection.creer(
-                universTrajectoire.id(), "LACASSIN ailleurs", "Où tout est permis",
+                "lacassin-ailleurs", universTrajectoire.id(), "LACASSIN ailleurs", "Où tout est permis",
                 "LACASSIN ailleurs accueille les récits qui refusent de rester dans un cadre défini. Ici, les "
                         + "lieux, les époques, les voix et les formes peuvent changer librement, au gré de l'histoire. "
                         + "Ce sont des romans de déplacement, de rupture, de musique, de mémoire ou de hasard, avec une "
@@ -100,7 +102,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                 2));
 
         Livre liensDuCrime = Livre.creer(
-                lacassinNoir.id(), "Les liens du crime", null,
+                "les-liens-du-crime", lacassinNoir.id(), "Les liens du crime", null,
                 "/images/couvertures/les-liens-du-crime.png",
                 "Autour d'un héritage criminel, les liens se nouent par la famille, la loyauté, l'intérêt ou la "
                         + "peur. Et chacun finit par payer le prix de ses choix.",
@@ -122,7 +124,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         livreRepository.save(liensDuCrime);
 
         Livre franckAKeller = Livre.creer(
-                lacassinNoir.id(), "De Franck à Keller", "À la recherche du respect",
+                "de-franck-a-keller", lacassinNoir.id(), "De Franck à Keller", "À la recherche du respect",
                 "/images/couvertures/de-franck-a-keller.png",
                 "Depuis sa cellule, Franck Keller raconte le chemin qui l'a mené de l'adolescence au milieu du "
                         + "crime. Une vie construite autour d'une obsession : le respect.",
@@ -142,7 +144,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         livreRepository.save(franckAKeller);
 
         Livre hommeDeSarenne = Livre.creer(
-                lacassinTerritoire.id(), "L'Homme de Sarenne", "Alpe d'Huez 3 300 mètres",
+                "homme-de-sarenne", lacassinTerritoire.id(), "L'Homme de Sarenne", "Alpe d'Huez 3 300 mètres",
                 "/images/couvertures/homme-de-sarenne.png",
                 "À l'Alpe d'Huez, la découverte d'un corps dans un glacier réveille une affaire ancienne. Eugène "
                         + "Cazal remonte le fil d'un secret que la montagne avait gardé pendant des décennies.",
@@ -161,7 +163,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         livreRepository.save(hommeDeSarenne);
 
         Livre jugementDuSilence = Livre.creer(
-                lacassinTerritoire.id(), "Le jugement du silence", "Le vaisseau des Cévennes",
+                "le-jugement-du-silence", lacassinTerritoire.id(), "Le jugement du silence", "Le vaisseau des Cévennes",
                 "/images/couvertures/le-jugement-du-silence.png",
                 "Dans un village cévenol, une vérité enfouie depuis la Libération refait surface. Eugène Cazal "
                         + "découvre qu'un homme condamné comme traître ne l'était peut-être pas, et que certains "
@@ -180,7 +182,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         livreRepository.save(jugementDuSilence);
 
         Livre camilleJournaliste = Livre.creer(
-                lacassinTrajectoire.id(), "Moi, Camille B. Journaliste", "Gard, années 80",
+                "moi-camille-b-journaliste", lacassinTrajectoire.id(), "Moi, Camille B. Journaliste", "Gard, années 80",
                 "/images/couvertures/moi-camille-b-journaliste.png",
                 "Dans le Gard des années 80, Camille B., jeune journaliste, découvre qu'un même fil relie "
                         + "plusieurs histoires en apparence ordinaires : l'eau. En enquêtant, il comprend que derrière "
@@ -199,7 +201,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         livreRepository.save(camilleJournaliste);
 
         Livre camillePhotographe = Livre.creer(
-                lacassinTrajectoire.id(), "Camille B. Un photographe ordinaire", "Londres, années 90",
+                "camille-b-photographe-ordinaire", lacassinTrajectoire.id(), "Camille B. Un photographe ordinaire", "Londres, années 90",
                 "/images/couvertures/camille-b-photographe-ordinaire.png",
                 "À Londres, au début des années 90, Camille B. traverse Camden, les squats et les marges de la "
                         + "ville avec son appareil photo. D'abord observateur, il finit peu à peu par devenir partie "
@@ -219,7 +221,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
         livreRepository.save(camillePhotographe);
 
         Livre rameEtLaRage = Livre.creer(
-                lacassinAilleurs.id(), "La rame et la rage", null,
+                "la-rame-et-la-rage", lacassinAilleurs.id(), "La rame et la rage", null,
                 "/images/couvertures/la-rame-et-la-rage.png",
                 "À Brooklyn, un ancien conducteur de métro raconte à un journaliste français l'été 1973, quand "
                         + "New York grondait déjà d'une musique nouvelle. Entre violence, amitiés et concerts, une "

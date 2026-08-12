@@ -5,7 +5,7 @@ import fr.lacassinauteur.site.catalogue.application.result.LivreResult;
 import fr.lacassinauteur.site.catalogue.application.result.UniversResult;
 import fr.lacassinauteur.site.catalogue.application.usecase.collection.ListerCollectionsParUniversUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.livre.ListerLivresParCollectionUseCase;
-import fr.lacassinauteur.site.catalogue.application.usecase.univers.ConsulterUniversUseCase;
+import fr.lacassinauteur.site.catalogue.application.usecase.univers.ConsulterUniversParSlugUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.univers.ListerUniversUseCase;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,26 +20,26 @@ import java.util.UUID;
 @Controller
 public class UniversController {
 
-    private final ConsulterUniversUseCase consulterUniversUseCase;
+    private final ConsulterUniversParSlugUseCase consulterUniversParSlugUseCase;
     private final ListerUniversUseCase listerUniversUseCase;
     private final ListerCollectionsParUniversUseCase listerCollectionsParUniversUseCase;
     private final ListerLivresParCollectionUseCase listerLivresParCollectionUseCase;
 
     public UniversController(
-            ConsulterUniversUseCase consulterUniversUseCase,
+            ConsulterUniversParSlugUseCase consulterUniversParSlugUseCase,
             ListerUniversUseCase listerUniversUseCase,
             ListerCollectionsParUniversUseCase listerCollectionsParUniversUseCase,
             ListerLivresParCollectionUseCase listerLivresParCollectionUseCase) {
-        this.consulterUniversUseCase = consulterUniversUseCase;
+        this.consulterUniversParSlugUseCase = consulterUniversParSlugUseCase;
         this.listerUniversUseCase = listerUniversUseCase;
         this.listerCollectionsParUniversUseCase = listerCollectionsParUniversUseCase;
         this.listerLivresParCollectionUseCase = listerLivresParCollectionUseCase;
     }
 
-    @GetMapping("/univers/{id}")
-    public String afficher(@PathVariable UUID id, Model model) {
-        UniversResult univers = consulterUniversUseCase.execute(id);
-        List<CollectionResult> collections = listerCollectionsParUniversUseCase.execute(id);
+    @GetMapping("/univers/{slug}")
+    public String afficher(@PathVariable String slug, Model model) {
+        UniversResult univers = consulterUniversParSlugUseCase.execute(slug);
+        List<CollectionResult> collections = listerCollectionsParUniversUseCase.execute(univers.id());
 
         Map<UUID, List<LivreResult>> livresParCollection = new LinkedHashMap<>();
         for (CollectionResult collection : collections) {
@@ -47,7 +47,7 @@ public class UniversController {
         }
 
         UniversResult autreUnivers = listerUniversUseCase.execute().stream()
-                .filter(u -> !u.id().equals(id))
+                .filter(u -> !u.id().equals(univers.id()))
                 .findFirst()
                 .orElse(null);
 
@@ -55,6 +55,15 @@ public class UniversController {
         model.addAttribute("collections", collections);
         model.addAttribute("livresParCollection", livresParCollection);
         model.addAttribute("autreUnivers", autreUnivers);
+        model.addAttribute("metaDescription", tronquer(univers.texte(), 155));
         return "public/univers";
+    }
+
+    private String tronquer(String texte, int longueurMax) {
+        if (texte == null) {
+            return "";
+        }
+        String nettoye = texte.strip();
+        return nettoye.length() <= longueurMax ? nettoye : nettoye.substring(0, longueurMax - 1).strip() + "…";
     }
 }

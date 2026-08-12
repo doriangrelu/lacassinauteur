@@ -3,7 +3,12 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{public/layout/layout-public}">
 <head>
-    <title th:text="${livre.titre}">Livre</title>
+    <title th:text="${livre.titre} + ' — ' + ${collection.nom}">Livre</title>
+    <meta name="description" th:content="${metaDescription}"/>
+    <meta property="og:type" content="book"/>
+    <meta property="og:title" th:content="${livre.titre}"/>
+    <meta property="og:description" th:content="${metaDescription}"/>
+    <meta th:if="${livre.couvertureUrl}" property="og:image" th:content="${livre.couvertureUrl}"/>
 </head>
 <body>
 <div layout:fragment="contenu">
@@ -30,10 +35,10 @@
     </section>
 
     <section class="page-conteneur flex flex-col items-center gap-3 py-12 text-center">
-        <a th:href="@{'/collections/' + ${collection.id}}" class="text-sm text-mist hover:text-ink">
+        <a th:href="@{'/collections/' + ${collection.slug}}" class="text-sm text-mist hover:text-ink">
             Retour à la collection — <span th:text="${collection.nom}">Collection</span>
         </a>
-        <a th:href="@{'/univers/' + ${univers.id}}" class="text-sm text-mist hover:text-ink">Retour à l'univers</a>
+        <a th:href="@{'/univers/' + ${univers.slug}}" class="text-sm text-mist hover:text-ink">Retour à l'univers</a>
         <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
     </section>
 </div>

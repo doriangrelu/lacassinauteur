@@ -5,14 +5,16 @@ import java.util.UUID;
 public class Collection {
 
     private final UUID id;
+    private final String slug;
     private UUID universId;
     private String nom;
     private String sousTitre;
     private String texte;
     private int ordre;
 
-    public Collection(UUID id, UUID universId, String nom, String sousTitre, String texte, int ordre) {
+    public Collection(UUID id, String slug, UUID universId, String nom, String sousTitre, String texte, int ordre) {
         this.id = id;
+        this.slug = slug;
         this.universId = universId;
         this.nom = nom;
         this.sousTitre = sousTitre;
@@ -20,8 +22,8 @@ public class Collection {
         this.ordre = ordre;
     }
 
-    public static Collection creer(UUID universId, String nom, String sousTitre, String texte, int ordre) {
-        return new Collection(UUID.randomUUID(), universId, nom, sousTitre, texte, ordre);
+    public static Collection creer(String slug, UUID universId, String nom, String sousTitre, String texte, int ordre) {
+        return new Collection(UUID.randomUUID(), slug, universId, nom, sousTitre, texte, ordre);
     }
 
     public void modifier(UUID universId, String nom, String sousTitre, String texte, int ordre) {
@@ -34,6 +36,10 @@ public class Collection {
 
     public UUID id() {
         return id;
+    }
+
+    public String slug() {
+        return slug;
     }
 
     public UUID universId() {

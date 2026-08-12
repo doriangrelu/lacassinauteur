@@ -32,6 +32,16 @@ public class JpaLivreRepository implements LivreRepository {
     }
 
     @Override
+    public Optional<Livre> findBySlug(String slug) {
+        return springDataRepository.findBySlug(slug).map(mapper::versDomaine);
+    }
+
+    @Override
+    public boolean existsBySlug(String slug) {
+        return springDataRepository.existsBySlug(slug);
+    }
+
+    @Override
     public List<Livre> findByCollectionIdOrderByOrdre(UUID collectionId) {
         return springDataRepository.findByCollectionIdOrderByOrdreAsc(collectionId).stream()
                 .map(mapper::versDomaine)

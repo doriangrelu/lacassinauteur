@@ -12,5 +12,9 @@ public interface UniversRepository {
 
     Optional<Univers> findById(UUID id);
 
+    Optional<Univers> findBySlug(String slug);
+
+    boolean existsBySlug(String slug);
+
     List<Univers> findAllOrderByOrdre();
 }

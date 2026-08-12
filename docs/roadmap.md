@@ -57,6 +57,16 @@
 - [x] Import des 7 livres et 4 collections existants depuis
       `docs/business/source/` (textes, synopsis, couvertures) via un seeder
       idempotent (`CatalogueInitialContentSeeder`)
+- [x] URLs publiques en slugs SEO-friendly (univers/collection/livre), générés une
+      fois à la création et jamais modifiés ; balises `<meta description>`/Open
+      Graph par page, `robots.txt` — cf.
+      [ADR-0011](architecture/decisions/0011-slugs-seo-pages-erreur.md)
+- [x] Pages d'erreur personnalisées (404/générique), déclinées par espace
+      (public/back-office) — cf.
+      [ADR-0011](architecture/decisions/0011-slugs-seo-pages-erreur.md)
+- [x] Modales natives (`<dialog>`) pour les formulaires de création back-office
+      (univers, collections, livres, comptes), déclenchées par un bouton
+      « Ajouter », sans dépendance JS supplémentaire
 
 ## Phase 3 — Domaine `actualite`
 
@@ -98,10 +108,12 @@
 - [ ] Provisionnement VPS Hetzner
 - [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr`
 - [ ] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS)
-- [ ] Sauvegarde/restauration : `scripts/backup.sh` (`pg_dump` + archive du dossier
-      d'images `STOCKAGE_IMAGES_CHEMIN`) et `scripts/restore.sh`, planifiés via cron
-      sur le VPS — approche proposée le 2026-08-12, **à valider avec l'utilisateur**
-      avant implémentation (cf. décision en attente ci-dessous)
+- [x] Sauvegarde/restauration : `scripts/backup.sh` (`pg_dump` + archive du volume
+      Docker `images-data`, via un conteneur éphémère `docker compose run`) et
+      `scripts/restore.sh` (restauration gardée par une confirmation explicite,
+      volontairement absente du back-office) — cf.
+      [ADR-0012](architecture/decisions/0012-sauvegarde-restauration.md). Reste à
+      planifier leur exécution régulière via cron sur le VPS.
 - [ ] Mise en ligne, vérification SEO de base (sitemap, meta descriptions, balises OG)
 
 ## Phase 8 — Recette avec l'auteur
@@ -120,8 +132,3 @@
 - Fournisseur d'email transactionnel pour le formulaire de contact (Gmail existant vs
   SMTP transactionnel dédié) — à trancher en Phase 5.
 - Nom exact du prestataire ESP newsletter (Brevo vs Mailjet) — à confirmer en Phase 4.
-- Sauvegarde/restauration (base + images) : approche recommandée `pg_dump`/
-  `pg_restore` + archive du dossier d'images via des scripts ops (`scripts/backup.sh`
-  / `scripts/restore.sh`), restauration volontairement **non** exposée en
-  self-service dans le back-office (opération destructive). À valider avec
-  l'utilisateur avant implémentation.

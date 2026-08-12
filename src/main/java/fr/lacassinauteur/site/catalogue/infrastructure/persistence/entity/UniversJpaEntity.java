@@ -14,6 +14,9 @@ public class UniversJpaEntity {
     @Id
     private UUID id;
 
+    @Column(nullable = false, unique = true)
+    private String slug;
+
     @Column(nullable = false)
     private String nom;
 
@@ -32,8 +35,9 @@ public class UniversJpaEntity {
     protected UniversJpaEntity() {
     }
 
-    public UniversJpaEntity(UUID id, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
+    public UniversJpaEntity(UUID id, String slug, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
         this.id = id;
+        this.slug = slug;
         this.nom = nom;
         this.sousTitre = sousTitre;
         this.texte = texte;
@@ -43,6 +47,10 @@ public class UniversJpaEntity {
 
     public UUID getId() {
         return id;
+    }
+
+    public String getSlug() {
+        return slug;
     }
 
     public String getNom() {

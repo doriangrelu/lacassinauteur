@@ -5,14 +5,16 @@ import java.util.UUID;
 public class Univers {
 
     private final UUID id;
+    private final String slug;
     private String nom;
     private String sousTitre;
     private String texte;
     private String photoUrl;
     private int ordre;
 
-    public Univers(UUID id, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
+    public Univers(UUID id, String slug, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
         this.id = id;
+        this.slug = slug;
         this.nom = nom;
         this.sousTitre = sousTitre;
         this.texte = texte;
@@ -20,8 +22,8 @@ public class Univers {
         this.ordre = ordre;
     }
 
-    public static Univers creer(String nom, String sousTitre, String texte, String photoUrl, int ordre) {
-        return new Univers(UUID.randomUUID(), nom, sousTitre, texte, photoUrl, ordre);
+    public static Univers creer(String slug, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
+        return new Univers(UUID.randomUUID(), slug, nom, sousTitre, texte, photoUrl, ordre);
     }
 
     public void modifier(String nom, String sousTitre, String texte, String photoUrl, int ordre) {
@@ -34,6 +36,10 @@ public class Univers {
 
     public UUID id() {
         return id;
+    }
+
+    public String slug() {
+        return slug;
     }
 
     public String nom() {

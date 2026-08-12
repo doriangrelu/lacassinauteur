@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Une erreur est survenue</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col items-center gap-4 py-24 text-center">
+    <span th:replace="~{backoffice/fragments/icons :: exclamationTriangle('h-10 w-10 text-red-500')}"></span>
+    <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Une erreur est survenue</h1>
+    <p class="max-w-md text-sm text-slate-500">Quelque chose s'est mal passé. Réessayez, ou revenez plus tard.</p>
+    <a th:href="@{/backoffice/univers}" class="btn btn-primary mt-2">Retour au back-office</a>
+</section>
+</body>
+</html>
