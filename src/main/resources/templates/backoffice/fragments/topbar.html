@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="topbar(emailConnecte)"
+        class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 md:px-8">
+    <span class="text-sm text-gray-600" th:text="${emailConnecte}">utilisateur@example.com</span>
+    <form th:action="@{/backoffice/deconnexion}" method="post">
+        <button type="submit" class="text-sm font-medium text-gray-700 hover:text-black">Se déconnecter</button>
+    </form>
+</header>
+</body>
+</html>

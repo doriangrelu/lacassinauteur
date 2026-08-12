@@ -18,9 +18,21 @@
 ## Phase 1 — Domaine `identity`
 
 - [ ] Entité `Utilisateur`, port `UtilisateurRepository`, persistance JPA
-- [ ] Authentification effective (`UserDetailsService`, hachage BCrypt)
+- [ ] Authentification effective (`UserDetailsService`, hachage BCrypt), suppression
+      de l'utilisateur en mémoire temporaire (`application-dev.yml`)
+- [ ] Anti brute-force Bucket4j sur `/backoffice/connexion`
+      ([ADR-0008](architecture/decisions/0008-anti-bruteforce-bucket4j.md))
 - [ ] Use case création de compte back-office (réservé `ADMIN`)
-- [ ] Écran back-office de gestion des comptes
+- [ ] Mise en place Tailwind CLI standalone (`frontend/public.css`,
+      `frontend/backoffice.css`, script de build local documenté) —
+      [ADR-0006](architecture/decisions/0006-tailwind-cli-standalone.md)
+- [ ] Layout back-office (`layout-backoffice.html`) + intégration Material Web
+      ([ADR-0007](architecture/decisions/0007-material-web-backoffice.md))
+- [ ] Layout public minimal (`layout-public.html`), même s'il n'est pas encore
+      rempli de contenu (préparé pour la Phase 2)
+- [ ] Écran de connexion back-office
+- [ ] Écran back-office de gestion des comptes (liste, création, changement de rôle,
+      désactivation, réactivation)
 
 ## Phase 2 — Domaine `catalogue`
 

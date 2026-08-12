@@ -159,6 +159,19 @@ Voir [package-structure.md](package-structure.md) pour l'arborescence complète.
 - Les formulaires publics avec écriture (newsletter, contact, avis lecteur) sont
   protégés contre le spam (honeypot et/ou limitation de fréquence par IP a minima ;
   CAPTCHA si le spam s'avère un problème réel après mise en ligne).
+- **CSRF** : toujours activé (comportement par défaut de Spring Security), sur le site
+  public comme sur le back-office. Ne **jamais** le désactiver, y compris pour des
+  endpoints appelés en htmx : transmettre le jeton CSRF via un header/hidden input sur
+  ces requêtes plutôt que de contourner la protection.
+- **CORS** : ne jamais ajouter de configuration CORS permissive (pas de
+  `Access-Control-Allow-Origin: *`, pas de `@CrossOrigin` générique). Le site est un
+  monolithe SSR sans frontend séparé sur un autre domaine : il n'y a par conception
+  aucun besoin de requêtes cross-origin. Si un besoin cross-origin apparaît un jour
+  (ex. widget embarquable ailleurs), il doit rester restreint à des origines
+  explicitement whitelistées et faire l'objet d'un ADR dédié.
+- **Anti brute-force** sur l'authentification back-office : voir
+  [ADR-0008](decisions/0008-anti-bruteforce-bucket4j.md) (Bucket4j, limitation par IP
+  et par couple IP/identifiant).
 
 ## 10. Tests
 
@@ -172,7 +185,67 @@ Voir [package-structure.md](package-structure.md) pour l'arborescence complète.
 - Un test de chaque use case couvre au minimum le chemin nominal et le principal
   chemin d'erreur métier.
 
-## 11. Documentation vivante
+## 12. Conventions front-end
+
+Le front-end (Thymeleaf) suit les mêmes exigences de rigueur que le code Java :
+séparation stricte des responsabilités, pas de fourre-tout, documentation à jour.
+
+### 12.1 Séparation stricte public / back-office
+
+Le site public et le back-office sont **deux espaces visuellement et techniquement
+distincts**, qui ne partagent ni layout, ni feuille de style, ni librairie JS :
+
+```
+src/main/resources/templates/
+├── public/          ← site vitrine, charte définie dans docs/business/brief.md §8
+│   ├── layout/
+│   ├── fragments/
+│   └── ...
+└── backoffice/       ← espace de gestion, Material Design (ADR-0007)
+    ├── layout/
+    ├── fragments/
+    └── ...
+
+src/main/resources/static/css/
+├── public.css         ← Tailwind, scope templates/public uniquement
+└── backoffice.css      ← Tailwind, scope templates/backoffice uniquement
+```
+
+Un template de `templates/public/**` n'étend jamais `templates/backoffice/layout/**`
+et inversement. Chaque espace charge sa propre feuille Tailwind compilée et, pour le
+back-office uniquement, Material Web Components (cf.
+[ADR-0007](decisions/0007-material-web-backoffice.md)) — jamais chargé sur le site
+public.
+
+### 12.2 Découpage des vues et layouts
+
+Chaque page est composée de **fragments Thymeleaf** aussi petits que possible
+(en-tête, pied de page, carte livre, formulaire, ligne de tableau back-office...),
+assemblés dans un layout commun à l'espace (`layout-public.html` /
+`layout-backoffice.html`) via le **Thymeleaf Layout Dialect**. Objectif : qu'un
+template de page ne contienne que ce qui est spécifique à cette page, tout le reste
+(structure HTML, header, footer, navigation) vient du layout et des fragments
+partagés. Un fragment réutilisé à plus d'un endroit (ex. carte livre affichée sur
+l'accueil, la collection et l'univers) vit dans `presentation.<domaine>` du domaine
+propriétaire du contenu, sous `fragments/`, jamais dupliqué.
+
+### 12.3 Tailwind CSS
+
+Tailwind CSS (v4, CLI standalone, cf. [ADR-0006](decisions/0006-tailwind-cli-standalone.md))
+pour les deux espaces, avec deux points d'entrée séparés (voir §12.1). Pas de classes
+Tailwind arbitraires dispersées sans cohérence : les tokens de thème (couleurs de la
+charte, typographies Cormorant Garamond/Aptos pour le site public) sont définis une
+fois dans le CSS d'entrée de chaque espace, pas répétés en dur dans chaque template.
+
+### 12.4 Responsive
+
+Les deux espaces sont **mobile-first** : on stylise d'abord pour smartphone, puis on
+ajoute les adaptations desktop via les breakpoints Tailwind (`sm:`, `md:`, `lg:`). Le
+site public est prioritaire sur ce point (majorité de trafic lecteur attendu sur
+mobile), mais le back-office doit rester utilisable sur smartphone/tablette (Thierry
+pouvant vouloir publier une actualité ou modérer un avis depuis son téléphone).
+
+## 13. Documentation vivante
 
 `/docs` fait partie de la definition of done : toute création de domaine, tout
 changement de règle d'architecture, toute décision structurante se traduit par une

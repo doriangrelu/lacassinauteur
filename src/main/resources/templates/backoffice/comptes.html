@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Comptes</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="flex flex-col gap-8">
+    <div>
+        <h1 class="mb-4 font-display text-2xl font-bold">Comptes back-office</h1>
+
+        <table class="w-full overflow-hidden rounded-lg bg-white text-left text-sm shadow">
+            <thead class="bg-gray-100 text-xs uppercase text-gray-500">
+            <tr>
+                <th class="px-4 py-3">Email</th>
+                <th class="px-4 py-3">Rôle</th>
+                <th class="px-4 py-3">Statut</th>
+                <th class="px-4 py-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="compte : ${comptes}" class="border-t border-gray-100">
+                <td class="px-4 py-3" th:text="${compte.email}">utilisateur@example.com</td>
+                <td class="px-4 py-3" th:text="${compte.role}">ADMIN</td>
+                <td class="px-4 py-3">
+                    <span th:text="${compte.actif} ? 'Actif' : 'Désactivé'"
+                          th:classappend="${compte.actif} ? 'text-green-700' : 'text-gray-400'">Actif</span>
+                </td>
+                <td class="flex flex-wrap items-center gap-2 px-4 py-3">
+                    <form th:action="@{'/backoffice/comptes/' + ${compte.id} + '/role'}" method="post" class="flex items-center gap-2">
+                        <select name="role" class="rounded border border-gray-300 px-2 py-1 text-xs">
+                            <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"
+                                    th:selected="${role.name()} == ${compte.role}"></option>
+                        </select>
+                        <button type="submit" class="text-xs font-medium text-gray-700 hover:text-black">Changer</button>
+                    </form>
+                    <form th:if="${compte.actif}" th:action="@{'/backoffice/comptes/' + ${compte.id} + '/desactiver'}" method="post">
+                        <button type="submit" class="text-xs font-medium text-red-600 hover:text-red-800">Désactiver</button>
+                    </form>
+                    <form th:unless="${compte.actif}" th:action="@{'/backoffice/comptes/' + ${compte.id} + '/reactiver'}" method="post">
+                        <button type="submit" class="text-xs font-medium text-green-700 hover:text-green-900">Réactiver</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="max-w-md rounded-lg bg-white p-6 shadow">
+        <h2 class="mb-4 font-display text-lg font-bold">Créer un compte</h2>
+
+        <form th:action="@{/backoffice/comptes}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+            <div>
+                <label class="champ-label" for="email">Email</label>
+                <input class="champ-texte" type="email" id="email" th:field="*{email}"/>
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="mt-1 text-xs text-red-600"></p>
+            </div>
+
+            <div>
+                <label class="champ-label" for="motDePasse">Mot de passe</label>
+                <input class="champ-texte" type="password" id="motDePasse" th:field="*{motDePasse}"/>
+                <p th:if="${#fields.hasErrors('motDePasse')}" th:errors="*{motDePasse}" class="mt-1 text-xs text-red-600"></p>
+            </div>
+
+            <select th:field="*{role}" class="rounded border border-gray-300 px-3 py-2 text-sm">
+                <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+            </select>
+
+            <md-filled-button type="submit">Créer le compte</md-filled-button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

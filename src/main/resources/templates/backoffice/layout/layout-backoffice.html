@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title layout:title-pattern="$CONTENT_TITLE — Back-office Thierry Lacassin">Back-office</title>
+    <link rel="stylesheet" th:href="@{/css/backoffice.css}"/>
+    <script type="module" src="https://esm.run/@material/web@2/all.js"></script>
+    <script src="/vendor/htmx.min.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 text-gray-900 md:flex">
+<div th:replace="~{backoffice/fragments/sidebar :: sidebar}"></div>
+<div class="flex min-h-screen flex-1 flex-col">
+    <div th:replace="~{backoffice/fragments/topbar :: topbar(emailConnecte=${emailConnecte})}"></div>
+    <main class="flex-1 p-4 md:p-8" layout:fragment="contenu"></main>
+</div>
+</body>
+</html>

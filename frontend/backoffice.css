@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@source "../src/main/resources/templates/backoffice";
+
+@layer components {
+  .champ-label {
+    @apply mb-1 block text-sm font-medium text-gray-700;
+  }
+
+  .champ-texte {
+    @apply w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-900
+           placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500;
+  }
+}

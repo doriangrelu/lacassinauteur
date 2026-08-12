@@ -1,14 +1,9 @@
 spring:
   thymeleaf:
     cache: false
-  # Utilisateur en mémoire temporaire pour le développement local, le temps que le
-  # domaine `identity` (Phase 1 de la roadmap) fournisse une authentification réelle.
-  # A supprimer dès que ce domaine est implémenté.
-  security:
-    user:
-      name: admin
-      password: admin
-      roles: ADMIN
+
+# Compte ADMIN créé automatiquement au démarrage en dev par DevUtilisateurSeeder :
+# admin@lacassinauteur.local / admin123 (jamais utilisé en prod, cf. ce seeder).
 
 logging:
   level:

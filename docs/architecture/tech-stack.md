@@ -23,18 +23,38 @@
 
 ## Frontend (dans le monolithe)
 
-- **Thymeleaf** pour le rendu serveur de toutes les pages (public + back-office).
+- **Thymeleaf** + **Thymeleaf Layout Dialect** pour le rendu serveur de toutes les
+  pages, avec un layout et des fragments dédiés par espace (site public / back-office)
+  — voir [architecture.md §12](architecture.md#12-conventions-front-end).
 - **htmx** pour l'interactivité ciblée (formulaires sans rechargement complet,
   actions du back-office comme réordonner/publier/modérer sans page dédiée), sans
   sortir du monolithe ni introduire de build JS séparé.
-- CSS : simple, sans framework lourd imposé — respecter la charte graphique (typo
-  Cormorant Garamond / Aptos, palette blanc/noir/gris, cf.
-  [brief fonctionnel §8](../business/brief.md#8-identité-graphique-contraintes-pour-lintégration)).
+- **Tailwind CSS v4** (CLI standalone, pas de npm — cf.
+  [ADR-0006](decisions/0006-tailwind-cli-standalone.md)), deux points d'entrée séparés
+  (`frontend/public.css`, `frontend/backoffice.css`) compilés vers
+  `static/css/public.css` / `static/css/backoffice.css`.
+  - **Développement local** : télécharger une fois le binaire standalone pour son OS
+    depuis les releases GitHub de Tailwind, le placer dans `tools/` (gitignoré), puis
+    lancer le watcher dans un terminal séparé pendant le développement :
+    ```bash
+    tools/tailwindcss.exe -i frontend/public.css -o src/main/resources/static/css/public.css --watch
+    tools/tailwindcss.exe -i frontend/backoffice.css -o src/main/resources/static/css/backoffice.css --watch
+    ```
+  - **Build Docker/CI** : le `Dockerfile` télécharge le binaire Linux et compile les
+    deux CSS (`--minify`) avant `mvn package`.
+- **Material Web Components** (`@material/web`) pour l'apparence des composants du
+  back-office uniquement — jamais chargé sur le site public (cf.
+  [ADR-0007](decisions/0007-material-web-backoffice.md)).
+- Typographie du site public : Cormorant Garamond / Aptos, palette blanc/noir/gris,
+  cf. [brief fonctionnel §8](../business/brief.md#8-identité-graphique-contraintes-pour-lintégration),
+  déclarée en tokens de thème Tailwind (`@theme` dans `frontend/public.css`).
   Auto-hébergement des polices recommandé (licences le permettant) plutôt que Google
-  Fonts, pour la performance et la confidentialité (pas de tiers tiers appelé au
+  Fonts, pour la performance et la confidentialité (pas de tiers appelé au
   chargement).
-- Pas de build JS (npm/webpack/vite) : htmx + JS vanilla minimal suffisent au périmètre
-  v1, cohérent avec le choix « petit monolithe ».
+- Pas de framework JS ni de bundler (React/Vue/webpack/vite) : htmx + Material Web
+  (web components natifs) + JS vanilla minimal suffisent au périmètre v1, cohérent
+  avec le choix « petit monolithe ». Le CLI Tailwind standalone n'introduit aucune
+  dépendance Node/npm dans le projet (cf. ADR-0006).
 
 ## Base de données
 
@@ -51,7 +71,11 @@
 - Rôles `ADMIN` et `AUTEUR` (cf. [ADR-0003](decisions/0003-roles-multiples.md)).
 - Mots de passe hachés avec `BCryptPasswordEncoder`.
 - CSRF activé sur tous les formulaires (public et back-office) — comportement par
-  défaut Spring Security à conserver.
+  défaut Spring Security à conserver, jamais désactivé.
+- CORS jamais configuré de façon permissive (pas de `*`) — le monolithe SSR n'a pas
+  de besoin cross-origin par conception.
+- **Bucket4j** pour la limitation anti brute-force sur l'authentification back-office
+  (cf. [ADR-0008](decisions/0008-anti-bruteforce-bucket4j.md)).
 - Protection anti-spam des formulaires publics (newsletter, contact, avis lecteur) :
   honeypot + limitation de fréquence par IP en v1 ; CAPTCHA (ex. Cloudflare Turnstile,
   respectueux de la vie privée) en option si le spam devient un problème réel.
@@ -99,3 +123,11 @@
 - **Testcontainers** (PostgreSQL) pour les tests d'intégration de persistance.
 - `@WebMvcTest` pour les contrôleurs, `@SpringBootTest` réservé aux tests bout-en-bout
   peu nombreux.
+
+> Note d'environnement local (Windows + Docker Desktop) : les tests Testcontainers
+> peuvent échouer avec `Could not find a valid Docker environment` malgré un Docker
+> Desktop fonctionnel, à cause d'une incompatibilité connue entre le client
+> Testcontainers et le pipe nommé de Docker Desktop sur certaines versions Windows.
+> Sans impact en CI (runners Linux). En local, si besoin : activer « Expose daemon on
+> tcp://localhost:2375 without TLS » dans Docker Desktop, ou lancer les tests dans un
+> environnement Linux (WSL2).

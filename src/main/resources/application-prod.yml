@@ -2,6 +2,12 @@ spring:
   thymeleaf:
     cache: true
 
+server:
+  # Derrière le reverse proxy Caddy (cf. tech-stack.md) : restaure la vraie IP client
+  # (X-Forwarded-For) pour request.getRemoteAddr(), utilisé par le rate limiting
+  # anti brute-force (ADR-0008).
+  forward-headers-strategy: framework
+
 logging:
   level:
     root: WARN

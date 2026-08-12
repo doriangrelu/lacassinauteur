@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@source "../src/main/resources/templates/public";
+
+@theme {
+  --font-display: "Cormorant Garamond", ui-serif, serif;
+  --font-body: "Aptos", ui-sans-serif, sans-serif;
+
+  --color-ink: #000000;
+  --color-paper: #ffffff;
+  --color-mist: #6b7280;
+}

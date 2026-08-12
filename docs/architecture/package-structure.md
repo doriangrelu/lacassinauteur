@@ -153,10 +153,20 @@ fr.lacassinauteur.site
 
 ## Ressources (hors code Java)
 
+Séparation stricte public / back-office, cf.
+[architecture.md §12](architecture.md#12-conventions-front-end) — **aucun** fragment ni
+layout n'est partagé entre les deux arborescences.
+
 ```
 src/main/resources
 ├── templates
 │   ├── public
+│   │   ├── layout
+│   │   │   └── layout-public.html      (structure HTML commune, th:fragment)
+│   │   ├── fragments
+│   │   │   ├── header-public.html
+│   │   │   ├── footer-public.html
+│   │   │   └── ...                      (un fragment réutilisable = un fichier)
 │   │   ├── accueil.html
 │   │   ├── univers.html
 │   │   ├── collection.html
@@ -165,19 +175,38 @@ src/main/resources
 │   │   ├── contact.html
 │   │   ├── actualites.html
 │   │   └── page-pro.html
-│   ├── backoffice
-│   │   └── ... (un template par écran de gestion)
-│   └── fragments
-│       ├── layout.html
-│       ├── header.html
-│       └── footer.html
+│   └── backoffice
+│       ├── layout
+│       │   └── layout-backoffice.html
+│       ├── fragments
+│       │   ├── sidebar.html
+│       │   ├── topbar.html
+│       │   └── ...
+│       ├── connexion.html
+│       └── ...                          (un template par écran de gestion)
 ├── static
-│   ├── css/
-│   ├── js/                (htmx + JS minimal)
-│   └── images/
+│   ├── css
+│   │   ├── public.css                  (généré par Tailwind, cf. ADR-0006)
+│   │   └── backoffice.css              (généré par Tailwind, cf. ADR-0006)
+│   ├── js                              (htmx, imports Material Web, JS minimal)
+│   ├── vendor                          (librairies figées en local : htmx, material web)
+│   └── images
 ├── db/migration          (scripts Flyway, voir tech-stack.md)
-│   └── V1__init_catalogue.sql, V2__init_newsletter.sql, ...
+│   └── V1__init.sql, V2__catalogue_init.sql, ...
 └── application.yml, application-dev.yml, application-prod.yml
+```
+
+Les fragments propres à un seul domaine (ex. carte livre) ne vivent pas dans
+`templates/public/fragments/` mais dans le `presentation.web` du domaine concerné
+(cf. arborescence Java ci-dessus) — `templates/*/fragments/` est réservé aux éléments
+transverses à tout l'espace (header, footer, navigation, layout).
+
+Point d'entrée des sources Tailwind (hors `src/`, jamais packagé tel quel) :
+
+```
+frontend
+├── public.css        (@import "tailwindcss"; @source "../src/.../templates/public"; @theme {...})
+└── backoffice.css    (@import "tailwindcss"; @source "../src/.../templates/backoffice";)
 ```
 
 ## Règle de test miroir

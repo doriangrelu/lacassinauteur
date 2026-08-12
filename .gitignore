@@ -6,3 +6,7 @@ target/
 *.log
 .env
 HELP.md
+tools/
+
+# CSS Tailwind généré (cf. docs/architecture/decisions/0006-tailwind-cli-standalone.md)
+src/main/resources/static/css/*.css
