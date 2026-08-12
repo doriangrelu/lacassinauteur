@@ -9,3 +9,19 @@
   --color-paper: #ffffff;
   --color-mist: #6b7280;
 }
+
+@layer base {
+  body {
+    @apply font-body text-ink;
+  }
+}
+
+@layer components {
+  .page-conteneur {
+    @apply mx-auto w-full max-w-3xl px-6 py-10 md:px-10;
+  }
+
+  .lien-souligne {
+    @apply border-b border-ink pb-0.5 text-sm font-semibold uppercase tracking-wide transition-opacity hover:opacity-60;
+  }
+}

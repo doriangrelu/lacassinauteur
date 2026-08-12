@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Livres</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
+    <header>
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Livres</h1>
+        <p class="mt-1 text-sm text-slate-500">Le catalogue complet, tous univers et collections confondus.</p>
+    </header>
+
+    <div class="card overflow-x-auto">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
+            <tr>
+                <th class="px-6 py-3">Titre</th>
+                <th class="px-6 py-3">Collection</th>
+                <th class="px-6 py-3">Statut</th>
+                <th class="px-6 py-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="livre : ${livres}" class="hover:bg-slate-50">
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-2 font-medium text-slate-900">
+                        <span th:if="${livre.derniereParution}">
+                            <span th:replace="~{backoffice/fragments/icons :: star('h-4 w-4 text-amber-500')}"></span>
+                        </span>
+                        <span th:text="${livre.titre}">Titre</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="badge badge-role" th:text="${livre.collectionNom}">Collection</span>
+                </td>
+                <td class="px-6 py-4">
+                    <span th:if="${livre.disponible}" class="badge badge-actif">Disponible</span>
+                    <span th:unless="${livre.disponible}" class="badge badge-inactif">Bientôt disponible</span>
+                </td>
+                <td class="px-6 py-4">
+                    <a th:href="@{'/backoffice/livres/' + ${livre.id} + '/modifier'}" class="link-action text-slate-600 hover:text-slate-900">
+                        <span th:replace="~{backoffice/fragments/icons :: pencilSquare('h-4 w-4')}"></span>
+                        Modifier
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(livres)}">
+                <td colspan="4" class="px-6 py-8 text-center text-slate-400">Aucun livre pour l'instant.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card max-w-lg p-6">
+        <div class="mb-5 flex items-center gap-2">
+            <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-5 w-5 text-indigo-600')}"></span>
+            <h2 class="text-lg font-semibold tracking-tight text-slate-900">Créer un livre</h2>
+        </div>
+
+        <form th:action="@{/backoffice/livres}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+            <div>
+                <label class="champ-label" for="collectionId">Collection</label>
+                <select class="champ-select" id="collectionId" th:field="*{collectionId}">
+                    <option th:each="collection : ${collections}" th:value="${collection.id}" th:text="${collection.nom}"></option>
+                </select>
+            </div>
+            <div>
+                <label class="champ-label" for="titre">Titre</label>
+                <input class="champ-texte" type="text" id="titre" th:field="*{titre}"/>
+                <p th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="sousTitre">Sous-titre</label>
+                <input class="champ-texte" type="text" id="sousTitre" th:field="*{sousTitre}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="couvertureUrl">Couverture (chemin ou URL)</label>
+                <input class="champ-texte" type="text" id="couvertureUrl" th:field="*{couvertureUrl}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="pitchCourt">Pitch court</label>
+                <textarea class="champ-texte" id="pitchCourt" rows="2" th:field="*{pitchCourt}"></textarea>
+            </div>
+            <div>
+                <label class="champ-label" for="resume">Résumé</label>
+                <textarea class="champ-texte" id="resume" rows="5" th:field="*{resume}"></textarea>
+            </div>
+            <div>
+                <label class="champ-label" for="ordre">Ordre d'affichage</label>
+                <input class="champ-texte" type="number" id="ordre" th:field="*{ordre}"/>
+            </div>
+            <button type="submit" class="btn btn-primary mt-1">
+                <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-4 w-4')}"></span>
+                Créer le livre
+            </button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

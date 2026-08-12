@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title layout:title-pattern="$CONTENT_TITLE — Thierry Lacassin">Thierry Lacassin</title>
+    <link rel="stylesheet" th:href="@{/css/public.css}"/>
+</head>
+<body class="flex min-h-screen flex-col bg-paper text-ink">
+<div th:replace="~{public/fragments/header-public :: header}"></div>
+<main class="flex-1" layout:fragment="contenu"></main>
+<div th:replace="~{public/fragments/footer-public :: footer}"></div>
+</body>
+</html>

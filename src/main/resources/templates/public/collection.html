@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title th:text="${collection.nom}">Collection</title>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col items-center gap-3 py-10 text-center">
+        <img th:if="${univers.photoUrl}" th:src="@{${univers.photoUrl}}" th:alt="${univers.nom}" class="h-16 w-16 rounded-full object-cover"/>
+        <h1 class="font-display text-3xl font-bold tracking-tight" th:text="${collection.nom}">Collection</h1>
+        <p class="font-display italic text-mist" th:text="${collection.sousTitre}">Sous-titre</p>
+        <p class="max-w-xl text-sm text-mist" th:text="${collection.texte}">Texte</p>
+    </section>
+
+    <section class="page-conteneur grid gap-10 py-6 sm:grid-cols-2 lg:grid-cols-3">
+        <a th:each="livre : ${livres}" th:href="@{'/livres/' + ${livre.id}}" class="flex flex-col gap-3">
+            <img th:if="${livre.couvertureUrl}" th:src="@{${livre.couvertureUrl}}" th:alt="${livre.titre}" class="aspect-[2/3] w-full rounded object-cover shadow"/>
+            <div>
+                <h2 class="font-display text-lg font-bold" th:text="${livre.titre}">Titre</h2>
+                <p class="mt-1 text-sm text-mist" th:text="${livre.pitchCourt}">Pitch</p>
+            </div>
+        </a>
+    </section>
+
+    <section class="page-conteneur flex flex-col items-center gap-4 py-12 text-center">
+        <a th:if="${autreCollection}" th:href="@{'/collections/' + ${autreCollection.id}}" class="lien-souligne">
+            Découvrir <span th:text="${autreCollection.nom}">l'autre collection</span> — l'autre collection de cet univers
+        </a>
+        <a th:href="@{'/univers/' + ${univers.id}}" class="text-sm text-mist hover:text-ink">Retour à l'univers</a>
+        <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
+    </section>
+</div>
+</body>
+</html>

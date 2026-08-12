@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Modifier un univers</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-6">
+    <a th:href="@{/backoffice/univers}" class="link-action self-start text-slate-600 hover:text-slate-900">
+        <span th:replace="~{backoffice/fragments/icons :: arrowUturnLeft('h-4 w-4')}"></span>
+        Retour aux univers
+    </a>
+
+    <div class="card max-w-lg p-6">
+        <h1 class="mb-5 text-lg font-semibold tracking-tight text-slate-900">Modifier l'univers</h1>
+
+        <form th:action="@{'/backoffice/univers/' + ${universId}}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+            <div>
+                <label class="champ-label" for="nom">Nom</label>
+                <input class="champ-texte" type="text" id="nom" th:field="*{nom}"/>
+                <p th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="sousTitre">Sous-titre / accroche</label>
+                <input class="champ-texte" type="text" id="sousTitre" th:field="*{sousTitre}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="texte">Texte de présentation</label>
+                <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
+            </div>
+            <div>
+                <label class="champ-label" for="photoUrl">Photo (chemin ou URL)</label>
+                <input class="champ-texte" type="text" id="photoUrl" th:field="*{photoUrl}"/>
+            </div>
+            <div>
+                <label class="champ-label" for="ordre">Ordre d'affichage</label>
+                <input class="champ-texte" type="number" id="ordre" th:field="*{ordre}"/>
+            </div>
+            <button type="submit" class="btn btn-primary mt-1">Enregistrer</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

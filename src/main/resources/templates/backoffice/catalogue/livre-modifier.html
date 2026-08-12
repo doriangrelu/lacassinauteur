@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Modifier un livre</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-6">
+    <a th:href="@{/backoffice/livres}" class="link-action self-start text-slate-600 hover:text-slate-900">
+        <span th:replace="~{backoffice/fragments/icons :: arrowUturnLeft('h-4 w-4')}"></span>
+        Retour aux livres
+    </a>
+
+    <div class="grid gap-6 lg:grid-cols-3">
+        <div class="card p-6 lg:col-span-2">
+            <h1 class="mb-5 text-lg font-semibold tracking-tight text-slate-900">Modifier le livre</h1>
+
+            <form th:action="@{'/backoffice/livres/' + ${livreId}}" th:object="${formulaire}" method="post" class="flex flex-col gap-4">
+                <div>
+                    <label class="champ-label" for="collectionId">Collection</label>
+                    <select class="champ-select" id="collectionId" th:field="*{collectionId}">
+                        <option th:each="collection : ${collections}" th:value="${collection.id}" th:text="${collection.nom}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label class="champ-label" for="titre">Titre</label>
+                    <input class="champ-texte" type="text" id="titre" th:field="*{titre}"/>
+                    <p th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}" class="champ-erreur"></p>
+                </div>
+                <div>
+                    <label class="champ-label" for="sousTitre">Sous-titre</label>
+                    <input class="champ-texte" type="text" id="sousTitre" th:field="*{sousTitre}"/>
+                </div>
+                <div>
+                    <label class="champ-label" for="couvertureUrl">Couverture (chemin ou URL)</label>
+                    <input class="champ-texte" type="text" id="couvertureUrl" th:field="*{couvertureUrl}"/>
+                </div>
+                <div>
+                    <label class="champ-label" for="pitchCourt">Pitch court</label>
+                    <textarea class="champ-texte" id="pitchCourt" rows="2" th:field="*{pitchCourt}"></textarea>
+                </div>
+                <div>
+                    <label class="champ-label" for="resume">Résumé</label>
+                    <textarea class="champ-texte" id="resume" rows="6" th:field="*{resume}"></textarea>
+                </div>
+                <div>
+                    <label class="champ-label" for="ordre">Ordre d'affichage</label>
+                    <input class="champ-texte" type="number" id="ordre" th:field="*{ordre}"/>
+                </div>
+                <button type="submit" class="btn btn-primary mt-1">Enregistrer</button>
+            </form>
+        </div>
+
+        <div class="flex flex-col gap-6">
+            <div class="card p-6">
+                <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">Disponibilité</h2>
+
+                <div th:if="${livre.disponible}" class="flex flex-col gap-3">
+                    <p class="badge badge-actif w-fit">Disponible</p>
+                    <p class="text-sm text-slate-600">
+                        Lien : <a class="text-indigo-600 hover:underline" th:href="${livre.lienAchatUrl}" th:text="${livre.lienAchatLibelle}" target="_blank" rel="noopener">Marchand</a>
+                    </p>
+                    <form th:action="@{'/backoffice/livres/' + ${livreId} + '/retirer-lien'}" method="post">
+                        <button type="submit" class="link-action text-red-600 hover:text-red-700">
+                            <span th:replace="~{backoffice/fragments/icons :: noSymbol('h-4 w-4')}"></span>
+                            Retirer le lien
+                        </button>
+                    </form>
+                </div>
+
+                <div th:unless="${livre.disponible}" class="flex flex-col gap-3">
+                    <p class="badge badge-inactif w-fit">Bientôt disponible</p>
+                    <form th:action="@{'/backoffice/livres/' + ${livreId} + '/publier'}" th:object="${formulairePublication}" method="post" class="flex flex-col gap-3">
+                        <div>
+                            <label class="champ-label" for="url">Lien d'achat</label>
+                            <input class="champ-texte" type="text" id="url" th:field="*{url}" placeholder="https://amazon.fr/..."/>
+                        </div>
+                        <div>
+                            <label class="champ-label" for="libelleMarchand">Marchand</label>
+                            <input class="champ-texte" type="text" id="libelleMarchand" th:field="*{libelleMarchand}" placeholder="Amazon"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Publier</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card p-6">
+                <h2 class="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">Mise en avant</h2>
+                <p th:if="${livre.derniereParution}" class="flex items-center gap-2 text-sm font-medium text-amber-600">
+                    <span th:replace="~{backoffice/fragments/icons :: star('h-5 w-5')}"></span>
+                    Dernière parution actuelle
+                </p>
+                <form th:unless="${livre.derniereParution}" th:action="@{'/backoffice/livres/' + ${livreId} + '/derniere-parution'}" method="post">
+                    <button type="submit" class="btn btn-ghost">
+                        <span th:replace="~{backoffice/fragments/icons :: star('h-4 w-4')}"></span>
+                        Définir comme dernière parution
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

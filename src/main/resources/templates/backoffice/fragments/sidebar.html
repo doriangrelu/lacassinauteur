@@ -7,7 +7,25 @@
         <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-6 w-6 text-indigo-600')}"></span>
         <span class="font-semibold tracking-tight text-slate-900">Thierry Lacassin</span>
     </div>
-    <ul class="flex gap-1 md:flex-col">
+    <ul class="flex flex-wrap gap-1 md:flex-col">
+        <li>
+            <a th:href="@{/backoffice/univers}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-5 w-5')}"></span>
+                Univers
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/backoffice/collections}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: rectangleStack('h-5 w-5')}"></span>
+                Collections
+            </a>
+        </li>
+        <li>
+            <a th:href="@{/backoffice/livres}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-5 w-5')}"></span>
+                Livres
+            </a>
+        </li>
         <li>
             <a th:href="@{/backoffice/comptes}" class="nav-lien">
                 <span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title th:text="${livre.titre}">Livre</title>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur grid gap-10 py-10 sm:grid-cols-[minmax(0,240px)_1fr]">
+        <img th:if="${livre.couvertureUrl}" th:src="@{${livre.couvertureUrl}}" th:alt="${livre.titre}"
+             class="w-full rounded shadow-lg sm:sticky sm:top-10"/>
+
+        <div class="flex flex-col gap-6">
+            <div>
+                <h1 class="font-display text-3xl font-bold tracking-tight" th:text="${livre.titre}">Titre</h1>
+                <p th:if="${livre.sousTitre}" class="font-display mt-1 text-lg italic text-mist" th:text="${livre.sousTitre}">Sous-titre</p>
+            </div>
+
+            <p th:if="${livre.pitchCourt}" class="font-display text-lg italic" th:text="${livre.pitchCourt}">Pitch</p>
+
+            <p class="whitespace-pre-line text-sm leading-relaxed text-mist" th:text="${livre.resume}">Résumé</p>
+
+            <div class="flex flex-wrap items-center gap-4">
+                <a th:if="${livre.disponible}" th:href="${livre.lienAchatUrl}" target="_blank" rel="noopener"
+                   class="lien-souligne" th:text="'Acheter sur ' + ${livre.lienAchatLibelle}">Acheter</a>
+                <span th:unless="${livre.disponible}" class="text-sm font-semibold uppercase tracking-wide text-mist">Bientôt disponible</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="page-conteneur flex flex-col items-center gap-3 py-12 text-center">
+        <a th:href="@{'/collections/' + ${collection.id}}" class="text-sm text-mist hover:text-ink">
+            Retour à la collection — <span th:text="${collection.nom}">Collection</span>
+        </a>
+        <a th:href="@{'/univers/' + ${univers.id}}" class="text-sm text-mist hover:text-ink">Retour à l'univers</a>
+        <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
+    </section>
+</div>
+</body>
+</html>

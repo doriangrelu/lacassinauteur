@@ -39,18 +39,23 @@
 
 ## Phase 2 — Domaine `catalogue`
 
-- [ ] Modèle domaine (`Univers`, `Collection`, `Livre`, `AvisLecteur`) + ports +
-      persistance JPA + migrations Flyway
-- [ ] Use cases CRUD univers/collection/livre + réordonnancement
-- [ ] Use case « définir la dernière parution » (bloc accueil)
-- [ ] Pages publiques : accueil, univers (×2), collection (×4), livre (×7 initial)
-- [ ] Back-office : gestion univers/collections/livres, upload des couvertures
+- [x] Modèle domaine (`Univers`, `Collection`, `Livre`) + ports + persistance JPA +
+      migration Flyway (V3) — `AvisLecteur` et `FicheProfessionnelle` volontairement
+      non implémentés dans cette passe, cf. items dédiés ci-dessous
+- [x] Use cases CRUD univers/collection/livre (réordonnancement via champ `ordre`
+      éditable ; pas de drag-and-drop en v1)
+- [x] Use case « définir la dernière parution » (bloc accueil), transactionnel
+- [x] Pages publiques : accueil, univers, collection, livre — layout public
+      (Cormorant Garamond/Aptos), vérifiées dans le navigateur avec le vrai contenu
+- [x] Back-office : gestion univers/collections/livres (CRUD complet), couverture
+      via chemin/URL texte (pas d'upload de fichier en v1)
 - [ ] Page professionnelle (route non listée, accessible par QR code) — fiche
-      technique des livres publiés
+      technique des livres publiés — **non fait dans cette passe**
 - [ ] Use cases avis lecteurs (soumission publique + modération back-office),
-      protection anti-spam (honeypot)
-- [ ] Import des 7 livres et 4 collections existants depuis
-      `docs/business/source/` (textes, synopsis, couvertures)
+      protection anti-spam (honeypot) — **non fait dans cette passe**
+- [x] Import des 7 livres et 4 collections existants depuis
+      `docs/business/source/` (textes, synopsis, couvertures) via un seeder
+      idempotent (`CatalogueInitialContentSeeder`)
 
 ## Phase 3 — Domaine `actualite`
 
