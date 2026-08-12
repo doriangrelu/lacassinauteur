@@ -1,0 +1,8 @@
+Besoin.zip
+target/
+.claude
+.idea
+*.class
+*.log
+.env
+HELP.md

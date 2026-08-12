@@ -1,0 +1,3 @@
+-- Schéma initial vide. Chaque domaine ajoutera ses propres migrations
+-- (V2__catalogue_init.sql, V3__actualite_init.sql, ...) au fil des phases de la
+-- roadmap (docs/roadmap.md).
