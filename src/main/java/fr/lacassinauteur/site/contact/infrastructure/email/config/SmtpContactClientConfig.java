@@ -34,6 +34,11 @@ public class SmtpContactClientConfig {
         proprietesJavaMail.put("mail.transport.protocol", "smtp");
         proprietesJavaMail.put("mail.smtp.auth", "true");
         proprietesJavaMail.put("mail.smtp.starttls.enable", "true");
+        // Sans ces timeouts, un hôte SMTP injoignable (filtré plutôt que refusé)
+        // bloquerait indéfiniment le thread de la requête HTTP.
+        proprietesJavaMail.put("mail.smtp.connectiontimeout", "5000");
+        proprietesJavaMail.put("mail.smtp.timeout", "5000");
+        proprietesJavaMail.put("mail.smtp.writetimeout", "5000");
 
         return mailSender;
     }

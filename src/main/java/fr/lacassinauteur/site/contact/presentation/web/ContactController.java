@@ -3,10 +3,10 @@ package fr.lacassinauteur.site.contact.presentation.web;
 import fr.lacassinauteur.site.contact.application.command.EnvoyerMessageContactCommand;
 import fr.lacassinauteur.site.contact.application.usecase.EnvoyerMessageContactUseCase;
 import fr.lacassinauteur.site.contact.presentation.form.MessageContactForm;
+import fr.lacassinauteur.site.shared.web.HoneypotAntiSpam;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -39,7 +39,7 @@ public class ContactController {
     @PostMapping("/envoi")
     public String envoyer(@Valid @ModelAttribute("formulaire") MessageContactForm formulaire,
                            BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-        if (StringUtils.hasText(formulaire.getSiteWeb())) {
+        if (HoneypotAntiSpam.estRempli(formulaire.getSiteWeb())) {
             // Honeypot rempli : comportement identique à un envoi réussi, sans rien
             // traiter ni révéler le mécanisme au bot.
             redirectAttributes.addFlashAttribute("messageEnvoye", true);

@@ -33,7 +33,7 @@ public class JpaMessageContactRepository implements MessageContactRepository {
 
     @Override
     public List<MessageContact> findAllOrderByDateReceptionDesc() {
-        return springDataRepository.findAllByOrderByDateReceptionDesc().stream()
+        return springDataRepository.findTop200ByOrderByDateReceptionDesc().stream()
                 .map(mapper::versDomaine)
                 .toList();
     }

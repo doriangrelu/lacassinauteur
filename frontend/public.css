@@ -14,6 +14,13 @@
   body {
     @apply font-body text-ink;
   }
+
+  /* Le reset Tailwind (margin: 0 sur *) neutralise le centrage par défaut du
+     navigateur pour <dialog> (margin: auto) — restauré ici par précaution, même
+     si aucun <dialog> n'existe encore côté public (cf. frontend/backoffice.css). */
+  dialog {
+    margin: auto;
+  }
 }
 
 @layer components {

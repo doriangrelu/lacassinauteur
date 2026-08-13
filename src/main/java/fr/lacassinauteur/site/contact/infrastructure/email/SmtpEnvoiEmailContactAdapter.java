@@ -26,19 +26,31 @@ public class SmtpEnvoiEmailContactAdapter implements EnvoiEmailContactPort {
 
     @Override
     public void envoyerNotification(MessageContact message) {
+        String emailVisiteur = sansRetourLigne(message.email());
+        String objet = sansRetourLigne(message.objet());
+
         SimpleMailMessage email = new SimpleMailMessage();
-        email.setFrom(proprietes.getExpediteurEmail());
+        email.setFrom(proprietes.getExpediteurNom() + " <" + proprietes.getExpediteurEmail() + ">");
         email.setTo(emailAuteur);
-        email.setReplyTo(message.email());
-        email.setSubject("[Site] " + message.objet());
+        email.setReplyTo(emailVisiteur);
+        email.setSubject("[Site] " + objet);
         email.setText("""
                 Nouveau message reçu via le formulaire de contact du site.
 
                 De : %s <%s>
                 Objet : %s
 
-                %s""".formatted(message.nom(), message.email(), message.objet(), message.message()));
+                %s""".formatted(message.nom(), emailVisiteur, objet, message.message()));
 
         mailSender.send(email);
+    }
+
+    /**
+     * Un objet/email saisi par un visiteur ne doit jamais contenir de retour à la
+     * ligne : ces valeurs finissent dans des en-têtes email (Sujet, Reply-To), où un
+     * CR/LF injecté pourrait ajouter des en-têtes non prévus.
+     */
+    private String sansRetourLigne(String valeur) {
+        return valeur.replaceAll("[\\r\\n]", " ");
     }
 }

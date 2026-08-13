@@ -6,10 +6,10 @@ import fr.lacassinauteur.site.newsletter.application.usecase.DesinscrireAbonneUs
 import fr.lacassinauteur.site.newsletter.application.usecase.InscrireAbonneUseCase;
 import fr.lacassinauteur.site.newsletter.domain.exception.AbonneIntrouvableException;
 import fr.lacassinauteur.site.newsletter.presentation.form.InscriptionNewsletterForm;
+import fr.lacassinauteur.site.shared.web.HoneypotAntiSpam;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -54,7 +54,7 @@ public class NewsletterController {
     @PostMapping("/inscription")
     public String inscrire(@Valid @ModelAttribute("formulaire") InscriptionNewsletterForm formulaire,
                             BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-        if (StringUtils.hasText(formulaire.getSiteWeb())) {
+        if (HoneypotAntiSpam.estRempli(formulaire.getSiteWeb())) {
             // Honeypot rempli : on se comporte comme si tout s'était bien passé, sans
             // rien traiter ni révéler le mécanisme au bot.
             redirectAttributes.addFlashAttribute("messageInscription", "merci");
