@@ -2,8 +2,12 @@
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <body>
 <header th:fragment="header" class="border-b border-black/5">
-    <div class="page-conteneur flex items-center justify-center py-6">
+    <div class="page-conteneur flex flex-wrap items-center justify-between gap-4 py-6">
         <a th:href="@{/}" class="font-display text-xl font-bold tracking-wide">THIERRY LACASSIN</a>
+        <nav class="flex gap-6 text-sm text-mist">
+            <a th:href="@{/actualites}" class="hover:text-ink">Actualités</a>
+            <a th:href="@{/newsletter}" class="hover:text-ink">Newsletter</a>
+        </nav>
     </div>
 </header>
 </body>
