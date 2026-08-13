@@ -153,6 +153,9 @@
 
 - [ ] Personnalisation avancée de la mise en page/du thème par l'auteur (cf. brief
       §9) — à cadrer une fois le socle v1 en production et utilisé.
+- [ ] Réordonnancement par glisser-déposer (drag-and-drop) dans les tableaux
+      back-office (univers, collections, livres) à la place du champ `ordre`
+      numérique actuel — confort d'usage pour Thierry, pas bloquant pour la v1.
 
 ## Décisions en attente
 
