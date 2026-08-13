@@ -115,10 +115,21 @@
 
 ## Phase 5 — Domaine `contact`
 
-- [ ] Modèle domaine (`MessageContact`) + persistance + migrations
-- [ ] Use case envoi de message (email transactionnel + enregistrement)
-- [ ] Page publique Contact
-- [ ] Back-office : liste des messages reçus, marquage traité
+- [x] Modèle domaine (`MessageContact`) + port + persistance JPA + migration Flyway
+      (V7) — statuts `NOUVEAU`/`LU`/`TRAITE`, `LU` posé automatiquement à la
+      consultation (cf. [ADR-0014](architecture/decisions/0014-contact-smtp-generique.md))
+- [x] Use case envoi de message (enregistrement + notification email à l'auteur),
+      protection honeypot (même approche que la newsletter)
+- [x] Adaptateur `infrastructure.email` : SMTP générique (host/port/identifiants
+      configurables, pas de fournisseur verrouillé) + adaptateur de log en dev —
+      cf. [ADR-0014](architecture/decisions/0014-contact-smtp-generique.md)
+- [x] Page publique Contact (`/contact`)
+- [x] Back-office : liste des messages (`/backoffice/messages`), détail (marque lu),
+      marquage traité
+- [ ] **Identifiants SMTP réels** (`CONTACT_SMTP_HOST`/`CONTACT_SMTP_USERNAME`/
+      `CONTACT_SMTP_PASSWORD`, `CONTACT_EMAIL_AUTEUR`) — à fournir au déploiement,
+      choix Gmail vs SMTP transactionnel dédié laissé ouvert (le port est
+      générique, aucun code à changer selon le choix)
 
 ## Phase 6 — Intégration graphique
 

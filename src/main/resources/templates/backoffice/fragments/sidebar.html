@@ -39,6 +39,12 @@
             </a>
         </li>
         <li>
+            <a th:href="@{/backoffice/messages}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: chatBubble('h-5 w-5')}"></span>
+                Messages
+            </a>
+        </li>
+        <li>
             <a th:href="@{/backoffice/comptes}" class="nav-lien">
                 <span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>
                 Comptes

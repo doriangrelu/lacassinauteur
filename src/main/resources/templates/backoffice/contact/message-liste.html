@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Messages de contact</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
+    <header>
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Messages de contact</h1>
+        <p class="mt-1 text-sm text-slate-500">Messages reçus via le formulaire public.</p>
+    </header>
+
+    <div class="card overflow-x-auto">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
+            <tr>
+                <th class="px-6 py-3">Reçu le</th>
+                <th class="px-6 py-3">De</th>
+                <th class="px-6 py-3">Objet</th>
+                <th class="px-6 py-3">Statut</th>
+                <th class="px-6 py-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="message : ${messages}" class="hover:bg-slate-50">
+                <td class="px-6 py-4 text-slate-500" th:text="${#temporals.format(message.dateReception, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                <td class="px-6 py-4 font-medium text-slate-900" th:text="${message.nom}">Nom</td>
+                <td class="px-6 py-4 text-slate-500" th:text="${message.objet}">Objet</td>
+                <td class="px-6 py-4">
+                    <span th:if="${message.statut.name() == 'NOUVEAU'}" class="badge badge-role">Nouveau</span>
+                    <span th:if="${message.statut.name() == 'LU'}" class="badge badge-inactif">Lu</span>
+                    <span th:if="${message.statut.name() == 'TRAITE'}" class="badge badge-actif">Traité</span>
+                </td>
+                <td class="px-6 py-4">
+                    <a th:href="@{'/backoffice/messages/' + ${message.id}}" class="link-action text-slate-600 hover:text-slate-900">
+                        <span th:replace="~{backoffice/fragments/icons :: envelope('h-4 w-4')}"></span>
+                        Consulter
+                    </a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(messages)}">
+                <td colspan="5" class="px-6 py-8 text-center text-slate-400">Aucun message pour l'instant.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

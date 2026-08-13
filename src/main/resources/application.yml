@@ -31,6 +31,18 @@ app:
       api-key: ${BREVO_API_KEY:}
       expediteur-email: ${BREVO_EXPEDITEUR_EMAIL:newsletter@thierrylacassin-auteur.fr}
       expediteur-nom: ${BREVO_EXPEDITEUR_NOM:Thierry Lacassin}
+  contact:
+    # Adresse de l'auteur qui reçoit les notifications du formulaire de contact.
+    email-auteur: ${CONTACT_EMAIL_AUTEUR:thierry@thierrylacassin-auteur.fr}
+    smtp:
+      # Cf. ADR-0014 : jamais commitées, à fournir en variable d'environnement une
+      # fois le SMTP réel (Gmail ou relais transactionnel) choisi et configuré.
+      host: ${CONTACT_SMTP_HOST:}
+      port: ${CONTACT_SMTP_PORT:587}
+      username: ${CONTACT_SMTP_USERNAME:}
+      password: ${CONTACT_SMTP_PASSWORD:}
+      expediteur-email: ${CONTACT_SMTP_EXPEDITEUR_EMAIL:contact@thierrylacassin-auteur.fr}
+      expediteur-nom: ${CONTACT_SMTP_EXPEDITEUR_NOM:Site Thierry Lacassin}
 
 server:
   port: 8080

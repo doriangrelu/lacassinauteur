@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Contact</title>
+    <meta name="description" content="Contactez Thierry Lacassin, auteur de romans noirs et de récits de trajectoires humaines."/>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col items-center gap-6 py-16 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight">Contact</h1>
+        <p class="max-w-md text-sm text-mist">
+            Une question, une invitation, un mot de lecteur ? Écrivez à Thierry Lacassin.
+        </p>
+
+        <p th:if="${messageEnvoye}" class="message-info max-w-md">
+            Merci, votre message a bien été envoyé. Thierry vous répondra dès que possible.
+        </p>
+
+        <form th:action="@{/contact/envoi}" method="post" th:object="${formulaire}"
+              class="flex w-full max-w-sm flex-col gap-4 text-left">
+            <div>
+                <label class="champ-label" for="nom">Nom</label>
+                <input class="champ-texte" type="text" id="nom" th:field="*{nom}" autocomplete="name"/>
+                <p th:if="${#fields.hasErrors('nom')}" th:errors="*{nom}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="email">Email</label>
+                <input class="champ-texte" type="email" id="email" th:field="*{email}" autocomplete="email"/>
+                <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="objet">Objet</label>
+                <input class="champ-texte" type="text" id="objet" th:field="*{objet}"/>
+                <p th:if="${#fields.hasErrors('objet')}" th:errors="*{objet}" class="champ-erreur"></p>
+            </div>
+            <div>
+                <label class="champ-label" for="message">Message</label>
+                <textarea class="champ-texte" id="message" rows="6" th:field="*{message}"></textarea>
+                <p th:if="${#fields.hasErrors('message')}" th:errors="*{message}" class="champ-erreur"></p>
+            </div>
+
+            <!-- Honeypot anti-spam : invisible pour un visiteur humain, cf. frontend/public.css (.piege-anti-spam). -->
+            <div class="piege-anti-spam" aria-hidden="true">
+                <label for="siteWeb">Laissez ce champ vide</label>
+                <input type="text" id="siteWeb" th:field="*{siteWeb}" tabindex="-1" autocomplete="off"/>
+            </div>
+
+            <button type="submit" class="btn self-start">Envoyer</button>
+        </form>
+    </section>
+</div>
+</body>
+</html>
