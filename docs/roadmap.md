@@ -133,13 +133,22 @@
 
 ## Phase 6 — Intégration graphique
 
-- [ ] Layout Thymeleaf commun (header, footer avec réseaux sociaux), respect de la
-      charte (Cormorant Garamond / Aptos, palette blanc/noir/gris) — voir
-      [brief §8](business/brief.md#8-identité-graphique-contraintes-pour-lintégration)
-- [ ] Intégration des maquettes/exemples de ton pour l'ambiance visuelle
-- [ ] Responsive (mobile-first, le site sera consulté en majorité sur mobile pour un
-      public de lecteurs)
-- [ ] Vérification navigation « pas de cul-de-sac » sur toutes les pages
+- [x] Layout Thymeleaf commun (header, footer avec réseaux sociaux) — présent depuis
+      la Phase 2 ; palette blanc/noir/gris respectée. Polices Cormorant Garamond/Aptos
+      déclarées en tokens Tailwind mais **non auto-hébergées** : elles ne s'affichent
+      que si le visiteur les a déjà sur sa machine (Aptos en particulier est une
+      police Microsoft, non librement redistribuable — à trancher avec l'utilisateur,
+      cf. discussion du 2026-08-13)
+- [ ] Intégration des maquettes/exemples de ton pour l'ambiance visuelle (nécessite
+      une relecture des .docx fournis, non faite dans cette passe)
+- [x] Responsive : vérifié en viewport mobile (375px) sur toutes les pages publiques
+      (accueil, univers, actualités, newsletter, contact) — a révélé et corrigé un
+      débordement horizontal réel causé par la nav ajoutée le jour même dans le
+      header/footer public (liens Actualités/Newsletter/Contact ne repliaient pas
+      correctement sur petit écran)
+- [x] Vérification navigation « pas de cul-de-sac » : chaque page publique reste
+      reliée à l'accueil (titre du header, lien de retour explicite sur les pages de
+      contenu) — aucun cul-de-sac trouvé
 
 ## Phase 7 — Déploiement Hetzner
 
