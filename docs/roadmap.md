@@ -31,8 +31,8 @@
 - [x] Layout back-office (`layout-backoffice.html`) + design system Tailwind natif +
       icônes SVG inline (Material Web essayé puis abandonné pour fiabilité, cf.
       [ADR-0009](architecture/decisions/0009-abandon-material-web.md))
-- [ ] Layout public minimal (`layout-public.html`), même s'il n'est pas encore
-      rempli de contenu (préparé pour la Phase 2)
+- [x] Layout public minimal (`layout-public.html`) — présent et utilisé depuis la
+      Phase 2 (oubli de case à cocher, pas un manque fonctionnel)
 - [x] Écran de connexion back-office
 - [x] Écran back-office de gestion des comptes (liste, création, changement de rôle,
       désactivation, réactivation)
@@ -40,20 +40,26 @@
 ## Phase 2 — Domaine `catalogue`
 
 - [x] Modèle domaine (`Univers`, `Collection`, `Livre`) + ports + persistance JPA +
-      migration Flyway (V3) — `AvisLecteur` et `FicheProfessionnelle` volontairement
-      non implémentés dans cette passe, cf. items dédiés ci-dessous
-- [x] Use cases CRUD univers/collection/livre (réordonnancement via champ `ordre`
-      éditable ; pas de drag-and-drop en v1)
+      migration Flyway (V3)
+- [x] Use cases CRUD univers/collection/livre — réordonnancement par
+      glisser-déposer natif dans les tableaux back-office (le champ `ordre`
+      numérique manuel a été retiré des formulaires, cf. backlog v2 ci-dessous,
+      fait)
 - [x] Use case « définir la dernière parution » (bloc accueil), transactionnel
 - [x] Pages publiques : accueil, univers, collection, livre — layout public
-      (Cormorant Garamond/Aptos), vérifiées dans le navigateur avec le vrai contenu
+      (Cormorant Garamond/Inter), vérifiées dans le navigateur avec le vrai contenu
 - [x] Back-office : gestion univers/collections/livres (CRUD complet), upload réel
       des photos/couvertures (stockage local, chemin configurable — cf.
       [ADR-0010](architecture/decisions/0010-upload-images-stockage-local.md))
-- [ ] Page professionnelle (route non listée, accessible par QR code) — fiche
-      technique des livres publiés — **non fait dans cette passe**
-- [ ] Use cases avis lecteurs (soumission publique + modération back-office),
-      protection anti-spam (honeypot) — **non fait dans cette passe**
+- [x] Page professionnelle (route non listée `/livres/{slug}/pro`, `noindex`) —
+      fiche technique (ISBN, format, pagination, prix, lieux de distribution,
+      pitch/synopsis éditeur) éditable en back-office dans le formulaire de
+      modification du livre, affichée uniquement si le livre est publié et la
+      fiche renseignée (404 sinon)
+- [x] Use cases avis lecteurs (soumission publique sur la page livre + modération
+      back-office `/backoffice/avis`, statuts en attente/publié/rejeté),
+      protection anti-spam (honeypot, réutilise `HoneypotAntiSpam` déjà utilisé par
+      newsletter/contact) — migration Flyway V8, fiche pro en V9
 - [x] Import des 7 livres et 4 collections existants depuis
       `docs/business/source/` (textes, synopsis, couvertures) via un seeder
       idempotent (`CatalogueInitialContentSeeder`)
@@ -179,6 +185,20 @@
 
 ## Phase 8 — Recette avec l'auteur
 
+- [x] Recette technique automatisée (5 agents en parallèle, HTTP + navigateur) sur
+      les fonctionnalités récentes (drag-and-drop, avis lecteurs, fiche pro) —
+      aucun bug fonctionnel réel trouvé. Deux faux positifs identifiés et écartés
+      après vérification du code : lien de confirmation newsletter pointant vers
+      le port 8080 (c'est le port par défaut du profil dev, l'instance de test
+      tournait volontairement sur 8090 pour ne pas entrer en conflit) et blocages
+      anti-bruteforce répétés (plusieurs agents de test partageaient la même IP et
+      le même compte admin, épuisant le même compartiment Bucket4j — la protection
+      fonctionne comme prévu, cf. [ADR-0008](architecture/decisions/0008-anti-bruteforce-bucket4j.md)).
+      Couverture partielle : plusieurs scénarios (réordonnancement avec
+      persistance vérifiée, honeypot avis lecteurs, CRUD actualité, contact) n'ont
+      pas pu être testés dans le temps imparti à cause de ce même effet de bord —
+      à refaire en session dédiée si une recette plus poussée est souhaitée avant
+      la mise en ligne.
 - [ ] Formation rapide de Thierry à l'usage du back-office
 - [ ] Recette fonctionnelle complète (parcours visiteur + parcours auteur)
 - [ ] Ajustements retours
@@ -187,9 +207,9 @@
 
 - [ ] Personnalisation avancée de la mise en page/du thème par l'auteur (cf. brief
       §9) — à cadrer une fois le socle v1 en production et utilisé.
-- [ ] Réordonnancement par glisser-déposer (drag-and-drop) dans les tableaux
+- [x] Réordonnancement par glisser-déposer (drag-and-drop) dans les tableaux
       back-office (univers, collections, livres) à la place du champ `ordre`
-      numérique actuel — confort d'usage pour Thierry, pas bloquant pour la v1.
+      numérique — fait plus tôt que prévu (cf. Phase 2 ci-dessus).
 
 ## Décisions en attente
 
