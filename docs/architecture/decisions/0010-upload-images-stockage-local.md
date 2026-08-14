@@ -9,7 +9,7 @@ Les photos d'univers et couvertures de livres étaient saisies comme un simple c
 texte dans le formulaire back-office. Thierry doit pouvoir **téléverser** ses images
 directement, sans manipuler de chemin de fichier.
 
-Le site est un « petit monolithe » déployé sur un unique VPS Hetzner via Docker
+Le site est un « petit monolithe » déployé sur un unique VPS OVHcloud via Docker
 Compose (cf. [tech-stack.md](../tech-stack.md)) : pas de besoin, à ce stade, d'un
 stockage objet externe (S3-compatible) — un disque local suffit, à condition qu'il
 survive aux redéploiements de l'application.
@@ -43,7 +43,7 @@ survive aux redéploiements de l'application.
 
 ## Alternatives envisagées
 
-- **Stockage objet S3-compatible** (ex. Hetzner Object Storage) : écarté pour l'instant
+- **Stockage objet S3-compatible** (ex. OVHcloud Object Storage) : écarté pour l'instant
   — complexité et coût superflus pour le volume d'images d'un site auteur ; le port
   `StockageFichierPort` permet d'introduire cette implémentation plus tard sans
   toucher aux use cases ni à la présentation, si le besoin apparaît (montée en charge,

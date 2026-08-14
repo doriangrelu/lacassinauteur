@@ -1,5 +1,5 @@
 # Reverse proxy pour le site Thierry Lacassin (cf. ADR-0016 et
-# docs/architecture/tech-stack.md §Déploiement — Hetzner).
+# docs/architecture/tech-stack.md §Déploiement — OVHcloud).
 #
 # HTTPS automatique (Let's Encrypt) dès que Caddy démarre avec un vrai nom de
 # domaine pointé vers ce serveur : aucune configuration TLS manuelle nécessaire,

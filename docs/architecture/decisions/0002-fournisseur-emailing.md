@@ -6,7 +6,7 @@
 ## Contexte
 
 Le site doit permettre l'envoi d'une newsletter à une liste d'abonnés. Deux options :
-SMTP auto-hébergé depuis le VPS Hetzner, ou API d'un Email Service Provider (ESP)
+SMTP auto-hébergé depuis le VPS OVHcloud, ou API d'un Email Service Provider (ESP)
 tiers.
 
 ## Décision

@@ -159,16 +159,17 @@
       reliée à l'accueil (titre du header, lien de retour explicite sur les pages de
       contenu) — aucun cul-de-sac trouvé
 
-## Phase 7 — Déploiement Hetzner
+## Phase 7 — Déploiement OVHcloud
 
-- [ ] Provisionnement VPS Hetzner — recommandation (2026-08-14) : **CX22**
-      (2 vCPU, 4 Go RAM, 40 Go NVMe, ~4,35-4,59 €/mois), largement suffisant pour
-      ce trafic. Créer le serveur avec la clé publique SSH dédiée
-      `claude-deploy-mybook` (générée localement, jamais commitée) ajoutée dès la
-      création, pour permettre les déploiements pilotés directement en SSH.
-- [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr` — recommandation :
-      OVHcloud (~4,99 € la 1ère année, ~7,79 €/an au renouvellement), registrar
-      français avec gestion DNS incluse.
+- [ ] Provisionnement VPS OVHcloud — décidé (2026-08-14) : gamme **VPS-1 2027**
+      (2 vCore, 4 Go RAM, 40 Go NVMe, trafic illimité, sauvegarde quotidienne et
+      anti-DDoS inclus, ~4,57 € TTC/mois), image Ubuntu 24.04 LTS. Créer le
+      serveur avec la clé publique SSH dédiée `claude-deploy-mybook` (générée
+      localement, jamais commitée) ajoutée dès la création, pour permettre les
+      déploiements pilotés directement en SSH.
+- [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr` — décidé : OVHcloud
+      (~4,99 € la 1ère année, ~7,79 €/an au renouvellement), même compte que le
+      VPS, registrar français avec gestion DNS incluse.
 - [x] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS) —
       `docker-compose.prod.yml` + `Caddyfile` + `.env.example` + `scripts/deploy.sh`,
       cf. [ADR-0016](architecture/decisions/0016-deploiement-caddy-prod.md). Config

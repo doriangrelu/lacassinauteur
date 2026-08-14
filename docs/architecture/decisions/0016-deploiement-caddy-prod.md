@@ -6,8 +6,8 @@
 ## Contexte
 
 La Phase 7 de la roadmap (cf. [roadmap.md](../../roadmap.md)) prépare le déploiement
-du site sur un unique VPS Hetzner via Docker Compose, cible déjà actée dans
-[tech-stack.md §Déploiement — Hetzner](../tech-stack.md#déploiement--hetzner) : un
+du site sur un unique VPS OVHcloud via Docker Compose, cible déjà actée dans
+[tech-stack.md §Déploiement — OVHcloud](../tech-stack.md#déploiement--ovhcloud) : un
 service `app` (le monolithe Spring Boot), un service `db` (PostgreSQL), et un reverse
 proxy assurant le HTTPS pour `thierrylacassin-auteur.fr`.
 
@@ -130,7 +130,7 @@ commande de migration séparée n'est nécessaire dans `deploy.sh`.
   d'interpolation résolues) avec un `.env` de test à valeurs manifestement factices,
   jamais committé. `caddy validate` a été vérifié sur le `Caddyfile`.
 - **Non fait dans cette passe**, nécessite une action humaine (comptes/paiement) :
-  - Provisionnement effectif du VPS Hetzner (roadmap Phase 7).
+  - Provisionnement effectif du VPS OVHcloud (roadmap Phase 7).
   - Achat et configuration DNS du domaine `thierrylacassin-auteur.fr` (roadmap
     Phase 7).
   - Première mise en ligne réelle (première exécution de `scripts/deploy.sh` sur le

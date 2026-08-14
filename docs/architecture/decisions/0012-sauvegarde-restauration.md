@@ -5,7 +5,7 @@
 
 ## Contexte
 
-Le site tourne sur un unique VPS Hetzner via Docker Compose (cf.
+Le site tourne sur un unique VPS OVHcloud via Docker Compose (cf.
 [ADR-0010](0010-upload-images-stockage-local.md)) : la base PostgreSQL et les images
 téléversées (volume Docker nommé `images-data`, monté sur `/data/images` dans le
 service `app`) sont les deux seules sources de vérité à protéger avant tout

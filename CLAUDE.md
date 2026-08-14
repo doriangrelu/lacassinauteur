@@ -12,7 +12,7 @@ Site auteur + back-office pour Thierry Lacassin (écrivain), développé pour so
 gendre (l'utilisateur de ce dépôt) qui agit comme développeur principal. Objectif :
 que Thierry gère lui-même son catalogue (univers/collections/livres), ses actualités
 et sa newsletter via un back-office, en autonomie complète. Déploiement cible : VPS
-Hetzner unique via Docker Compose.
+OVHcloud unique via Docker Compose.
 
 **Avant de faire quoi que ce soit d'architectural, lire `/docs`** — c'est la source
 de vérité vivante, à tenir à jour à chaque évolution (pas une passe séparée) :

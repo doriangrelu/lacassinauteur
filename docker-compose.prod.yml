@@ -1,5 +1,5 @@
-# Stack de production (VPS Hetzner unique, cf. docs/architecture/tech-stack.md
-# §Déploiement — Hetzner et ADR-0016). Fichier autonome, pas un override du
+# Stack de production (VPS OVHcloud unique, cf. docs/architecture/tech-stack.md
+# §Déploiement — OVHcloud et ADR-0016). Fichier autonome, pas un override du
 # docker-compose.yml de dev : les deux stacks divergent sur trop de points
 # structurants (pas de build local, port PostgreSQL non publié, service Caddy en
 # plus) pour qu'une fusion de fichiers reste lisible — cf. ADR-0016 pour le détail

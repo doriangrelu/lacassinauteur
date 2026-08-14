@@ -8,7 +8,8 @@
 
 ## Vue d'ensemble
 
-1. Toi : provisionner le VPS Hetzner + acheter/configurer le domaine.
+1. Toi : provisionner le VPS OVHcloud + acheter/configurer le domaine (même compte
+   OVHcloud pour les deux).
 2. Toi : me transmettre l'adresse IP du VPS et confirmer que ma clé SSH y a été
    ajoutée.
 3. Moi : préparer le serveur (Docker), cloner le dépôt, créer le `.env` réel,
@@ -17,11 +18,12 @@
    identifiants — ou me laisser les saisir directement dans le `.env` du VPS si tu
    préfères ne pas me les dicter en clair.
 
-## 1. Provisionner le VPS Hetzner
+## 1. Provisionner le VPS OVHcloud
 
-Recommandation actée (cf. `roadmap.md` Phase 7) : **CX22** (2 vCPU, 4 Go RAM,
-40 Go NVMe, ~4,35-4,59 €/mois), image **Ubuntu 24.04 LTS**, région **Falkenstein**
-ou **Nuremberg** (proximité France).
+Décidé (cf. `roadmap.md` Phase 7) : gamme **VPS-1 2027** (2 vCore, 4 Go RAM,
+40 Go NVMe, trafic illimité, sauvegarde quotidienne et anti-DDoS inclus,
+~4,57 € TTC/mois), image **Ubuntu 24.04 LTS**, datacenter **Gravelines** ou
+**Strasbourg** (France).
 
 À la création du serveur, dans la section clé SSH, ajoute la clé publique dédiée
 que j'ai générée pour piloter les déploiements :
@@ -36,8 +38,8 @@ local, jamais commitée).
 
 ## 2. Acheter et configurer le domaine
 
-Recommandation actée : **OVHcloud**, `thierrylacassin-auteur.fr`
-(~4,99 € la 1ère année, ~7,79 €/an au renouvellement).
+Décidé : **OVHcloud**, `thierrylacassin-auteur.fr`
+(~4,99 € la 1ère année, ~7,79 €/an au renouvellement) — même compte que le VPS.
 
 Une fois le domaine acheté, configure deux enregistrements DNS pointant vers
 l'IP du VPS (chez OVHcloud : zone DNS du domaine) :

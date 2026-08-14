@@ -112,10 +112,10 @@
   personnel) — décision précise à prendre au moment de l'implémentation du domaine
   `contact`.
 
-## Déploiement — Hetzner
+## Déploiement — OVHcloud
 
-- **Cible v1** : un unique VPS Hetzner (CX22 ou équivalent suffit largement pour ce
-  trafic), avec :
+- **Cible v1** : un unique VPS OVHcloud (gamme VPS, ex. VPS-1 — 2 vCore/4 Go RAM/
+  40 Go NVMe — suffit largement pour ce trafic), avec :
   - **Docker** + **Docker Compose** : un service `app` (image du monolithe Spring
     Boot), un service `db` (PostgreSQL, volume persistant), un reverse proxy
     (**Caddy** recommandé pour son HTTPS/Let's Encrypt automatique et sa configuration

@@ -108,7 +108,7 @@ fréquence).
 
 **v1 (ce projet)** : tout ce qui précède — site vitrine + back-office complet
 (catalogue, actualités, newsletter, contact, avis lecteurs, page pro), déploiement sur
-Hetzner.
+OVHcloud.
 
 **v2 (backlog, non détaillé)** : personnalisation avancée de la mise en page/du thème
 par l'auteur (au-delà de la simple gestion de contenu). À affiner une fois le socle v1
