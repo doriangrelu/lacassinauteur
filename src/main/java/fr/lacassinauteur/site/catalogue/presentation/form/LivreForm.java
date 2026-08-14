@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public class LivreForm {
@@ -23,6 +24,20 @@ public class LivreForm {
     private String resume;
 
     private int ordre;
+
+    private String isbn;
+
+    private String format;
+
+    private Integer nombrePages;
+
+    private BigDecimal prix;
+
+    private String lieuxDistribution;
+
+    private String pitchEditeur;
+
+    private String synopsisEditeur;
 
     public UUID getCollectionId() {
         return collectionId;
@@ -78,5 +93,61 @@ public class LivreForm {
 
     public void setOrdre(int ordre) {
         this.ordre = ordre;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    public Integer getNombrePages() {
+        return nombrePages;
+    }
+
+    public void setNombrePages(Integer nombrePages) {
+        this.nombrePages = nombrePages;
+    }
+
+    public BigDecimal getPrix() {
+        return prix;
+    }
+
+    public void setPrix(BigDecimal prix) {
+        this.prix = prix;
+    }
+
+    public String getLieuxDistribution() {
+        return lieuxDistribution;
+    }
+
+    public void setLieuxDistribution(String lieuxDistribution) {
+        this.lieuxDistribution = lieuxDistribution;
+    }
+
+    public String getPitchEditeur() {
+        return pitchEditeur;
+    }
+
+    public void setPitchEditeur(String pitchEditeur) {
+        this.pitchEditeur = pitchEditeur;
+    }
+
+    public String getSynopsisEditeur() {
+        return synopsisEditeur;
+    }
+
+    public void setSynopsisEditeur(String synopsisEditeur) {
+        this.synopsisEditeur = synopsisEditeur;
     }
 }

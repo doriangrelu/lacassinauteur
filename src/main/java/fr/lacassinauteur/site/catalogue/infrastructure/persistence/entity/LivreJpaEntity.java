@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -47,12 +48,34 @@ public class LivreJpaEntity {
     @Column(name = "derniere_parution", nullable = false)
     private boolean derniereParution;
 
+    @Column(name = "isbn")
+    private String isbn;
+
+    @Column(name = "format")
+    private String format;
+
+    @Column(name = "nombre_pages")
+    private Integer nombrePages;
+
+    @Column(name = "prix")
+    private BigDecimal prix;
+
+    @Column(name = "lieux_distribution")
+    private String lieuxDistribution;
+
+    @Column(name = "pitch_editeur", columnDefinition = "text")
+    private String pitchEditeur;
+
+    @Column(name = "synopsis_editeur", columnDefinition = "text")
+    private String synopsisEditeur;
+
     protected LivreJpaEntity() {
     }
 
     public LivreJpaEntity(UUID id, String slug, UUID collectionId, String titre, String sousTitre, String couvertureUrl,
                            String pitchCourt, String resume, String lienAchatUrl, String lienAchatLibelle,
-                           int ordre, boolean derniereParution) {
+                           int ordre, boolean derniereParution, String isbn, String format, Integer nombrePages,
+                           BigDecimal prix, String lieuxDistribution, String pitchEditeur, String synopsisEditeur) {
         this.id = id;
         this.slug = slug;
         this.collectionId = collectionId;
@@ -65,6 +88,13 @@ public class LivreJpaEntity {
         this.lienAchatLibelle = lienAchatLibelle;
         this.ordre = ordre;
         this.derniereParution = derniereParution;
+        this.isbn = isbn;
+        this.format = format;
+        this.nombrePages = nombrePages;
+        this.prix = prix;
+        this.lieuxDistribution = lieuxDistribution;
+        this.pitchEditeur = pitchEditeur;
+        this.synopsisEditeur = synopsisEditeur;
     }
 
     public UUID getId() {
@@ -113,5 +143,33 @@ public class LivreJpaEntity {
 
     public boolean isDerniereParution() {
         return derniereParution;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public Integer getNombrePages() {
+        return nombrePages;
+    }
+
+    public BigDecimal getPrix() {
+        return prix;
+    }
+
+    public String getLieuxDistribution() {
+        return lieuxDistribution;
+    }
+
+    public String getPitchEditeur() {
+        return pitchEditeur;
+    }
+
+    public String getSynopsisEditeur() {
+        return synopsisEditeur;
     }
 }
