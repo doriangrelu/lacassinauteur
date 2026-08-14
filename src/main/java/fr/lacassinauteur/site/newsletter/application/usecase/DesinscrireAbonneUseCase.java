@@ -5,6 +5,9 @@ import fr.lacassinauteur.site.newsletter.domain.exception.AbonneIntrouvableExcep
 import fr.lacassinauteur.site.newsletter.domain.model.AbonneNewsletter;
 import fr.lacassinauteur.site.newsletter.domain.model.StatutAbonnement;
 import fr.lacassinauteur.site.newsletter.domain.port.AbonneNewsletterRepository;
+import fr.lacassinauteur.site.newsletter.domain.port.SynchronisationEspPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -17,10 +20,14 @@ import java.util.UUID;
 @Component
 public class DesinscrireAbonneUseCase {
 
-    private final AbonneNewsletterRepository abonneNewsletterRepository;
+    private static final Logger LOG = LoggerFactory.getLogger(DesinscrireAbonneUseCase.class);
 
-    public DesinscrireAbonneUseCase(AbonneNewsletterRepository abonneNewsletterRepository) {
+    private final AbonneNewsletterRepository abonneNewsletterRepository;
+    private final SynchronisationEspPort synchronisationEspPort;
+
+    public DesinscrireAbonneUseCase(AbonneNewsletterRepository abonneNewsletterRepository, SynchronisationEspPort synchronisationEspPort) {
         this.abonneNewsletterRepository = abonneNewsletterRepository;
+        this.synchronisationEspPort = synchronisationEspPort;
     }
 
     public AbonneNewsletterResult execute(UUID jeton) {
@@ -30,6 +37,15 @@ public class DesinscrireAbonneUseCase {
         if (abonne.statut() != StatutAbonnement.DESINSCRIT) {
             abonne.desinscrire();
             abonne = abonneNewsletterRepository.save(abonne);
+
+            // Même raisonnement qu'à la confirmation : la désinscription est déjà
+            // enregistrée, un échec Brevo ne doit pas empêcher le visiteur de se
+            // désinscrire avec succès.
+            try {
+                synchronisationEspPort.retirer(abonne);
+            } catch (RuntimeException exception) {
+                LOG.warn("Échec du retrait Brevo pour l'abonné {}", abonne.id(), exception);
+            }
         }
 
         return AbonneNewsletterResult.depuis(abonne);

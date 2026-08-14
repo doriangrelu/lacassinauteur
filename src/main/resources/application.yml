@@ -31,6 +31,10 @@ app:
       api-key: ${BREVO_API_KEY:}
       expediteur-email: ${BREVO_EXPEDITEUR_EMAIL:newsletter@thierrylacassin-auteur.fr}
       expediteur-nom: ${BREVO_EXPEDITEUR_NOM:Thierry Lacassin}
+      # Cf. ADR-0017 : identifiant de la liste de contacts Brevo à synchroniser à
+      # chaque confirmation/désinscription (0 = non configurée, synchronisation
+      # ignorée). À renseigner une fois la liste créée dans Brevo.
+      liste-id: ${BREVO_LISTE_ID:0}
   contact:
     # Adresse de l'auteur qui reçoit les notifications du formulaire de contact.
     email-auteur: ${CONTACT_EMAIL_AUTEUR:thierry@thierrylacassin-auteur.fr}

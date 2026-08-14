@@ -18,6 +18,8 @@ public class BrevoNewsletterProperties {
 
     /** Nom affiché comme expéditeur. */
     private String expediteurNom = "Thierry Lacassin";
+    /** Identifiant numérique de la liste de contacts Brevo à synchroniser (0 = non configurée). */
+    private long listeId = 0L;
 
     public String getApiKey() {
         return apiKey;
@@ -41,5 +43,13 @@ public class BrevoNewsletterProperties {
 
     public void setExpediteurNom(String expediteurNom) {
         this.expediteurNom = expediteurNom;
+    }
+
+    public long getListeId() {
+        return listeId;
+    }
+
+    public void setListeId(long listeId) {
+        this.listeId = listeId;
     }
 }

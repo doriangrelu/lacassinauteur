@@ -95,9 +95,7 @@
       migration Flyway (V5) — jeton unique réutilisé confirmation/désinscription,
       cf. [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
 - [x] Use cases inscription (double opt-in, idempotente), confirmation,
-      désinscription — testés unitairement avec repository fake (pas de
-      `CampagneNewsletter` ni de synchronisation ESP dans ce lot, hors périmètre v1
-      cf. domain-model.md)
+      désinscription — testés unitairement avec repository fake
 - [x] Adaptateur `infrastructure.email` vers l'ESP : `BrevoEmailAdapter` (par défaut/
       prod) + `LogEmailAdapter` (profil `dev`, parcours testable en local sans
       compte externe) — cf. [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
@@ -105,13 +103,19 @@
       honeypot, liens de confirmation/désinscription (`/newsletter/confirmer`,
       `/newsletter/desinscrire`)
 - [x] Back-office : liste des abonnés (`/backoffice/abonnes`) — lecture seule en v1,
-      pas d'ajout manuel (les abonnés s'inscrivent eux-mêmes) ; pas de
-      déclenchement/consultation de campagnes (hors périmètre v1)
-- [ ] **Compte Brevo réel + clé API** (`BREVO_API_KEY`) — `BrevoEmailAdapter` est
-      implémenté d'après la documentation publique de l'API mais **non vérifié
+      pas d'ajout manuel (les abonnés s'inscrivent eux-mêmes)
+- [x] Synchronisation des abonnés confirmés vers une liste de contacts Brevo (ajout
+      à la confirmation, retrait à la désinscription, en temps réel) — Thierry
+      compose et envoie ses newsletters directement depuis l'interface Brevo,
+      **pas d'éditeur de campagnes maison** (décision explicite de l'utilisateur,
+      cf. [ADR-0017](architecture/decisions/0017-synchronisation-brevo-campagnes.md))
+- [ ] **Compte Brevo réel + clé API + liste de contacts** (`BREVO_API_KEY`,
+      `BREVO_LISTE_ID`) — `BrevoEmailAdapter` et `BrevoContactSyncAdapter` sont
+      implémentés d'après la documentation publique de l'API mais **non vérifiés
       contre l'API réelle**, aucun compte n'étant disponible au moment de
-      l'implémentation. À tester manuellement dès que la clé est disponible, cf.
-      [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
+      l'implémentation. À tester manuellement dès que le compte/la clé/la liste
+      sont disponibles, cf. [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
+      et [ADR-0017](architecture/decisions/0017-synchronisation-brevo-campagnes.md)
 
 ## Phase 5 — Domaine `contact`
 
