@@ -34,6 +34,10 @@ public class Collection {
         this.ordre = ordre;
     }
 
+    public void changerOrdre(int ordre) {
+        this.ordre = ordre;
+    }
+
     public UUID id() {
         return id;
     }

@@ -18,19 +18,23 @@
         </button>
     </header>
 
+    <p class="text-xs text-slate-400">Glissez-déposez une ligne pour changer l'ordre d'affichage.</p>
+
     <div class="card overflow-x-auto">
-        <table class="w-full text-left text-sm">
+        <table class="w-full text-left text-sm" data-formulaire-reordonner="formulaire-reordonner-univers">
             <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
-                <th class="px-6 py-3">Ordre</th>
+                <th class="px-6 py-3 w-10"></th>
                 <th class="px-6 py-3">Nom</th>
                 <th class="px-6 py-3">Sous-titre</th>
                 <th class="px-6 py-3">Actions</th>
             </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-            <tr th:each="univers : ${universList}" class="hover:bg-slate-50">
-                <td class="px-6 py-4 text-slate-500" th:text="${univers.ordre}">0</td>
+            <tr th:each="univers : ${universList}" th:data-id="${univers.id}" draggable="true" class="hover:bg-slate-50 cursor-move">
+                <td class="px-6 py-4 text-slate-400">
+                    <span th:replace="~{backoffice/fragments/icons :: bars3('h-4 w-4')}"></span>
+                </td>
                 <td class="px-6 py-4 font-medium text-slate-900" th:text="${univers.nom}">Nom</td>
                 <td class="px-6 py-4 text-slate-500" th:text="${univers.sousTitre}">Sous-titre</td>
                 <td class="px-6 py-4">
@@ -46,6 +50,8 @@
             </tbody>
         </table>
     </div>
+
+    <form id="formulaire-reordonner-univers" th:action="@{/backoffice/univers/reordonner}" method="post" class="hidden"></form>
 
     <dialog id="modale-creer-univers" class="modale" th:object="${formulaire}"
             th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
@@ -76,10 +82,6 @@
             <div>
                 <label class="champ-label" for="photo">Photo</label>
                 <input class="champ-texte" type="file" id="photo" th:field="*{photo}" accept="image/*"/>
-            </div>
-            <div>
-                <label class="champ-label" for="ordre">Ordre d'affichage</label>
-                <input class="champ-texte" type="number" id="ordre" th:field="*{ordre}"/>
             </div>
             <button type="submit" class="btn btn-primary mt-1">
                 <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-4 w-4')}"></span>

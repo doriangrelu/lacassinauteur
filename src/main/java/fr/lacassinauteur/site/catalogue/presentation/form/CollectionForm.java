@@ -17,8 +17,6 @@ public class CollectionForm {
 
     private String texte;
 
-    private int ordre;
-
     public UUID getUniversId() {
         return universId;
     }
@@ -49,13 +47,5 @@ public class CollectionForm {
 
     public void setTexte(String texte) {
         this.texte = texte;
-    }
-
-    public int getOrdre() {
-        return ordre;
-    }
-
-    public void setOrdre(int ordre) {
-        this.ordre = ordre;
     }
 }

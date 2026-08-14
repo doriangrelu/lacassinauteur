@@ -56,6 +56,10 @@ public class Livre {
         this.lienAchat = null;
     }
 
+    public void changerOrdre(int ordre) {
+        this.ordre = ordre;
+    }
+
     public void marquerCommeDerniereParution() {
         this.derniereParution = true;
     }

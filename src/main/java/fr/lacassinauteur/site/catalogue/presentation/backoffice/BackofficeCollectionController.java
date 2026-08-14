@@ -8,6 +8,7 @@ import fr.lacassinauteur.site.catalogue.application.usecase.collection.Consulter
 import fr.lacassinauteur.site.catalogue.application.usecase.collection.CreerCollectionUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.collection.ListerToutesLesCollectionsUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.collection.ModifierCollectionUseCase;
+import fr.lacassinauteur.site.catalogue.application.usecase.collection.ReordonnerCollectionsUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.univers.ListerUniversUseCase;
 import fr.lacassinauteur.site.catalogue.presentation.form.CollectionForm;
 import fr.lacassinauteur.site.catalogue.presentation.mapper.CollectionViewModelMapper;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -34,6 +36,7 @@ public class BackofficeCollectionController {
     private final ConsulterCollectionUseCase consulterCollectionUseCase;
     private final CreerCollectionUseCase creerCollectionUseCase;
     private final ModifierCollectionUseCase modifierCollectionUseCase;
+    private final ReordonnerCollectionsUseCase reordonnerCollectionsUseCase;
     private final ListerUniversUseCase listerUniversUseCase;
     private final CollectionViewModelMapper mapper;
 
@@ -42,12 +45,14 @@ public class BackofficeCollectionController {
             ConsulterCollectionUseCase consulterCollectionUseCase,
             CreerCollectionUseCase creerCollectionUseCase,
             ModifierCollectionUseCase modifierCollectionUseCase,
+            ReordonnerCollectionsUseCase reordonnerCollectionsUseCase,
             ListerUniversUseCase listerUniversUseCase,
             CollectionViewModelMapper mapper) {
         this.listerToutesLesCollectionsUseCase = listerToutesLesCollectionsUseCase;
         this.consulterCollectionUseCase = consulterCollectionUseCase;
         this.creerCollectionUseCase = creerCollectionUseCase;
         this.modifierCollectionUseCase = modifierCollectionUseCase;
+        this.reordonnerCollectionsUseCase = reordonnerCollectionsUseCase;
         this.listerUniversUseCase = listerUniversUseCase;
         this.mapper = mapper;
     }
@@ -74,8 +79,9 @@ public class BackofficeCollectionController {
             return liste(model);
         }
 
+        int prochainOrdre = listerToutesLesCollectionsUseCase.execute().size() + 1;
         creerCollectionUseCase.execute(new CreerCollectionCommand(
-                formulaire.getUniversId(), formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(), formulaire.getOrdre()));
+                formulaire.getUniversId(), formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(), prochainOrdre));
 
         return "redirect:/backoffice/collections";
     }
@@ -89,7 +95,6 @@ public class BackofficeCollectionController {
             formulaire.setNom(collection.nom());
             formulaire.setSousTitre(collection.sousTitre());
             formulaire.setTexte(collection.texte());
-            formulaire.setOrdre(collection.ordre());
             model.addAttribute("formulaire", formulaire);
         }
         model.addAttribute("collectionId", id);
@@ -104,9 +109,16 @@ public class BackofficeCollectionController {
             return formulaireModification(id, model);
         }
 
+        int ordreActuel = consulterCollectionUseCase.execute(id).ordre();
         modifierCollectionUseCase.execute(new ModifierCollectionCommand(
-                id, formulaire.getUniversId(), formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(), formulaire.getOrdre()));
+                id, formulaire.getUniversId(), formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(), ordreActuel));
 
+        return "redirect:/backoffice/collections";
+    }
+
+    @PostMapping("/reordonner")
+    public String reordonner(@RequestParam("id") List<UUID> idsOrdonnes) {
+        reordonnerCollectionsUseCase.execute(idsOrdonnes);
         return "redirect:/backoffice/collections";
     }
 }

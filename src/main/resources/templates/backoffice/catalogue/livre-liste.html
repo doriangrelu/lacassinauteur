@@ -18,10 +18,13 @@
         </button>
     </header>
 
+    <p class="text-xs text-slate-400">Glissez-déposez une ligne pour changer l'ordre d'affichage.</p>
+
     <div class="card overflow-x-auto">
-        <table class="w-full text-left text-sm">
+        <table class="w-full text-left text-sm" data-formulaire-reordonner="formulaire-reordonner-livre">
             <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
+                <th class="px-6 py-3 w-10"></th>
                 <th class="px-6 py-3">Titre</th>
                 <th class="px-6 py-3">Collection</th>
                 <th class="px-6 py-3">Statut</th>
@@ -29,7 +32,10 @@
             </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-            <tr th:each="livre : ${livres}" class="hover:bg-slate-50">
+            <tr th:each="livre : ${livres}" th:data-id="${livre.id}" draggable="true" class="hover:bg-slate-50 cursor-move">
+                <td class="px-6 py-4 text-slate-400">
+                    <span th:replace="~{backoffice/fragments/icons :: bars3('h-4 w-4')}"></span>
+                </td>
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-2 font-medium text-slate-900">
                         <span th:if="${livre.derniereParution}">
@@ -53,11 +59,13 @@
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(livres)}">
-                <td colspan="4" class="px-6 py-8 text-center text-slate-400">Aucun livre pour l'instant.</td>
+                <td colspan="5" class="px-6 py-8 text-center text-slate-400">Aucun livre pour l'instant.</td>
             </tr>
             </tbody>
         </table>
     </div>
+
+    <form id="formulaire-reordonner-livre" th:action="@{/backoffice/livres/reordonner}" method="post" class="hidden"></form>
 
     <dialog id="modale-creer-livre" class="modale" th:object="${formulaire}"
             th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
@@ -98,10 +106,6 @@
             <div>
                 <label class="champ-label" for="resume">Résumé</label>
                 <textarea class="champ-texte" id="resume" rows="5" th:field="*{resume}"></textarea>
-            </div>
-            <div>
-                <label class="champ-label" for="ordre">Ordre d'affichage</label>
-                <input class="champ-texte" type="number" id="ordre" th:field="*{ordre}"/>
             </div>
             <button type="submit" class="btn btn-primary mt-1">
                 <span th:replace="~{backoffice/fragments/icons :: bookOpen('h-4 w-4')}"></span>

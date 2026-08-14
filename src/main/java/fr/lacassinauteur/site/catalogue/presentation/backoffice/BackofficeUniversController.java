@@ -7,6 +7,7 @@ import fr.lacassinauteur.site.catalogue.application.usecase.univers.ConsulterUni
 import fr.lacassinauteur.site.catalogue.application.usecase.univers.CreerUniversUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.univers.ListerUniversUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.univers.ModifierUniversUseCase;
+import fr.lacassinauteur.site.catalogue.application.usecase.univers.ReordonnerUniversUseCase;
 import fr.lacassinauteur.site.catalogue.presentation.form.UniversForm;
 import fr.lacassinauteur.site.catalogue.presentation.mapper.UniversViewModelMapper;
 import jakarta.validation.Valid;
@@ -18,10 +19,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -32,6 +35,7 @@ public class BackofficeUniversController {
     private final ConsulterUniversUseCase consulterUniversUseCase;
     private final CreerUniversUseCase creerUniversUseCase;
     private final ModifierUniversUseCase modifierUniversUseCase;
+    private final ReordonnerUniversUseCase reordonnerUniversUseCase;
     private final UniversViewModelMapper mapper;
 
     public BackofficeUniversController(
@@ -39,11 +43,13 @@ public class BackofficeUniversController {
             ConsulterUniversUseCase consulterUniversUseCase,
             CreerUniversUseCase creerUniversUseCase,
             ModifierUniversUseCase modifierUniversUseCase,
+            ReordonnerUniversUseCase reordonnerUniversUseCase,
             UniversViewModelMapper mapper) {
         this.listerUniversUseCase = listerUniversUseCase;
         this.consulterUniversUseCase = consulterUniversUseCase;
         this.creerUniversUseCase = creerUniversUseCase;
         this.modifierUniversUseCase = modifierUniversUseCase;
+        this.reordonnerUniversUseCase = reordonnerUniversUseCase;
         this.mapper = mapper;
     }
 
@@ -62,9 +68,10 @@ public class BackofficeUniversController {
             return liste(model);
         }
 
+        int prochainOrdre = listerUniversUseCase.execute().size() + 1;
         creerUniversUseCase.execute(new CreerUniversCommand(
                 formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(),
-                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), formulaire.getOrdre()));
+                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), prochainOrdre));
 
         return "redirect:/backoffice/univers";
     }
@@ -78,7 +85,6 @@ public class BackofficeUniversController {
             formulaire.setNom(univers.nom());
             formulaire.setSousTitre(univers.sousTitre());
             formulaire.setTexte(univers.texte());
-            formulaire.setOrdre(univers.ordre());
             model.addAttribute("formulaire", formulaire);
         }
         model.addAttribute("univers", univers);
@@ -93,10 +99,17 @@ public class BackofficeUniversController {
             return formulaireModification(id, model);
         }
 
+        int ordreActuel = consulterUniversUseCase.execute(id).ordre();
         modifierUniversUseCase.execute(new ModifierUniversCommand(
                 id, formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(),
-                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), formulaire.getOrdre()));
+                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), ordreActuel));
 
+        return "redirect:/backoffice/univers";
+    }
+
+    @PostMapping("/reordonner")
+    public String reordonner(@RequestParam("id") List<UUID> idsOrdonnes) {
+        reordonnerUniversUseCase.execute(idsOrdonnes);
         return "redirect:/backoffice/univers";
     }
 

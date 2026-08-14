@@ -14,8 +14,6 @@ public class UniversForm {
 
     private MultipartFile photo;
 
-    private int ordre;
-
     public String getNom() {
         return nom;
     }
@@ -46,13 +44,5 @@ public class UniversForm {
 
     public void setPhoto(MultipartFile photo) {
         this.photo = photo;
-    }
-
-    public int getOrdre() {
-        return ordre;
-    }
-
-    public void setOrdre(int ordre) {
-        this.ordre = ordre;
     }
 }

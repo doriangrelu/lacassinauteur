@@ -22,8 +22,6 @@ public class LivreForm {
 
     private String resume;
 
-    private int ordre;
-
     public UUID getCollectionId() {
         return collectionId;
     }
@@ -70,13 +68,5 @@ public class LivreForm {
 
     public void setResume(String resume) {
         this.resume = resume;
-    }
-
-    public int getOrdre() {
-        return ordre;
-    }
-
-    public void setOrdre(int ordre) {
-        this.ordre = ordre;
     }
 }

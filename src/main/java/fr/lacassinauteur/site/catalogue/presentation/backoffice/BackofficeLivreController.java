@@ -13,6 +13,7 @@ import fr.lacassinauteur.site.catalogue.application.usecase.livre.DefinirDernier
 import fr.lacassinauteur.site.catalogue.application.usecase.livre.ListerTousLesLivresUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.livre.ModifierLivreUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.livre.PublierLivreUseCase;
+import fr.lacassinauteur.site.catalogue.application.usecase.livre.ReordonnerLivresUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.livre.RetirerLienAchatUseCase;
 import fr.lacassinauteur.site.catalogue.presentation.form.LivreForm;
 import fr.lacassinauteur.site.catalogue.presentation.form.PublierLivreForm;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -46,6 +48,7 @@ public class BackofficeLivreController {
     private final PublierLivreUseCase publierLivreUseCase;
     private final RetirerLienAchatUseCase retirerLienAchatUseCase;
     private final DefinirDerniereParutionUseCase definirDerniereParutionUseCase;
+    private final ReordonnerLivresUseCase reordonnerLivresUseCase;
     private final ListerToutesLesCollectionsUseCase listerToutesLesCollectionsUseCase;
     private final LivreViewModelMapper mapper;
 
@@ -57,6 +60,7 @@ public class BackofficeLivreController {
             PublierLivreUseCase publierLivreUseCase,
             RetirerLienAchatUseCase retirerLienAchatUseCase,
             DefinirDerniereParutionUseCase definirDerniereParutionUseCase,
+            ReordonnerLivresUseCase reordonnerLivresUseCase,
             ListerToutesLesCollectionsUseCase listerToutesLesCollectionsUseCase,
             LivreViewModelMapper mapper) {
         this.listerTousLesLivresUseCase = listerTousLesLivresUseCase;
@@ -66,6 +70,7 @@ public class BackofficeLivreController {
         this.publierLivreUseCase = publierLivreUseCase;
         this.retirerLienAchatUseCase = retirerLienAchatUseCase;
         this.definirDerniereParutionUseCase = definirDerniereParutionUseCase;
+        this.reordonnerLivresUseCase = reordonnerLivresUseCase;
         this.listerToutesLesCollectionsUseCase = listerToutesLesCollectionsUseCase;
         this.mapper = mapper;
     }
@@ -95,10 +100,11 @@ public class BackofficeLivreController {
             return liste(model);
         }
 
+        int prochainOrdre = listerTousLesLivresUseCase.execute().size() + 1;
         creerLivreUseCase.execute(new CreerLivreCommand(
                 formulaire.getCollectionId(), formulaire.getTitre(), formulaire.getSousTitre(),
                 octets(formulaire.getCouverture()), nomOriginal(formulaire.getCouverture()),
-                formulaire.getPitchCourt(), formulaire.getResume(), formulaire.getOrdre()));
+                formulaire.getPitchCourt(), formulaire.getResume(), prochainOrdre));
 
         return "redirect:/backoffice/livres";
     }
@@ -114,7 +120,6 @@ public class BackofficeLivreController {
             formulaire.setSousTitre(livre.sousTitre());
             formulaire.setPitchCourt(livre.pitchCourt());
             formulaire.setResume(livre.resume());
-            formulaire.setOrdre(livre.ordre());
             model.addAttribute("formulaire", formulaire);
         }
         if (!model.containsAttribute("formulairePublication")) {
@@ -133,10 +138,11 @@ public class BackofficeLivreController {
             return formulaireModification(id, model);
         }
 
+        int ordreActuel = consulterLivreUseCase.execute(id).ordre();
         modifierLivreUseCase.execute(new ModifierLivreCommand(
                 id, formulaire.getCollectionId(), formulaire.getTitre(), formulaire.getSousTitre(),
                 octets(formulaire.getCouverture()), nomOriginal(formulaire.getCouverture()),
-                formulaire.getPitchCourt(), formulaire.getResume(), formulaire.getOrdre()));
+                formulaire.getPitchCourt(), formulaire.getResume(), ordreActuel));
 
         return "redirect:/backoffice/livres";
     }
@@ -171,6 +177,12 @@ public class BackofficeLivreController {
     @PostMapping("/{id}/derniere-parution")
     public String definirDerniereParution(@PathVariable UUID id) {
         definirDerniereParutionUseCase.execute(new DefinirDerniereParutionCommand(id));
+        return "redirect:/backoffice/livres";
+    }
+
+    @PostMapping("/reordonner")
+    public String reordonner(@RequestParam("id") List<UUID> idsOrdonnes) {
+        reordonnerLivresUseCase.execute(idsOrdonnes);
         return "redirect:/backoffice/livres";
     }
 }

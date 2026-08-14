@@ -18,11 +18,13 @@
         </button>
     </header>
 
+    <p class="text-xs text-slate-400">Glissez-déposez une ligne pour changer l'ordre d'affichage.</p>
+
     <div class="card overflow-x-auto">
-        <table class="w-full text-left text-sm">
+        <table class="w-full text-left text-sm" data-formulaire-reordonner="formulaire-reordonner-collection">
             <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
             <tr>
-                <th class="px-6 py-3">Ordre</th>
+                <th class="px-6 py-3 w-10"></th>
                 <th class="px-6 py-3">Nom</th>
                 <th class="px-6 py-3">Univers</th>
                 <th class="px-6 py-3">Sous-titre</th>
@@ -30,8 +32,10 @@
             </tr>
             </thead>
             <tbody class="divide-y divide-slate-100">
-            <tr th:each="collection : ${collections}" class="hover:bg-slate-50">
-                <td class="px-6 py-4 text-slate-500" th:text="${collection.ordre}">0</td>
+            <tr th:each="collection : ${collections}" th:data-id="${collection.id}" draggable="true" class="hover:bg-slate-50 cursor-move">
+                <td class="px-6 py-4 text-slate-400">
+                    <span th:replace="~{backoffice/fragments/icons :: bars3('h-4 w-4')}"></span>
+                </td>
                 <td class="px-6 py-4 font-medium text-slate-900" th:text="${collection.nom}">Nom</td>
                 <td class="px-6 py-4">
                     <span class="badge badge-role" th:text="${collection.universNom}">Univers</span>
@@ -50,6 +54,8 @@
             </tbody>
         </table>
     </div>
+
+    <form id="formulaire-reordonner-collection" th:action="@{/backoffice/collections/reordonner}" method="post" class="hidden"></form>
 
     <dialog id="modale-creer-collection" class="modale" th:object="${formulaire}"
             th:attr="open=${#fields.hasErrors('*')} ? 'open' : null">
@@ -82,10 +88,6 @@
             <div>
                 <label class="champ-label" for="texte">Texte de présentation</label>
                 <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
-            </div>
-            <div>
-                <label class="champ-label" for="ordre">Ordre d'affichage</label>
-                <input class="champ-texte" type="number" id="ordre" th:field="*{ordre}"/>
             </div>
             <button type="submit" class="btn btn-primary mt-1">
                 <span th:replace="~{backoffice/fragments/icons :: rectangleStack('h-4 w-4')}"></span>
