@@ -151,8 +151,14 @@
 
 ## Phase 7 — Déploiement Hetzner
 
-- [ ] Provisionnement VPS Hetzner
-- [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr`
+- [ ] Provisionnement VPS Hetzner — recommandation (2026-08-14) : **CX22**
+      (2 vCPU, 4 Go RAM, 40 Go NVMe, ~4,35-4,59 €/mois), largement suffisant pour
+      ce trafic. Créer le serveur avec la clé publique SSH dédiée
+      `claude-deploy-mybook` (générée localement, jamais commitée) ajoutée dès la
+      création, pour permettre les déploiements pilotés directement en SSH.
+- [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr` — recommandation :
+      OVHcloud (~4,99 € la 1ère année, ~7,79 €/an au renouvellement), registrar
+      français avec gestion DNS incluse.
 - [ ] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS)
 - [x] Sauvegarde/restauration : `scripts/backup.sh` (`pg_dump` + archive du volume
       Docker `images-data`, via un conteneur éphémère `docker compose run`) et
