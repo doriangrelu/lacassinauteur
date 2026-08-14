@@ -23,3 +23,14 @@ thierrylacassin-auteur.fr {
 www.thierrylacassin-auteur.fr {
 	redir https://thierrylacassin-auteur.fr{uri} permanent
 }
+
+# Second nom de domaine (deja pointe vers ce serveur) : redirection pure vers le
+# domaine canonique, meme logique que le www. ci-dessus — evite le contenu
+# duplique (penalite SEO) plutot que de servir le site sur deux domaines.
+leblogdethierry.fr {
+	redir https://thierrylacassin-auteur.fr{uri} permanent
+}
+
+www.leblogdethierry.fr {
+	redir https://thierrylacassin-auteur.fr{uri} permanent
+}
