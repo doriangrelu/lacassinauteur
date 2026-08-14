@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title th:text="'Fiche professionnelle — ' + ${livre.titre}">Fiche professionnelle</title>
+    <meta name="robots" content="noindex"/>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <section class="page-conteneur flex flex-col gap-8 py-10">
+        <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-mist">Fiche professionnelle</p>
+            <h1 class="font-display text-3xl font-bold tracking-tight" th:text="${livre.titre}">Titre</h1>
+            <p th:if="${livre.sousTitre}" class="font-display mt-1 text-lg italic text-mist" th:text="${livre.sousTitre}">Sous-titre</p>
+        </div>
+
+        <div class="grid gap-8 sm:grid-cols-[minmax(0,200px)_1fr]">
+            <img th:if="${livre.couvertureUrl}" th:src="@{${livre.couvertureUrl}}" th:alt="${livre.titre}"
+                 class="w-full rounded shadow-lg"/>
+
+            <dl class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+                <div class="contents" th:if="${livre.isbn}">
+                    <dt class="font-semibold text-mist">ISBN</dt>
+                    <dd th:text="${livre.isbn}">ISBN</dd>
+                </div>
+                <div class="contents" th:if="${livre.format}">
+                    <dt class="font-semibold text-mist">Format</dt>
+                    <dd th:text="${livre.format}">Format</dd>
+                </div>
+                <div class="contents" th:if="${livre.nombrePages}">
+                    <dt class="font-semibold text-mist">Pagination</dt>
+                    <dd th:text="${livre.nombrePages} + ' pages'">Pagination</dd>
+                </div>
+                <div class="contents" th:if="${livre.prix}">
+                    <dt class="font-semibold text-mist">Prix</dt>
+                    <dd th:text="${livre.prix} + ' €'">Prix</dd>
+                </div>
+                <div class="contents" th:if="${livre.lieuxDistribution}">
+                    <dt class="font-semibold text-mist">Distribution</dt>
+                    <dd th:text="${livre.lieuxDistribution}">Distribution</dd>
+                </div>
+                <div class="contents">
+                    <dt class="font-semibold text-mist">Disponibilité</dt>
+                    <dd>
+                        <a th:href="${livre.lienAchatUrl}" target="_blank" rel="noopener" class="lien-souligne"
+                           th:text="'Acheter sur ' + ${livre.lienAchatLibelle}">Acheter</a>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        <div th:if="${livre.pitchEditeur}" class="flex flex-col gap-2">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-mist">Argumentaire éditeur</h2>
+            <p class="font-display text-lg italic" th:text="${livre.pitchEditeur}">Pitch éditeur</p>
+        </div>
+
+        <div th:if="${livre.synopsisEditeur}" class="flex flex-col gap-2">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-mist">Synopsis</h2>
+            <p class="whitespace-pre-line text-sm leading-relaxed text-mist" th:text="${livre.synopsisEditeur}">Synopsis</p>
+        </div>
+    </section>
+</div>
+</body>
+</html>

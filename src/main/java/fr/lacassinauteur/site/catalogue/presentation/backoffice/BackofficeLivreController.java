@@ -120,6 +120,13 @@ public class BackofficeLivreController {
             formulaire.setSousTitre(livre.sousTitre());
             formulaire.setPitchCourt(livre.pitchCourt());
             formulaire.setResume(livre.resume());
+            formulaire.setIsbn(livre.isbn());
+            formulaire.setFormat(livre.format());
+            formulaire.setNombrePages(livre.nombrePages());
+            formulaire.setPrix(livre.prix());
+            formulaire.setLieuxDistribution(livre.lieuxDistribution());
+            formulaire.setPitchEditeur(livre.pitchEditeur());
+            formulaire.setSynopsisEditeur(livre.synopsisEditeur());
             model.addAttribute("formulaire", formulaire);
         }
         if (!model.containsAttribute("formulairePublication")) {
@@ -142,7 +149,9 @@ public class BackofficeLivreController {
         modifierLivreUseCase.execute(new ModifierLivreCommand(
                 id, formulaire.getCollectionId(), formulaire.getTitre(), formulaire.getSousTitre(),
                 octets(formulaire.getCouverture()), nomOriginal(formulaire.getCouverture()),
-                formulaire.getPitchCourt(), formulaire.getResume(), ordreActuel));
+                formulaire.getPitchCourt(), formulaire.getResume(), ordreActuel,
+                formulaire.getIsbn(), formulaire.getFormat(), formulaire.getNombrePages(), formulaire.getPrix(),
+                formulaire.getLieuxDistribution(), formulaire.getPitchEditeur(), formulaire.getSynopsisEditeur()));
 
         return "redirect:/backoffice/livres";
     }

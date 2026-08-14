@@ -1,0 +1,7 @@
+ALTER TABLE livre ADD COLUMN isbn VARCHAR(20);
+ALTER TABLE livre ADD COLUMN format VARCHAR(100);
+ALTER TABLE livre ADD COLUMN nombre_pages INT;
+ALTER TABLE livre ADD COLUMN prix NUMERIC(8, 2);
+ALTER TABLE livre ADD COLUMN lieux_distribution VARCHAR(500);
+ALTER TABLE livre ADD COLUMN pitch_editeur TEXT;
+ALTER TABLE livre ADD COLUMN synopsis_editeur TEXT;
