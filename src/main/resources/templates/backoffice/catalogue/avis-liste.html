@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Avis lecteurs</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-8">
+    <header>
+        <h1 class="text-2xl font-semibold tracking-tight text-slate-900">Avis lecteurs</h1>
+        <p class="mt-1 text-sm text-slate-500">Avis soumis via les pages livres, à modérer avant publication.</p>
+    </header>
+
+    <div class="card overflow-x-auto">
+        <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
+            <tr>
+                <th class="px-6 py-3">Reçu le</th>
+                <th class="px-6 py-3">Livre</th>
+                <th class="px-6 py-3">De</th>
+                <th class="px-6 py-3">Note</th>
+                <th class="px-6 py-3">Avis</th>
+                <th class="px-6 py-3">Statut</th>
+                <th class="px-6 py-3">Actions</th>
+            </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+            <tr th:each="avisLecteur : ${avis}" class="hover:bg-slate-50">
+                <td class="px-6 py-4 text-slate-500" th:text="${#temporals.format(avisLecteur.dateSoumission, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                <td class="px-6 py-4 text-slate-500" th:text="${avisLecteur.livreTitre}">Livre</td>
+                <td class="px-6 py-4 font-medium text-slate-900" th:text="${avisLecteur.nomAuteurAvis}">Nom</td>
+                <td class="px-6 py-4 text-slate-500" th:text="${avisLecteur.note} ?: '—'">5</td>
+                <td class="px-6 py-4 max-w-xs truncate text-slate-500" th:text="${avisLecteur.texte}">Texte de l'avis</td>
+                <td class="px-6 py-4">
+                    <span th:if="${avisLecteur.statut.name() == 'EN_ATTENTE'}" class="badge badge-role">En attente</span>
+                    <span th:if="${avisLecteur.statut.name() == 'PUBLIE'}" class="badge badge-actif">Publié</span>
+                    <span th:if="${avisLecteur.statut.name() == 'REJETE'}" class="badge badge-inactif">Rejeté</span>
+                </td>
+                <td class="px-6 py-4">
+                    <div th:if="${avisLecteur.statut.name() == 'EN_ATTENTE'}" class="flex flex-wrap items-center gap-4">
+                        <form th:action="@{'/backoffice/avis/' + ${avisLecteur.id} + '/approuver'}" method="post">
+                            <button type="submit" class="link-action text-emerald-600 hover:text-emerald-700">
+                                <span th:replace="~{backoffice/fragments/icons :: checkCircle('h-4 w-4')}"></span>
+                                Approuver
+                            </button>
+                        </form>
+                        <form th:action="@{'/backoffice/avis/' + ${avisLecteur.id} + '/rejeter'}" method="post"
+                              onsubmit="return confirm('Rejeter cet avis ?');">
+                            <button type="submit" class="link-action text-red-600 hover:text-red-700">
+                                <span th:replace="~{backoffice/fragments/icons :: noSymbol('h-4 w-4')}"></span>
+                                Rejeter
+                            </button>
+                        </form>
+                    </div>
+                    <span th:unless="${avisLecteur.statut.name() == 'EN_ATTENTE'}" class="text-slate-400">—</span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(avis)}">
+                <td colspan="7" class="px-6 py-8 text-center text-slate-400">Aucun avis pour l'instant.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</body>
+</html>

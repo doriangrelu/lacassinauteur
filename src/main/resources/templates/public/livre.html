@@ -34,6 +34,57 @@
         </div>
     </section>
 
+    <section class="page-conteneur flex flex-col gap-6 py-10">
+        <h2 class="font-display text-2xl font-bold tracking-tight">Avis lecteurs</h2>
+
+        <div th:if="${#lists.isEmpty(avisLecteurs)}" class="text-sm text-mist">
+            Aucun avis pour l'instant. Soyez le premier à en laisser un.
+        </div>
+        <ul th:unless="${#lists.isEmpty(avisLecteurs)}" class="flex flex-col gap-4">
+            <li th:each="avisLecteur : ${avisLecteurs}" class="rounded border border-slate-200 p-4">
+                <div class="flex items-center justify-between gap-4">
+                    <span class="font-semibold text-ink" th:text="${avisLecteur.nomAuteurAvis}">Nom</span>
+                    <span th:if="${avisLecteur.note}" class="text-sm text-mist" th:text="${avisLecteur.note} + '/5'">5/5</span>
+                </div>
+                <p class="mt-2 whitespace-pre-line text-sm text-mist" th:text="${avisLecteur.texte}">Texte de l'avis</p>
+            </li>
+        </ul>
+
+        <p th:if="${avisEnvoye}" class="message-info max-w-md">
+            Merci, votre avis a bien été envoyé. Il sera publié après relecture.
+        </p>
+
+        <details class="mt-2">
+            <summary class="cursor-pointer text-sm font-semibold text-ink">Laisser un avis</summary>
+            <form th:action="@{'/livres/' + ${livre.slug} + '/avis'}" method="post" th:object="${formulaireAvis}"
+                  class="mt-4 flex w-full max-w-sm flex-col gap-4 text-left">
+                <div>
+                    <label class="champ-label" for="nomAuteurAvis">Votre nom</label>
+                    <input class="champ-texte" type="text" id="nomAuteurAvis" th:field="*{nomAuteurAvis}" autocomplete="name"/>
+                    <p th:if="${#fields.hasErrors('nomAuteurAvis')}" th:errors="*{nomAuteurAvis}" class="champ-erreur"></p>
+                </div>
+                <div>
+                    <label class="champ-label" for="note">Note (facultatif, sur 5)</label>
+                    <input class="champ-texte" type="number" id="note" th:field="*{note}" min="1" max="5"/>
+                    <p th:if="${#fields.hasErrors('note')}" th:errors="*{note}" class="champ-erreur"></p>
+                </div>
+                <div>
+                    <label class="champ-label" for="texte">Votre avis</label>
+                    <textarea class="champ-texte" id="texte" rows="4" th:field="*{texte}"></textarea>
+                    <p th:if="${#fields.hasErrors('texte')}" th:errors="*{texte}" class="champ-erreur"></p>
+                </div>
+
+                <!-- Honeypot anti-spam : invisible pour un visiteur humain, cf. frontend/public.css (.piege-anti-spam). -->
+                <div class="piege-anti-spam" aria-hidden="true">
+                    <label for="siteWeb">Laissez ce champ vide</label>
+                    <input type="text" id="siteWeb" th:field="*{siteWeb}" tabindex="-1" autocomplete="off"/>
+                </div>
+
+                <button type="submit" class="btn self-start">Envoyer mon avis</button>
+            </form>
+        </details>
+    </section>
+
     <section class="page-conteneur flex flex-col items-center gap-3 py-12 text-center">
         <a th:href="@{'/collections/' + ${collection.slug}}" class="text-sm text-mist hover:text-ink">
             Retour à la collection — <span th:text="${collection.nom}">Collection</span>

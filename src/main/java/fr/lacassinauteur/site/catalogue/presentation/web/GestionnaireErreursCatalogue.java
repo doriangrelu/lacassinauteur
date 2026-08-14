@@ -1,5 +1,6 @@
 package fr.lacassinauteur.site.catalogue.presentation.web;
 
+import fr.lacassinauteur.site.catalogue.domain.exception.AvisLecteurIntrouvableException;
 import fr.lacassinauteur.site.catalogue.domain.exception.CollectionIntrouvableException;
 import fr.lacassinauteur.site.catalogue.domain.exception.LivreIntrouvableException;
 import fr.lacassinauteur.site.catalogue.domain.exception.UniversIntrouvableException;
@@ -16,7 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice(basePackages = "fr.lacassinauteur.site.catalogue.presentation")
 public class GestionnaireErreursCatalogue {
 
-    @ExceptionHandler({UniversIntrouvableException.class, CollectionIntrouvableException.class, LivreIntrouvableException.class})
+    @ExceptionHandler({UniversIntrouvableException.class, CollectionIntrouvableException.class, LivreIntrouvableException.class,
+            AvisLecteurIntrouvableException.class})
     public String contenuIntrouvable(HttpServletRequest request, HttpServletResponse response) {
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
         boolean backoffice = request.getRequestURI().startsWith("/backoffice");
