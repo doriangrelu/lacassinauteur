@@ -134,11 +134,10 @@
 ## Phase 6 — Intégration graphique
 
 - [x] Layout Thymeleaf commun (header, footer avec réseaux sociaux) — présent depuis
-      la Phase 2 ; palette blanc/noir/gris respectée. Polices Cormorant Garamond/Aptos
-      déclarées en tokens Tailwind mais **non auto-hébergées** : elles ne s'affichent
-      que si le visiteur les a déjà sur sa machine (Aptos en particulier est une
-      police Microsoft, non librement redistribuable — à trancher avec l'utilisateur,
-      cf. discussion du 2026-08-13)
+      la Phase 2 ; palette blanc/noir/gris respectée.
+- [x] Polices auto-hébergées : Cormorant Garamond (titres) + Inter en remplacement
+      d'Aptos, non librement redistribuable — cf.
+      [ADR-0015](architecture/decisions/0015-polices-auto-hebergees.md)
 - [ ] Intégration des maquettes/exemples de ton pour l'ambiance visuelle (nécessite
       une relecture des .docx fournis, non faite dans cette passe)
 - [x] Responsive : vérifié en viewport mobile (375px) sur toutes les pages publiques

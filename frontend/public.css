@@ -3,11 +3,40 @@
 
 @theme {
   --font-display: "Cormorant Garamond", ui-serif, serif;
-  --font-body: "Aptos", ui-sans-serif, sans-serif;
+  /* "Aptos" (prévue au brief) est une police Microsoft non librement
+     redistribuable : remplacée par Inter, une police libre (SIL OFL) visuellement
+     proche, auto-hébergée comme Cormorant Garamond ci-dessous. */
+  --font-body: "Inter", ui-sans-serif, sans-serif;
 
   --color-ink: #000000;
   --color-paper: #ffffff;
   --color-mist: #6b7280;
+}
+
+/* Polices auto-hébergées (SIL Open Font License) plutôt que Google Fonts : pas
+   d'appel à un tiers au chargement, cf. tech-stack.md. Fichiers variables
+   (couvrent tout l'axe de graisse en un seul fichier par style), ne servir que le
+   sous-ensemble latin réellement utilisé (français). */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/cormorant-garamond-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/inter.woff2") format("woff2");
 }
 
 @layer base {
