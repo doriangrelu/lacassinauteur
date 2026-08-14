@@ -159,7 +159,12 @@
 - [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr` — recommandation :
       OVHcloud (~4,99 € la 1ère année, ~7,79 €/an au renouvellement), registrar
       français avec gestion DNS incluse.
-- [ ] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS)
+- [x] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS) —
+      `docker-compose.prod.yml` + `Caddyfile` + `.env.example` + `scripts/deploy.sh`,
+      cf. [ADR-0016](architecture/decisions/0016-deploiement-caddy-prod.md). Config
+      prête et validée (`docker compose config`, `caddy validate`) mais **jamais
+      exécutée contre un vrai serveur** — reste bloquée sur le provisionnement VPS et
+      le DNS ci-dessous.
 - [x] Sauvegarde/restauration : `scripts/backup.sh` (`pg_dump` + archive du volume
       Docker `images-data`, via un conteneur éphémère `docker compose run`) et
       `scripts/restore.sh` (restauration gardée par une confirmation explicite,
