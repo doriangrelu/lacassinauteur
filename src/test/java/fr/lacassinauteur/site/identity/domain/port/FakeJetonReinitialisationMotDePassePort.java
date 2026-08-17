@@ -8,21 +8,21 @@ import java.util.concurrent.ConcurrentMap;
 
 public class FakeJetonReinitialisationMotDePassePort implements JetonReinitialisationMotDePassePort {
 
-    private final ConcurrentMap<String, UUID> jetons = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, JetonDecode> jetons = new ConcurrentHashMap<>();
 
     @Override
-    public String genererJeton(UUID utilisateurId) {
+    public String genererJeton(UUID utilisateurId, UUID jetonId) {
         String jeton = "jeton-" + UUID.randomUUID();
-        jetons.put(jeton, utilisateurId);
+        jetons.put(jeton, new JetonDecode(utilisateurId, jetonId));
         return jeton;
     }
 
     @Override
-    public UUID validerEtExtraireUtilisateurId(String jeton) {
-        UUID utilisateurId = jetons.get(jeton);
-        if (utilisateurId == null) {
+    public JetonDecode validerEtExtraire(String jeton) {
+        JetonDecode decode = jetons.get(jeton);
+        if (decode == null) {
             throw new JetonReinitialisationInvalideException("Jeton de réinitialisation invalide ou expiré");
         }
-        return utilisateurId;
+        return decode;
     }
 }

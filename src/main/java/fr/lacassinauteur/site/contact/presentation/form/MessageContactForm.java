@@ -29,6 +29,9 @@ public class MessageContactForm {
      */
     private String siteWeb;
 
+    /** Jeton reCAPTCHA v3 (cf. ADR-0019), vérifié côté contrôleur. */
+    private String captchaToken;
+
     public String getNom() {
         return nom;
     }
@@ -67,5 +70,13 @@ public class MessageContactForm {
 
     public void setSiteWeb(String siteWeb) {
         this.siteWeb = siteWeb;
+    }
+
+    public String getCaptchaToken() {
+        return captchaToken;
+    }
+
+    public void setCaptchaToken(String captchaToken) {
+        this.captchaToken = captchaToken;
     }
 }

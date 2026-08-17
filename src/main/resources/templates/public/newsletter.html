@@ -5,6 +5,8 @@
 <head>
     <title>Newsletter</title>
     <meta name="description" content="Inscrivez-vous à la newsletter de Thierry Lacassin pour suivre ses parutions et actualités."/>
+    <script th:if="${captchaSiteKey}" th:src="@{'https://www.google.com/recaptcha/api.js?render=' + ${captchaSiteKey}}"></script>
+    <script src="/js/captcha.js" defer></script>
 </head>
 <body>
 <div layout:fragment="contenu">
@@ -28,6 +30,7 @@
         </p>
 
         <form th:action="@{/newsletter/inscription}" method="post" th:object="${formulaire}"
+              th:attr="data-captcha-site-key=${captchaSiteKey}"
               class="flex w-full max-w-sm flex-col gap-4 text-left">
             <div>
                 <label class="champ-label" for="prenom">Prénom</label>
@@ -45,6 +48,7 @@
                 <label for="siteWeb">Laissez ce champ vide</label>
                 <input type="text" id="siteWeb" th:field="*{siteWeb}" tabindex="-1" autocomplete="off"/>
             </div>
+            <input type="hidden" th:field="*{captchaToken}"/>
 
             <button type="submit" class="btn self-start">S'inscrire</button>
         </form>

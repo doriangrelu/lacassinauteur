@@ -5,6 +5,8 @@
 <head>
     <title>Contact</title>
     <meta name="description" content="Contactez Thierry Lacassin, auteur de romans noirs et de récits de trajectoires humaines."/>
+    <script th:if="${captchaSiteKey}" th:src="@{'https://www.google.com/recaptcha/api.js?render=' + ${captchaSiteKey}}"></script>
+    <script src="/js/captcha.js" defer></script>
 </head>
 <body>
 <div layout:fragment="contenu">
@@ -19,6 +21,7 @@
         </p>
 
         <form th:action="@{/contact/envoi}" method="post" th:object="${formulaire}"
+              th:attr="data-captcha-site-key=${captchaSiteKey}"
               class="flex w-full max-w-sm flex-col gap-4 text-left">
             <div>
                 <label class="champ-label" for="nom">Nom</label>
@@ -46,6 +49,7 @@
                 <label for="siteWeb">Laissez ce champ vide</label>
                 <input type="text" id="siteWeb" th:field="*{siteWeb}" tabindex="-1" autocomplete="off"/>
             </div>
+            <input type="hidden" th:field="*{captchaToken}"/>
 
             <button type="submit" class="btn self-start">Envoyer</button>
         </form>

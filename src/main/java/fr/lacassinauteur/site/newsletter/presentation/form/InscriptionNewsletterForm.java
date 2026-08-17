@@ -20,6 +20,9 @@ public class InscriptionNewsletterForm {
      */
     private String siteWeb;
 
+    /** Jeton reCAPTCHA v3 (cf. ADR-0019), vérifié côté contrôleur. */
+    private String captchaToken;
+
     public String getPrenom() {
         return prenom;
     }
@@ -42,5 +45,13 @@ public class InscriptionNewsletterForm {
 
     public void setSiteWeb(String siteWeb) {
         this.siteWeb = siteWeb;
+    }
+
+    public String getCaptchaToken() {
+        return captchaToken;
+    }
+
+    public void setCaptchaToken(String captchaToken) {
+        this.captchaToken = captchaToken;
     }
 }

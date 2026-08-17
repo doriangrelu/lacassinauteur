@@ -10,8 +10,10 @@ import fr.lacassinauteur.site.catalogue.application.usecase.collection.Consulter
 import fr.lacassinauteur.site.catalogue.application.usecase.livre.ConsulterLivreParSlugUseCase;
 import fr.lacassinauteur.site.catalogue.application.usecase.univers.ConsulterUniversUseCase;
 import fr.lacassinauteur.site.catalogue.presentation.form.AvisLecteurForm;
+import fr.lacassinauteur.site.shared.domain.port.CaptchaPort;
 import fr.lacassinauteur.site.shared.web.HoneypotAntiSpam;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,18 +31,29 @@ public class LivreController {
     private final ConsulterUniversUseCase consulterUniversUseCase;
     private final ListerAvisLecteurPublieParLivreUseCase listerAvisLecteurPublieParLivreUseCase;
     private final SoumettreAvisLecteurUseCase soumettreAvisLecteurUseCase;
+    private final CaptchaPort captchaPort;
+
+    @Value("${app.captcha.site-key}")
+    private String captchaSiteKey;
+
+    @ModelAttribute("captchaSiteKey")
+    public String captchaSiteKey() {
+        return captchaSiteKey;
+    }
 
     public LivreController(
             ConsulterLivreParSlugUseCase consulterLivreParSlugUseCase,
             ConsulterCollectionUseCase consulterCollectionUseCase,
             ConsulterUniversUseCase consulterUniversUseCase,
             ListerAvisLecteurPublieParLivreUseCase listerAvisLecteurPublieParLivreUseCase,
-            SoumettreAvisLecteurUseCase soumettreAvisLecteurUseCase) {
+            SoumettreAvisLecteurUseCase soumettreAvisLecteurUseCase,
+            CaptchaPort captchaPort) {
         this.consulterLivreParSlugUseCase = consulterLivreParSlugUseCase;
         this.consulterCollectionUseCase = consulterCollectionUseCase;
         this.consulterUniversUseCase = consulterUniversUseCase;
         this.listerAvisLecteurPublieParLivreUseCase = listerAvisLecteurPublieParLivreUseCase;
         this.soumettreAvisLecteurUseCase = soumettreAvisLecteurUseCase;
+        this.captchaPort = captchaPort;
     }
 
     @GetMapping("/livres/{slug}")
@@ -75,6 +88,12 @@ public class LivreController {
 
         if (bindingResult.hasErrors()) {
             return afficher(slug, model);
+        }
+
+        if (!captchaPort.verifier(formulaire.getCaptchaToken())) {
+            // Même traitement que le honeypot (cf. ADR-0019).
+            redirectAttributes.addFlashAttribute("avisEnvoye", true);
+            return "redirect:/livres/" + slug;
         }
 
         soumettreAvisLecteurUseCase.execute(new SoumettreAvisLecteurCommand(

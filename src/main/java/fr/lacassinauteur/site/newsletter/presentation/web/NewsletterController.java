@@ -6,8 +6,10 @@ import fr.lacassinauteur.site.newsletter.application.usecase.DesinscrireAbonneUs
 import fr.lacassinauteur.site.newsletter.application.usecase.InscrireAbonneUseCase;
 import fr.lacassinauteur.site.newsletter.domain.exception.AbonneIntrouvableException;
 import fr.lacassinauteur.site.newsletter.presentation.form.InscriptionNewsletterForm;
+import fr.lacassinauteur.site.shared.domain.port.CaptchaPort;
 import fr.lacassinauteur.site.shared.web.HoneypotAntiSpam;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,14 +35,25 @@ public class NewsletterController {
     private final InscrireAbonneUseCase inscrireAbonneUseCase;
     private final ConfirmerInscriptionUseCase confirmerInscriptionUseCase;
     private final DesinscrireAbonneUseCase desinscrireAbonneUseCase;
+    private final CaptchaPort captchaPort;
+
+    @Value("${app.captcha.site-key}")
+    private String captchaSiteKey;
+
+    @ModelAttribute("captchaSiteKey")
+    public String captchaSiteKey() {
+        return captchaSiteKey;
+    }
 
     public NewsletterController(
             InscrireAbonneUseCase inscrireAbonneUseCase,
             ConfirmerInscriptionUseCase confirmerInscriptionUseCase,
-            DesinscrireAbonneUseCase desinscrireAbonneUseCase) {
+            DesinscrireAbonneUseCase desinscrireAbonneUseCase,
+            CaptchaPort captchaPort) {
         this.inscrireAbonneUseCase = inscrireAbonneUseCase;
         this.confirmerInscriptionUseCase = confirmerInscriptionUseCase;
         this.desinscrireAbonneUseCase = desinscrireAbonneUseCase;
+        this.captchaPort = captchaPort;
     }
 
     @GetMapping
@@ -63,6 +76,13 @@ public class NewsletterController {
 
         if (bindingResult.hasErrors()) {
             return afficher(model);
+        }
+
+        if (!captchaPort.verifier(formulaire.getCaptchaToken())) {
+            // Même traitement que le honeypot : pas d'erreur révélée, on se comporte
+            // comme un envoi réussi sans rien traiter (cf. ADR-0019).
+            redirectAttributes.addFlashAttribute("messageInscription", "merci");
+            return "redirect:/newsletter";
         }
 
         inscrireAbonneUseCase.execute(new InscrireAbonneCommand(formulaire.getPrenom(), formulaire.getEmail()));
