@@ -48,12 +48,17 @@ public class ConfirmerInscriptionUseCase {
             abonne.confirmer();
             abonne = abonneNewsletterRepository.save(abonne);
 
+            // L'abonné est déjà confirmé et enregistré : un échec d'envoi de l'email
+            // de bienvenue ou de synchronisation Brevo (pas encore configurée, API
+            // indisponible...) ne doit pas transformer une confirmation réussie en
+            // erreur pour le visiteur.
             String lienDesinscription = urlBase + "/newsletter/desinscrire?jeton=" + abonne.jetonConfirmation();
-            envoiEmailPort.envoyerEmailBienvenue(abonne.email(), abonne.prenom(), lienDesinscription);
+            try {
+                envoiEmailPort.envoyerEmailBienvenue(abonne.email(), abonne.prenom(), lienDesinscription);
+            } catch (RuntimeException exception) {
+                LOG.warn("Échec de l'envoi de l'email de bienvenue pour l'abonné {}", abonne.id(), exception);
+            }
 
-            // L'abonné est déjà confirmé et enregistré : un échec de synchronisation
-            // Brevo (pas encore configurée, API indisponible...) ne doit pas
-            // transformer une confirmation réussie en erreur pour le visiteur.
             try {
                 synchronisationEspPort.ajouterOuMettreAJour(abonne);
             } catch (RuntimeException exception) {

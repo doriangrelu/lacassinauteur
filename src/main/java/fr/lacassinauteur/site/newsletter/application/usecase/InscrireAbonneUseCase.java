@@ -7,6 +7,8 @@ import fr.lacassinauteur.site.newsletter.domain.model.Email;
 import fr.lacassinauteur.site.newsletter.domain.model.StatutAbonnement;
 import fr.lacassinauteur.site.newsletter.domain.port.AbonneNewsletterRepository;
 import fr.lacassinauteur.site.newsletter.domain.port.EnvoiEmailPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +27,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class InscrireAbonneUseCase {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InscrireAbonneUseCase.class);
 
     private final AbonneNewsletterRepository abonneNewsletterRepository;
     private final EnvoiEmailPort envoiEmailPort;
@@ -54,8 +58,15 @@ public class InscrireAbonneUseCase {
 
         abonne = abonneNewsletterRepository.save(abonne);
 
+        // L'abonné est déjà enregistré : un échec d'envoi (ESP indisponible/mal
+        // configuré) ne doit pas transformer une inscription réussie en erreur 500
+        // pour le visiteur — même principe que la confirmation et la synchro Brevo.
         String lienConfirmation = urlBase + "/newsletter/confirmer?jeton=" + abonne.jetonConfirmation();
-        envoiEmailPort.envoyerEmailConfirmation(email, abonne.prenom(), lienConfirmation);
+        try {
+            envoiEmailPort.envoyerEmailConfirmation(email, abonne.prenom(), lienConfirmation);
+        } catch (RuntimeException exception) {
+            LOG.warn("Échec de l'envoi de l'email de confirmation pour l'abonné {}", abonne.id(), exception);
+        }
 
         return AbonneNewsletterResult.depuis(abonne);
     }
