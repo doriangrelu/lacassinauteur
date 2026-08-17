@@ -25,7 +25,11 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage(PAGE_CONNEXION)
                         .loginProcessingUrl(PAGE_CONNEXION)
-                        .defaultSuccessUrl("/backoffice/comptes", true)
+                        // "/backoffice/comptes" est reserve a l'ADMIN (cf. CompteController) : la
+                        // redirection par defaut apres connexion doit pointer vers une page
+                        // accessible aux deux roles, sans quoi un AUTEUR tombe sur une erreur
+                        // 403 juste apres s'etre connecte.
+                        .defaultSuccessUrl("/backoffice/univers", true)
                         .failureUrl(PAGE_CONNEXION + "?erreur")
                         .permitAll())
                 .logout(logout -> logout

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <nav th:fragment="sidebar"
      class="w-full shrink-0 border-b border-slate-200 bg-white p-4 md:h-screen md:w-60 md:border-b-0 md:border-r md:p-6">
@@ -50,7 +51,7 @@
                 Messages
             </a>
         </li>
-        <li>
+        <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/backoffice/comptes}" class="nav-lien">
                 <span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>
                 Comptes
