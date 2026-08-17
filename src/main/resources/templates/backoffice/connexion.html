@@ -20,6 +20,9 @@
     <p th:if="${param.deconnecte}" class="mb-4 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
         Vous avez été déconnecté.
     </p>
+    <p th:if="${param.motDePasseReinitialise}" class="mb-4 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+        Mot de passe réinitialisé, vous pouvez vous connecter.
+    </p>
 
     <form th:action="@{/backoffice/connexion}" method="post" class="flex flex-col gap-5">
         <div>
@@ -37,6 +40,9 @@
             </div>
         </div>
         <button type="submit" class="btn btn-primary mt-1 w-full">Se connecter</button>
+        <a th:href="@{/backoffice/mot-de-passe-oublie}" class="text-center text-sm text-slate-500 hover:text-slate-700 hover:underline">
+            Mot de passe oublié ?
+        </a>
     </form>
 </div>
 </body>

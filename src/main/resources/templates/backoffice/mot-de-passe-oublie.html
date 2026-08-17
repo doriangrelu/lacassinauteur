@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Mot de passe oublié — Back-office Thierry Lacassin</title>
+    <link rel="stylesheet" th:href="@{/css/backoffice.css}"/>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+<div class="w-full max-w-sm card p-8">
+    <div class="mb-6 flex flex-col items-center gap-2 text-center">
+        <span th:replace="~{backoffice/fragments/icons :: lockClosed('h-8 w-8 text-indigo-600')}"></span>
+        <h1 class="text-xl font-semibold tracking-tight">Mot de passe oublié</h1>
+        <p class="text-sm text-slate-500">Reçois un lien de réinitialisation par email.</p>
+    </div>
+
+    <div th:if="${param.envoye}" class="flex flex-col gap-4 text-center">
+        <p class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-600">
+            Si un compte existe pour cette adresse, un email contenant un lien de réinitialisation (valable
+            15 minutes) vient d'être envoyé.
+        </p>
+        <a th:href="@{/backoffice/connexion}" class="link-action justify-center text-slate-600 hover:text-slate-900">
+            <span th:replace="~{backoffice/fragments/icons :: arrowUturnLeft('h-4 w-4')}"></span>
+            Retour à la connexion
+        </a>
+    </div>
+
+    <form th:unless="${param.envoye}" th:action="@{/backoffice/mot-de-passe-oublie}" th:object="${formulaire}"
+          method="post" class="flex flex-col gap-5">
+        <div>
+            <label class="champ-label" for="email">Email</label>
+            <div class="champ-avec-icone">
+                <span th:replace="~{backoffice/fragments/icons :: envelope('h-5 w-5')}"></span>
+                <input class="champ-texte" type="email" id="email" th:field="*{email}" required autofocus/>
+            </div>
+            <p th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="champ-erreur"></p>
+        </div>
+        <button type="submit" class="btn btn-primary mt-1 w-full">Envoyer le lien</button>
+        <a th:href="@{/backoffice/connexion}" class="link-action justify-center text-slate-600 hover:text-slate-900">
+            <span th:replace="~{backoffice/fragments/icons :: arrowUturnLeft('h-4 w-4')}"></span>
+            Retour à la connexion
+        </a>
+    </form>
+</div>
+</body>
+</html>

@@ -26,6 +26,10 @@ public class Utilisateur {
         this.role = nouveauRole;
     }
 
+    public void changerMotDePasse(MotDePasseHache nouveauMotDePasseHache) {
+        this.motDePasseHache = nouveauMotDePasseHache;
+    }
+
     public void desactiver() {
         this.actif = false;
     }

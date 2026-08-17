@@ -18,7 +18,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, LoginRateLimiter loginRateLimiter) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PAGE_CONNEXION).permitAll()
+                        .requestMatchers(PAGE_CONNEXION, "/backoffice/mot-de-passe-oublie", "/backoffice/reinitialiser-mot-de-passe")
+                        .permitAll()
                         .requestMatchers("/backoffice/**").hasAnyRole("ADMIN", "AUTEUR")
                         .anyRequest().permitAll())
                 .formLogin(form -> form

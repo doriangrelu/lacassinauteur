@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Réinitialiser le mot de passe — Back-office Thierry Lacassin</title>
+    <link rel="stylesheet" th:href="@{/css/backoffice.css}"/>
+</head>
+<body class="flex min-h-screen items-center justify-center bg-slate-50 px-4">
+<div class="w-full max-w-sm card p-8">
+    <div class="mb-6 flex flex-col items-center gap-2 text-center">
+        <span th:replace="~{backoffice/fragments/icons :: lockClosed('h-8 w-8 text-indigo-600')}"></span>
+        <h1 class="text-xl font-semibold tracking-tight">Nouveau mot de passe</h1>
+    </div>
+
+    <div th:if="${lienExpire}" class="flex flex-col gap-4 text-center">
+        <p class="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            Ce lien est invalide ou a expiré (valable 15 minutes).
+        </p>
+        <a th:href="@{/backoffice/mot-de-passe-oublie}" class="link-action justify-center text-slate-600 hover:text-slate-900">
+            <span th:replace="~{backoffice/fragments/icons :: arrowUturnLeft('h-4 w-4')}"></span>
+            Demander un nouveau lien
+        </a>
+    </div>
+
+    <form th:unless="${lienExpire}" th:action="@{/backoffice/reinitialiser-mot-de-passe}" th:object="${formulaire}"
+          method="post" class="flex flex-col gap-5">
+        <input type="hidden" th:field="*{jeton}"/>
+        <div>
+            <label class="champ-label" for="nouveauMotDePasse">Nouveau mot de passe</label>
+            <div class="champ-avec-icone">
+                <span th:replace="~{backoffice/fragments/icons :: lockClosed('h-5 w-5')}"></span>
+                <input class="champ-texte" type="password" id="nouveauMotDePasse" th:field="*{nouveauMotDePasse}" required autofocus/>
+            </div>
+            <p th:if="${#fields.hasErrors('nouveauMotDePasse')}" th:errors="*{nouveauMotDePasse}" class="champ-erreur"></p>
+            <p class="mt-1 text-xs text-slate-400">Au moins 10 caractères, avec une lettre, un chiffre et un caractère spécial.</p>
+        </div>
+        <div>
+            <label class="champ-label" for="confirmationMotDePasse">Confirmer le mot de passe</label>
+            <div class="champ-avec-icone">
+                <span th:replace="~{backoffice/fragments/icons :: lockClosed('h-5 w-5')}"></span>
+                <input class="champ-texte" type="password" id="confirmationMotDePasse" th:field="*{confirmationMotDePasse}" required/>
+            </div>
+            <p th:if="${#fields.hasErrors('confirmationMotDePasse')}" th:errors="*{confirmationMotDePasse}" class="champ-erreur"></p>
+        </div>
+        <button type="submit" class="btn btn-primary mt-1 w-full">Réinitialiser le mot de passe</button>
+    </form>
+</div>
+</body>
+</html>

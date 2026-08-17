@@ -2,7 +2,7 @@ package fr.lacassinauteur.site.identity.presentation.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 
 public class CreerUtilisateurForm {
 
@@ -11,7 +11,9 @@ public class CreerUtilisateurForm {
     private String email;
 
     @NotBlank
-    @Size(min = 8, message = "Le mot de passe doit contenir au moins 8 caractères")
+    @Pattern(
+            regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^A-Za-z0-9]).{10,}$",
+            message = "Le mot de passe doit contenir au moins 10 caractères, dont une lettre, un chiffre et un caractère spécial")
     private String motDePasse;
 
     @NotBlank

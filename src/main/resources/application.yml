@@ -35,6 +35,23 @@ app:
       # chaque confirmation/désinscription (0 = non configurée, synchronisation
       # ignorée). À renseigner une fois la liste créée dans Brevo.
       liste-id: ${BREVO_LISTE_ID:0}
+  identity:
+    # Base des liens absolus (réinitialisation de mot de passe) insérés dans les
+    # emails transactionnels — même valeur que app.newsletter.url-base, dupliquée
+    # pour ne pas coupler les deux domaines (cf. package-structure.md).
+    url-base: ${APP_URL_BASE:http://localhost:8080}
+    jwt:
+      # Cf. ADR-0018 : jamais commise, à générer et fournir en variable
+      # d'environnement en production (valeur par défaut utilisable en dev
+      # uniquement).
+      secret: ${JWT_RESET_SECRET:dev-uniquement-a-remplacer-en-prod-min-32-caracteres-svp}
+      duree-validite-minutes: 15
+    brevo:
+      # Même compte Brevo que app.newsletter.brevo (mêmes variables
+      # d'environnement, cf. BrevoIdentityProperties).
+      api-key: ${BREVO_API_KEY:}
+      expediteur-email: ${BREVO_EXPEDITEUR_EMAIL:newsletter@thierrylacassin-auteur.fr}
+      expediteur-nom: ${BREVO_EXPEDITEUR_NOM:Thierry Lacassin}
   contact:
     # Adresse de l'auteur qui reçoit les notifications du formulaire de contact.
     email-auteur: ${CONTACT_EMAIL_AUTEUR:thierry@thierrylacassin-auteur.fr}
