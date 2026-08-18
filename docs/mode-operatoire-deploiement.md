@@ -108,6 +108,18 @@ Logs d'un autre conteneur (remplace `app` par `db` ou `caddy`) :
 docker compose logs caddy --tail 50
 ```
 
+**Logs persistants sur disque** : en plus de la sortie console ci-dessus (qui
+se perd si le conteneur est recréé), l'application écrit aussi ses logs dans
+un fichier, conservé 7 jours et gardé au redémarrage du conteneur (volume
+Docker nommé `logs-data`) :
+
+```bash
+docker compose exec app tail -f /data/logs/application.log
+```
+
+Utile si tu veux consulter un incident survenu il y a quelques jours, ou
+récupérer le fichier complet plutôt qu'un extrait `--tail`.
+
 ## 7. Modifier un réglage (fichier `.env`)
 
 Les mots de passe, clés API, etc. sont dans le fichier `.env` (jamais dans le
