@@ -30,10 +30,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
-    # Pas de section "ports" ici, contrairement au docker-compose.yml de dev : la
-    # base ne doit jamais être exposée directement sur le réseau public en
-    # production, seul le service "app" (sur le réseau Compose interne) y accède —
-    # réduction réelle de surface d'attaque, cf. ADR-0016.
+    ports:
+      # Lié uniquement à la boucle locale du VPS ("127.0.0.1:", jamais
+      # "0.0.0.0:") : invisible depuis le réseau public, contrairement au port
+      # publié sur toutes les interfaces du docker-compose.yml de dev. Sert de
+      # point d'entrée à un tunnel SSH (cf. mode-operatoire-deploiement.md —
+      # accès à la base) pour un client desktop type DBeaver/pgAdmin, sans
+      # jamais exposer Postgres à Internet — cf. ADR-0021.
+      - "127.0.0.1:5432:5432"
+    deploy:
+      resources:
+        limits:
+          # VPS-1 2027 = 2 vCore / 4 Go RAM (cf. tech-stack.md) : plafonds par
+          # conteneur pour qu'aucun service ne puisse à lui seul épuiser les
+          # ressources de la machine, cf. ADR-0022.
+          cpus: "1.0"
+          memory: 768M
 
   app:
     build: .
@@ -41,6 +53,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.5"
+          memory: 1536M
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
@@ -76,6 +93,11 @@ services:
     restart: unless-stopped
     depends_on:
       - app
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
     ports:
       - "80:80"
       - "443:443"

@@ -155,7 +155,38 @@ d'agir) :
 scripts/restore.sh backups/sauvegarde-20260101-030000.tar.gz
 ```
 
-## 9. Revenir en arrière si un déploiement pose problème
+## 9. Accéder à la base de données avec un outil graphique
+
+Pas d'outil web (type pgAdmin) installé sur le VPS — ça consommerait des
+ressources en continu sur une machine déjà limitée pour un usage occasionnel
+(cf. [ADR-0021](architecture/decisions/0021-acces-bdd-tunnel-ssh.md)). À la
+place : un **tunnel SSH**, à ouvrir depuis ta machine à chaque fois que tu en
+as besoin.
+
+```bash
+ssh -L 5433:localhost:5432 ubuntu@152.228.237.190
+```
+
+*(`5433` côté gauche pour ne pas entrer en conflit avec un Postgres local que
+tu aurais déjà sur ton PC — le `5432` de droite est celui du VPS, ne pas le
+changer.)*
+
+Laisse ce terminal ouvert (c'est lui qui maintient le tunnel), puis dans ton
+client desktop préféré (**DBeaver**, gratuit, ou **pgAdmin** installé
+localement sur ton PC — pas besoin qu'il tourne sur le serveur) :
+
+| Champ | Valeur |
+|---|---|
+| Hôte | `localhost` |
+| Port | `5433` |
+| Base | valeur de `POSTGRES_DB` dans le `.env` du VPS |
+| Utilisateur | valeur de `POSTGRES_USER` dans le `.env` du VPS |
+| Mot de passe | valeur de `POSTGRES_PASSWORD` dans le `.env` du VPS |
+
+`Ctrl+C` dans le terminal SSH ferme le tunnel — plus aucun accès à la base
+n'est possible depuis ta machine tant qu'il n'est pas rouvert.
+
+## 10. Revenir en arrière si un déploiement pose problème
 
 Si après un `scripts/deploy.sh` le site ne fonctionne plus correctement :
 
@@ -174,7 +205,7 @@ occupe) plutôt que de continuer à bidouiller — je regarderai ce qui a cassé
 **Option B — restaurer une sauvegarde** (si le problème vient des données,
 pas du code) : voir §8 ci-dessus.
 
-## 10. Lexique rapide
+## 11. Lexique rapide
 
 | Commande | Ce que ça fait |
 |---|---|
@@ -187,6 +218,7 @@ pas du code) : voir §8 ci-dessus.
 | `git pull` | Récupère le dernier code depuis GitHub |
 | `git log --oneline -10` | Liste les 10 derniers commits |
 | `exit` | Se déconnecter du serveur |
+| `ssh -L 5433:localhost:5432 ubuntu@<ip>` | Ouvre un tunnel vers la base (§9), depuis ta machine, pas depuis le VPS |
 
 ## En cas de doute
 
