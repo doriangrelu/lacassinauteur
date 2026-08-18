@@ -33,7 +33,7 @@
                    class="group relative block shrink-0 overflow-hidden rounded shadow">
                     <img th:if="${livre.couvertureUrl}" th:src="@{${livre.couvertureUrl}}" th:alt="${livre.titre}" loading="lazy"
                          class="h-40 w-auto transition-transform duration-500 group-hover:scale-105"/>
-                    <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent px-2 py-1.5 text-xs text-white/80 underline underline-offset-2 transition-colors group-hover:text-white">Découvrir le livre</span>
+                    <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent px-2 py-1.5 text-xs text-white/80 underline underline-offset-2 backdrop-blur-sm transition-colors group-hover:text-white">Découvrir le livre</span>
                 </a>
             </div>
             <a th:href="@{'/collections/' + ${collection.slug}}" class="lien-souligne self-start">Découvrir la collection</a>
