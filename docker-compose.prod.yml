@@ -24,7 +24,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - ../volumes/db-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -81,8 +81,8 @@ services:
       RECAPTCHA_SITE_KEY: ${RECAPTCHA_SITE_KEY}
       RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
     volumes:
-      - images-data:/data/images
-      - logs-data:/data/logs
+      - ../volumes/images-data:/data/images
+      - ../volumes/logs-data:/data/logs
     expose:
       - "8080"
     # Pas de section "ports" publiée sur l'hôte : seul Caddy (ci-dessous) écoute en
@@ -103,21 +103,15 @@ services:
       - "443:443"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy-data:/data
-      - caddy-config:/config
+      - ../volumes/caddy-data:/data
+      - ../volumes/caddy-config:/config
     environment:
       CADDY_ACME_EMAIL: ${CADDY_ACME_EMAIL}
 
-volumes:
-  db-data:
-  images-data:
-  # Logs applicatifs (Logback, cf. src/main/resources/logback-spring.xml) : volume
-  # nommé pour que les fichiers survivent aux redéploiements ("docker compose up
-  # -d --build" recrée le conteneur "app" à chaque fois).
-  logs-data:
-  # Certificats Let's Encrypt (caddy-data) et état interne de Caddy (caddy-config) :
-  # volumes nommés pour survivre aux redéploiements, sans quoi chaque "up --build"
-  # redemanderait des certificats neufs (risque de heurter le rate limit Let's
-  # Encrypt).
-  caddy-data:
-  caddy-config:
+# Pas de section "volumes:" top-level : toutes les données persistantes sont des
+# bind mounts vers "../volumes/<nom>" (donc "~/volumes", au même niveau que ce
+# dépôt sur le VPS) plutôt que des volumes gérés par Docker — visibles et
+# inspectables directement sur le disque de l'hôte sans détour par
+# "docker volume inspect"/"/var/lib/docker/volumes/...". Cf. ADR-0023. Ces
+# dossiers survivent aux redéploiements exactement comme les anciens volumes
+# nommés ("up --build" ne recrée que les conteneurs, jamais les bind mounts).
