@@ -31,10 +31,16 @@
         </appender>
     </springProfile>
 
+    <!--
+        "FICHIER" n'existe pas en profil dev (springProfile ci-dessus l'exclut) :
+        Logback résout un appender-ref inconnu en un WARN de démarrage suivi d'un
+        no-op, jamais une erreur bloquante — c'est le mécanisme officiellement
+        supporté pour un appender conditionnel dans <root> (contrairement à un
+        <springProfile> imbriqué dans <root>, invalide et signalé comme tel par
+        Spring Boot lui-même : "elements cannot be nested within a root element").
+    -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <springProfile name="!dev">
-            <appender-ref ref="FICHIER"/>
-        </springProfile>
+        <appender-ref ref="FICHIER"/>
     </root>
 </configuration>
