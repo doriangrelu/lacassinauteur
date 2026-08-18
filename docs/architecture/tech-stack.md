@@ -80,8 +80,12 @@
   `app.stockage.images.prefixe-url`), distinct des visuels du seed initial
   (`/images/**`, packagés dans le jar).
 - Taille max 5 Mo par fichier, formats acceptés : jpg/jpeg/png/webp/gif.
-- **Docker Compose** : volume nommé (`images-data`) monté sur ce chemin dans le
-  service `app`, pour survivre aux redéploiements.
+- **Conversion WebP** systématique à l'upload, et à la volée (avec cache disque)
+  pour les visuels du seed servis via `/images/**` — cf.
+  [ADR-0024](decisions/0024-conversion-webp-images.md).
+- **Docker Compose** : bind mount (`~/volumes/images-data`, cf.
+  [ADR-0023](decisions/0023-bind-mounts-volumes-visibles.md)) monté sur ce chemin
+  dans le service `app`, pour survivre aux redéploiements.
 
 ## Sécurité
 

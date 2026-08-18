@@ -1,6 +1,7 @@
 package fr.lacassinauteur.site.shared.infrastructure.stockage;
 
 import fr.lacassinauteur.site.shared.domain.exception.FichierInvalideException;
+import fr.lacassinauteur.site.shared.domain.port.FakeConversionImageWebPPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -17,21 +18,60 @@ class StockageFichierLocalTest {
     @TempDir
     Path dossierTemporaire;
 
+    private final FakeConversionImageWebPPort conversion = new FakeConversionImageWebPPort();
+
     private StockageFichierLocal nouveauStockage() {
         StockageImagesProperties proprietes = new StockageImagesProperties();
         proprietes.setChemin(dossierTemporaire.toString());
         proprietes.setPrefixeUrl("/media");
-        return new StockageFichierLocal(proprietes);
+        return new StockageFichierLocal(proprietes, conversion);
     }
 
     @Test
-    void enregistre_le_fichier_sur_disque_et_retourne_une_url_publique() throws IOException {
+    void convertit_en_webp_et_enregistre_le_fichier_sur_disque() throws IOException {
+        StockageFichierLocal stockage = nouveauStockage();
+        byte[] contenu = "contenu-image".getBytes(StandardCharsets.UTF_8);
+
+        String url = stockage.enregistrer(contenu, "photo.png", "univers");
+
+        assertThat(url).startsWith("/media/univers/").endsWith(".webp");
+        Path fichierEcrit = dossierTemporaire.resolve("univers").resolve(url.substring("/media/univers/".length()));
+        assertThat(Files.readAllBytes(fichierEcrit)).isEqualTo("webp-simule".getBytes(StandardCharsets.UTF_8));
+    }
+
+    @Test
+    void conserve_le_format_dorigine_si_la_conversion_webp_echoue() throws IOException {
+        conversion.simulerEchec();
         StockageFichierLocal stockage = nouveauStockage();
         byte[] contenu = "contenu-image".getBytes(StandardCharsets.UTF_8);
 
         String url = stockage.enregistrer(contenu, "photo.png", "univers");
 
         assertThat(url).startsWith("/media/univers/").endsWith(".png");
+        Path fichierEcrit = dossierTemporaire.resolve("univers").resolve(url.substring("/media/univers/".length()));
+        assertThat(Files.readAllBytes(fichierEcrit)).isEqualTo(contenu);
+    }
+
+    @Test
+    void ne_tente_pas_de_reconvertir_un_fichier_deja_webp() throws IOException {
+        StockageFichierLocal stockage = nouveauStockage();
+        byte[] contenu = "deja-webp".getBytes(StandardCharsets.UTF_8);
+
+        String url = stockage.enregistrer(contenu, "photo.webp", "univers");
+
+        assertThat(url).endsWith(".webp");
+        Path fichierEcrit = dossierTemporaire.resolve("univers").resolve(url.substring("/media/univers/".length()));
+        assertThat(Files.readAllBytes(fichierEcrit)).isEqualTo(contenu);
+    }
+
+    @Test
+    void ne_convertit_pas_un_gif_pour_ne_pas_perdre_une_eventuelle_animation() throws IOException {
+        StockageFichierLocal stockage = nouveauStockage();
+        byte[] contenu = "gif-anime".getBytes(StandardCharsets.UTF_8);
+
+        String url = stockage.enregistrer(contenu, "photo.gif", "univers");
+
+        assertThat(url).endsWith(".gif");
         Path fichierEcrit = dossierTemporaire.resolve("univers").resolve(url.substring("/media/univers/".length()));
         assertThat(Files.readAllBytes(fichierEcrit)).isEqualTo(contenu);
     }

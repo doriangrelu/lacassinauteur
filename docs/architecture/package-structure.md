@@ -139,15 +139,25 @@ fr.lacassinauteur.site
 ├── shared
 │   ├── domain
 │   │   ├── port
-│   │   │   └── StockageFichierPort.java        (upload de fichiers, cf. ADR-0010)
+│   │   │   ├── StockageFichierPort.java        (upload de fichiers, cf. ADR-0010)
+│   │   │   ├── CaptchaPort.java                 (reCAPTCHA v3, cf. ADR-0019)
+│   │   │   └── ConversionImageWebPPort.java     (cf. ADR-0024)
 │   │   └── exception
-│   │       └── FichierInvalideException.java
+│   │       ├── FichierInvalideException.java
+│   │       └── ConversionImageEchoueeException.java
 │   ├── infrastructure
-│   │   └── stockage
-│   │       ├── StockageFichierLocal.java       (implémente StockageFichierPort)
-│   │       └── StockageImagesProperties.java   (@ConfigurationProperties)
+│   │   ├── stockage
+│   │   │   ├── StockageFichierLocal.java       (implémente StockageFichierPort)
+│   │   │   └── StockageImagesProperties.java   (@ConfigurationProperties)
+│   │   ├── captcha
+│   │   │   ├── RecaptchaV3Adapter.java / NoopCaptchaAdapter.java (@Profile)
+│   │   │   └── RecaptchaProperties.java
+│   │   └── image
+│   │       └── CwebpConversionAdapter.java     (implémente ConversionImageWebPPort, cf. ADR-0024)
 │   └── web
-│       └── GestionnaireErreursGlobal.java      (@ControllerAdvice commun)
+│       ├── GestionnaireErreursGlobal.java      (@ControllerAdvice commun)
+│       ├── ErreurController.java               (pages d'erreur 404/générique)
+│       └── ImageStatiqueController.java        (sert /images/** en WebP + cache, cf. ADR-0024)
 │
 ├── config
 │   ├── SecurityConfig.java

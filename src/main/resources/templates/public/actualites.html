@@ -27,7 +27,7 @@
                 <p th:if="${evenement.texte}" class="text-sm text-mist" th:text="${evenement.texte}">Texte</p>
                 <a th:if="${evenement.lienBilletterie}" th:href="${evenement.lienBilletterie}" target="_blank" rel="noopener" class="lien-souligne self-start">Billetterie / informations</a>
             </div>
-            <img th:if="${evenement.imageUrl}" th:src="@{${evenement.imageUrl}}" th:alt="${evenement.titre}" class="h-28 w-28 shrink-0 rounded object-cover"/>
+            <img th:if="${evenement.imageUrl}" th:src="@{${evenement.imageUrl}}" th:alt="${evenement.titre}" loading="lazy" class="h-28 w-28 shrink-0 rounded object-cover"/>
         </div>
         <p th:if="${#lists.isEmpty(evenementsAVenir)}" class="border-t border-black/5 py-8 text-center text-sm text-mist">
             Aucun événement à venir pour le moment.

@@ -21,6 +21,15 @@ RUN tailwindcss -i frontend/public.css -o src/main/resources/static/css/public.c
 RUN mvn -B package -DskipTests
 
 FROM eclipse-temurin:25-jre
+
+# "cwebp" (paquet Debian "webp") : conversion des images en WebP à l'upload et à la
+# volée pour les visuels du seed (cf. CwebpConversionAdapter, ADR-0024) — binaire de
+# référence plutôt qu'une dépendance Java native, même logique que le CLI Tailwind
+# standalone (ADR-0006).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends webp \
+    && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 COPY --from=build /app/target/site-*.jar app.jar
 EXPOSE 8080
