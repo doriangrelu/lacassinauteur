@@ -24,6 +24,10 @@ BASE_DE_DONNEES="${POSTGRES_DB:-site}"
 UTILISATEUR_DB="${POSTGRES_USER:-site}"
 
 mkdir -p "$DOSSIER_DESTINATION"
+# Contient des dumps complets de la base (mots de passe hashes, donnees
+# personnelles des abonnes/contacts) : jamais lisible par d'autres comptes
+# locaux que celui qui exploite le VPS.
+chmod 700 "$DOSSIER_DESTINATION"
 
 DOSSIER_TEMPORAIRE="$(mktemp -d)"
 trap 'rm -rf "$DOSSIER_TEMPORAIRE"' EXIT
@@ -37,6 +41,7 @@ docker compose run --rm --no-deps -T --entrypoint sh "$SERVICE_APP" \
 
 echo "==> Creation de l'archive..."
 tar -czf "$DOSSIER_DESTINATION/$NOM_ARCHIVE" -C "$DOSSIER_TEMPORAIRE" base.dump images.tar
+chmod 600 "$DOSSIER_DESTINATION/$NOM_ARCHIVE"
 
 TAILLE="$(du -h "$DOSSIER_DESTINATION/$NOM_ARCHIVE" | cut -f1)"
 echo "==> Sauvegarde terminee : $DOSSIER_DESTINATION/$NOM_ARCHIVE ($TAILLE)"
