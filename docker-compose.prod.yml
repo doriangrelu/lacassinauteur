@@ -47,6 +47,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
       STOCKAGE_IMAGES_CHEMIN: /data/images
+      LOG_PATH: /data/logs
       APP_URL_BASE: ${APP_URL_BASE}
       BREVO_API_KEY: ${BREVO_API_KEY}
       BREVO_EXPEDITEUR_EMAIL: ${BREVO_EXPEDITEUR_EMAIL}
@@ -64,6 +65,7 @@ services:
       RECAPTCHA_SECRET_KEY: ${RECAPTCHA_SECRET_KEY}
     volumes:
       - images-data:/data/images
+      - logs-data:/data/logs
     expose:
       - "8080"
     # Pas de section "ports" publiée sur l'hôte : seul Caddy (ci-dessous) écoute en
@@ -87,6 +89,10 @@ services:
 volumes:
   db-data:
   images-data:
+  # Logs applicatifs (Logback, cf. src/main/resources/logback-spring.xml) : volume
+  # nommé pour que les fichiers survivent aux redéploiements ("docker compose up
+  # -d --build" recrée le conteneur "app" à chaque fois).
+  logs-data:
   # Certificats Let's Encrypt (caddy-data) et état interne de Caddy (caddy-config) :
   # volumes nommés pour survivre aux redéploiements, sans quoi chaque "up --build"
   # redemanderait des certificats neufs (risque de heurter le rate limit Let's

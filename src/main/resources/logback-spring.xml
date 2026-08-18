@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Journalisation applicative (cf. demande explicite : Logback, rétention >= 1
+    jour, retrouvable ailleurs que dans la sortie console de Docker).
+
+    - CONSOLE : conserve le comportement par défaut de Spring Boot (utile pour
+      "docker compose logs -f").
+    - FICHIER (hors profil dev) : fichiers roulés quotidiennement dans
+      ${LOG_PATH:-logs}/application.log, conservés 7 jours (largement au-dessus
+      du minimum demandé), plafonnés à 200 Mo cumulés pour ne jamais remplir le
+      disque du VPS même en cas de pic de logs. Monté sur un volume Docker
+      nommé (cf. docker-compose.prod.yml) pour survivre aux redéploiements.
+-->
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <springProfile name="!dev">
+        <property name="LOG_PATH" value="${LOG_PATH:-logs}"/>
+
+        <appender name="FICHIER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/application.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+                <totalSizeCap>200MB</totalSizeCap>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <springProfile name="!dev">
+            <appender-ref ref="FICHIER"/>
+        </springProfile>
+    </root>
+</configuration>
