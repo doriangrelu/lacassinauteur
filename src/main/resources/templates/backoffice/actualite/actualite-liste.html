@@ -45,7 +45,7 @@
                             Modifier
                         </a>
                         <form th:action="@{'/backoffice/actualites/' + ${actualite.id} + '/supprimer'}" method="post"
-                              onsubmit="return confirm('Supprimer définitivement cette actualité ?');">
+                              data-confirmer="Supprimer définitivement cette actualité ?">
                             <button type="submit" class="link-action text-red-600 hover:text-red-700">
                                 <span th:replace="~{backoffice/fragments/icons :: trash('h-4 w-4')}"></span>
                                 Supprimer

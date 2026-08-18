@@ -23,3 +23,13 @@ document.addEventListener('click', (evenement) => {
         }
     }
 });
+
+// Confirmation avant soumission (ex. suppression) : attribut plutôt qu'un
+// "onsubmit" inline, incompatible avec une Content-Security-Policy stricte
+// (cf. ADR sur la CSP).
+document.addEventListener('submit', (evenement) => {
+    const message = evenement.target.dataset?.confirmer;
+    if (message && !confirm(message)) {
+        evenement.preventDefault();
+    }
+});

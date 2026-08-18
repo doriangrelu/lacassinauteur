@@ -26,9 +26,10 @@
 - **Thymeleaf** + **Thymeleaf Layout Dialect** pour le rendu serveur de toutes les
   pages, avec un layout et des fragments dédiés par espace (site public / back-office)
   — voir [architecture.md §12](architecture.md#12-conventions-front-end).
-- **htmx** pour l'interactivité ciblée (formulaires sans rechargement complet,
-  actions du back-office comme réordonner/publier/modérer sans page dédiée), sans
-  sortir du monolithe ni introduire de build JS séparé.
+- **JS vanilla minimal** pour l'interactivité ciblée du back-office (modales,
+  réordonnancement par glisser-déposer) — htmx, envisagé initialement
+  (ADR-0001), n'a jamais été utilisé en pratique et a été retiré
+  ([ADR-0025](decisions/0025-abandon-htmx.md)).
 - **Tailwind CSS v4** (CLI standalone, pas de npm — cf.
   [ADR-0006](decisions/0006-tailwind-cli-standalone.md)), deux points d'entrée séparés
   (`frontend/public.css`, `frontend/backoffice.css`) compilés vers
@@ -56,10 +57,9 @@
   (`--font-sans` dans `frontend/backoffice.css`), volontairement distinct de
   l'identité éditoriale du site public.
 - Pas de framework JS ni de bundler (React/Vue/webpack/vite), et **aucune dépendance
-  JS externe** dans le back-office : htmx (vendorisé en local) + JS vanilla minimal
-  suffisent au périmètre v1, cohérent avec le choix « petit monolithe ». Le CLI
-  Tailwind standalone n'introduit aucune dépendance Node/npm dans le projet (cf.
-  ADR-0006).
+  JS externe** dans le back-office : du JS vanilla minimal suffit au périmètre v1,
+  cohérent avec le choix « petit monolithe » (cf. ADR-0025). Le CLI Tailwind
+  standalone n'introduit aucune dépendance Node/npm dans le projet (cf. ADR-0006).
 
 ## Base de données
 

@@ -210,7 +210,6 @@ src/main/resources
 │   │   ├── public.css                  (généré par Tailwind, cf. ADR-0006)
 │   │   └── backoffice.css              (généré par Tailwind, cf. ADR-0006)
 │   ├── js                              (JS vanilla minimal, si besoin)
-│   ├── vendor                          (librairies figées en local : htmx.min.js)
 │   └── images
 ├── db/migration          (scripts Flyway, voir tech-stack.md)
 │   └── V1__init.sql, V2__catalogue_init.sql, ...
