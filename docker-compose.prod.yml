@@ -86,7 +86,11 @@ services:
       # donnees a sauvegarder ici (tout l'etat persistant vit dans Postgres).
       - ./keycloak-themes:/opt/keycloak/themes:ro
     healthcheck:
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3 && grep -q '\"status\": \"UP\"' <&3"]
+      # Pas de curl/wget dans l'image officielle (base RHEL/UBI minimale) : on
+      # utilise /dev/tcp de bash a la place, sur le port 9000 (l'interface de
+      # management, ou vivent /health/ready et consorts en Keycloak 26 -- pas
+      # le port 8080 principal).
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3 && grep -q '\"status\": \"UP\"' <&3"]
       interval: 15s
       timeout: 5s
       retries: 10
