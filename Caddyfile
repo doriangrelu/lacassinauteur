@@ -35,3 +35,19 @@ leblogdethierry.fr {
 www.leblogdethierry.fr {
 	redir https://thierrylacassin-auteur.fr{uri} permanent
 }
+
+# Keycloak (IAM, cf. ADR-0027) : domaine distinct, sans lien visible avec le site
+# Thierry Lacassin. Pas de X-Frame-Options/CSP forces ici : Keycloak gere deja ses
+# propres en-tetes anti-clickjacking par royaume (Realm Settings > Security
+# Defenses) et en a besoin pour ses mecanismes OIDC (iframe de verification de
+# session) — les forcer ici risquerait d'entrer en conflit, surtout une fois un
+# client cross-origin branche dessus (backoffice du site, prevu plus tard).
+iabilis.fr {
+	encode gzip zstd
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+	}
+	reverse_proxy keycloak:8080
+}

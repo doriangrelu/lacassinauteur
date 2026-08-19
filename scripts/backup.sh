@@ -22,6 +22,11 @@ SERVICE_DB="db"
 SERVICE_APP="app"
 BASE_DE_DONNEES="${POSTGRES_DB:-site}"
 UTILISATEUR_DB="${POSTGRES_USER:-site}"
+# Base Keycloak (cf. ADR-0027), meme instance Postgres que "site" mais dump a
+# part : optionnelle, un environnement sans Keycloak (KEYCLOAK_DB non definie)
+# garde le comportement d'avant sans y toucher.
+BASE_KEYCLOAK="${KEYCLOAK_DB:-}"
+UTILISATEUR_KEYCLOAK="${KEYCLOAK_DB_USER:-}"
 
 mkdir -p "$DOSSIER_DESTINATION"
 # Contient des dumps complets de la base (mots de passe hashes, donnees
@@ -35,12 +40,19 @@ trap 'rm -rf "$DOSSIER_TEMPORAIRE"' EXIT
 echo "==> Sauvegarde de la base de donnees ($BASE_DE_DONNEES)..."
 docker compose exec -T "$SERVICE_DB" pg_dump -U "$UTILISATEUR_DB" -F custom "$BASE_DE_DONNEES" > "$DOSSIER_TEMPORAIRE/base.dump"
 
+FICHIERS_ARCHIVE="base.dump images.tar"
+if [ -n "$BASE_KEYCLOAK" ]; then
+    echo "==> Sauvegarde de la base Keycloak ($BASE_KEYCLOAK)..."
+    docker compose exec -T "$SERVICE_DB" pg_dump -U "$UTILISATEUR_KEYCLOAK" -F custom "$BASE_KEYCLOAK" > "$DOSSIER_TEMPORAIRE/keycloak.dump"
+    FICHIERS_ARCHIVE="$FICHIERS_ARCHIVE keycloak.dump"
+fi
+
 echo "==> Copie des images (volume Docker du service \"$SERVICE_APP\")..."
 docker compose run --rm --no-deps -T --entrypoint sh "$SERVICE_APP" \
     -c "tar -cf - -C '$CHEMIN_IMAGES_CONTENEUR' ." > "$DOSSIER_TEMPORAIRE/images.tar"
 
 echo "==> Creation de l'archive..."
-tar -czf "$DOSSIER_DESTINATION/$NOM_ARCHIVE" -C "$DOSSIER_TEMPORAIRE" base.dump images.tar
+tar -czf "$DOSSIER_DESTINATION/$NOM_ARCHIVE" -C "$DOSSIER_TEMPORAIRE" $FICHIERS_ARCHIVE
 chmod 600 "$DOSSIER_DESTINATION/$NOM_ARCHIVE"
 
 TAILLE="$(du -h "$DOSSIER_DESTINATION/$NOM_ARCHIVE" | cut -f1)"

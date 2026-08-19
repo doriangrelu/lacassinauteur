@@ -47,6 +47,52 @@ services:
           cpus: "1.0"
           memory: 768M
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7
+    restart: unless-stopped
+    command: start
+    depends_on:
+      db:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          # Budget serre (VPS 2 vCore/4 Go, cf. ADR-0022) : plafond volontairement
+          # conservateur pour un IAM a faible trafic, a ajuster via "docker stats"
+          # si necessaire, cf. ADR-0027.
+          cpus: "0.5"
+          memory: 512M
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/${KEYCLOAK_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      # Caddy termine le HTTPS (cf. bloc "iabilis.fr" du Caddyfile) : Keycloak sert
+      # du HTTP en clair sur le reseau Compose interne, comme "app".
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: https://iabilis.fr
+      # Fait confiance aux en-tetes X-Forwarded-* envoyes par Caddy (nom d'option
+      # Keycloak 26 courant, remplace l'ancien "KC_PROXY=edge"), cf. ADR-0027.
+      KC_PROXY_HEADERS: xforwarded
+      KC_HEALTH_ENABLED: "true"
+      # N'a d'effet qu'au tout premier demarrage (compte deja cree ensuite,
+      # ignore aux redemarrages suivants).
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
+    volumes:
+      # Theme personnalise versionne (cf. ADR-0027) : lecture seule, jamais de
+      # donnees a sauvegarder ici (tout l'etat persistant vit dans Postgres).
+      - ./keycloak-themes:/opt/keycloak/themes:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 && echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3 && grep -q '\"status\": \"UP\"' <&3"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+    expose:
+      - "8080"
+    # Pas de "ports" publie : seul Caddy ecoute en 80/443, joignable uniquement
+    # via le reseau Compose interne ("keycloak:8080"), meme pattern que "app".
+
   app:
     build: .
     restart: unless-stopped
@@ -93,6 +139,7 @@ services:
     restart: unless-stopped
     depends_on:
       - app
+      - keycloak
     deploy:
       resources:
         limits:

@@ -9,13 +9,14 @@
 
 ## 1. Rappel de ce qui tourne sur le serveur
 
-Un seul VPS (OVHcloud), trois conteneurs Docker gérés par **Docker Compose** :
+Un seul VPS (OVHcloud), quatre conteneurs Docker gérés par **Docker Compose** :
 
 | Conteneur | Rôle |
 |---|---|
 | `app` | Le site (Spring Boot), reconstruit à chaque déploiement |
-| `db` | La base PostgreSQL (les données) |
+| `db` | La base PostgreSQL (les données — partagée avec `keycloak`, bases séparées) |
 | `caddy` | Le reverse proxy qui gère le HTTPS automatique |
+| `keycloak` | L'IAM (comptes/connexion), exposé sur `iabilis.fr`, cf. [ADR-0027](architecture/decisions/0027-keycloak-iam.md) |
 
 Tout se pilote depuis le dossier `~/mybook` **sur le serveur** (pas sur ta
 machine), via `docker compose` (sans tiret entre "docker" et "compose").
@@ -205,7 +206,36 @@ occupe) plutôt que de continuer à bidouiller — je regarderai ce qui a cassé
 **Option B — restaurer une sauvegarde** (si le problème vient des données,
 pas du code) : voir §8 ci-dessus.
 
-## 11. Lexique rapide
+## 11. Première configuration de Keycloak (une seule fois)
+
+Ces trois étapes ne se font qu'**une seule fois**, après le tout premier
+déploiement qui ajoute le service `keycloak` (cf.
+[ADR-0027](architecture/decisions/0027-keycloak-iam.md)). Pas besoin d'y
+revenir aux déploiements suivants.
+
+**a. Créer la base et le rôle Postgres dédiés** (avant le premier démarrage de
+`keycloak`, sinon il échouera à se connecter) :
+
+```bash
+docker compose exec db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c \
+  "CREATE ROLE keycloak WITH LOGIN PASSWORD 'la-valeur-de-KEYCLOAK_DB_PASSWORD-dans-.env';"
+docker compose exec db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c \
+  "CREATE DATABASE keycloak OWNER keycloak;"
+```
+
+**b. Sélectionner le thème de connexion personnalisé** : une fois `keycloak`
+démarré, se connecter à `https://iabilis.fr/admin/` avec le compte
+`KC_BOOTSTRAP_ADMIN_USERNAME`/`KC_BOOTSTRAP_ADMIN_PASSWORD` du `.env`, puis
+dans le royaume concerné : **Realm Settings → Themes → Login theme →
+`lacassin-boat`**, sauvegarder.
+
+**c. Configurer l'envoi d'email** (recommandation : réutiliser le relais SMTP
+Brevo déjà utilisé pour la newsletter, cf. ADR-0027) : **Realm Settings →
+Email**, renseigner `smtp-relay.brevo.com` / port `587`, avec une **clé SMTP**
+Brevo (différente de `BREVO_API_KEY` — à générer dans le compte Brevo,
+Paramètres → SMTP & API).
+
+## 12. Lexique rapide
 
 | Commande | Ce que ça fait |
 |---|---|

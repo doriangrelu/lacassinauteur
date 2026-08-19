@@ -1,0 +1,23 @@
+/* Theme "lacassin-boat" : masque toute reference visible a Keycloak et pose le
+ * logo bateau a la place (cf. ADR-0027 -- l'objectif est qu'on ne devine pas
+ * que Keycloak est utilise derriere ce domaine).
+ *
+ * Selecteurs verifies contre keycloak.v2 au moment d'ecrire ce fichier -- a
+ * reconfirmer/ajuster une fois Keycloak reellement demarre et la page de
+ * connexion inspectee (cf. ADR-0027, section verification).
+ */
+
+.kc-logo-text {
+    background-image: url("../img/logo.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 64px;
+    height: 64px;
+}
+
+/* Lien "powered by Keycloak" en pied de page : ciblage par domaine plutot que
+ * par classe, plus robuste aux evolutions du gabarit herite. */
+a[href*="keycloak.org"] {
+    display: none !important;
+}

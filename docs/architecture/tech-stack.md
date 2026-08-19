@@ -126,6 +126,9 @@
     minimale — alternative : Nginx + Certbot).
   - Nom de domaine `thierrylacassin-auteur.fr` pointé vers l'IP du VPS.
   - Sauvegardes régulières de la base (dump PostgreSQL planifié, cf. roadmap).
+  - **Keycloak** (IAM, cf. [ADR-0027](decisions/0027-keycloak-iam.md)) : service
+    supplémentaire sur la même instance Postgres (base dédiée), exposé via Caddy
+    sur un second domaine (`iabilis.fr`), thème de connexion personnalisé.
 - Pas de Kubernetes, pas de multi-nœud : hors de proportion avec le besoin (« petit
   monolithe », faible trafic attendu).
 - CI/CD v1 minimal envisageable : build + tests sur push, déploiement manuel ou via un
