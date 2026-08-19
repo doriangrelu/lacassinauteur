@@ -115,13 +115,13 @@
       compose et envoie ses newsletters directement depuis l'interface Brevo,
       **pas d'éditeur de campagnes maison** (décision explicite de l'utilisateur,
       cf. [ADR-0017](architecture/decisions/0017-synchronisation-brevo-campagnes.md))
-- [ ] **Compte Brevo réel + clé API + liste de contacts** (`BREVO_API_KEY`,
-      `BREVO_LISTE_ID`) — `BrevoEmailAdapter` et `BrevoContactSyncAdapter` sont
-      implémentés d'après la documentation publique de l'API mais **non vérifiés
-      contre l'API réelle**, aucun compte n'étant disponible au moment de
-      l'implémentation. À tester manuellement dès que le compte/la clé/la liste
-      sont disponibles, cf. [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)
-      et [ADR-0017](architecture/decisions/0017-synchronisation-brevo-campagnes.md)
+- [x] **Compte Brevo réel + clé API + liste de contacts** (`BREVO_API_KEY`,
+      `BREVO_LISTE_ID`) — renseignés en production (vérifié dans le `.env` du VPS
+      le 2026-08-19). `BREVO_LISTE_ID` manquait initialement et a été corrigé.
+      Reste à faire une **inscription réelle de bout en bout** (inscription →
+      email de confirmation reçu → clic → apparition dans la liste Brevo) pour
+      valider la chaîne complète : elle n'a jamais été exercée avec un vrai
+      destinataire.
 
 ## Phase 5 — Domaine `contact`
 
@@ -136,10 +136,15 @@
 - [x] Page publique Contact (`/contact`)
 - [x] Back-office : liste des messages (`/backoffice/messages`), détail (marque lu),
       marquage traité
-- [ ] **Identifiants SMTP réels** (`CONTACT_SMTP_HOST`/`CONTACT_SMTP_USERNAME`/
-      `CONTACT_SMTP_PASSWORD`, `CONTACT_EMAIL_AUTEUR`) — à fournir au déploiement,
-      choix Gmail vs SMTP transactionnel dédié laissé ouvert (le port est
-      générique, aucun code à changer selon le choix)
+- [ ] ⚠️ **Identifiants SMTP réels** (`CONTACT_SMTP_HOST`/`CONTACT_SMTP_USERNAME`/
+      `CONTACT_SMTP_PASSWORD`) — **toujours vides en production** (vérifié le
+      2026-08-19). Conséquence concrète : un visiteur qui envoie un message via
+      `/contact` le voit bien enregistré en base et consultable en back-office,
+      mais **Thierry ne reçoit aucune notification par email** — l'envoi échoue
+      silencieusement. Recommandation : réutiliser le relais SMTP Brevo
+      (`smtp-relay.brevo.com:587`), la même clé SMTP que celle créée pour
+      Keycloak peut servir (cf. mode-operatoire-deploiement.md §12), ce qui évite
+      un troisième fournisseur.
 
 ## Phase 6 — Intégration graphique
 
@@ -161,28 +166,35 @@
 
 ## Phase 7 — Déploiement OVHcloud
 
-- [ ] Provisionnement VPS OVHcloud — décidé (2026-08-14) : gamme **VPS-1 2027**
-      (2 vCore, 4 Go RAM, 40 Go NVMe, trafic illimité, sauvegarde quotidienne et
-      anti-DDoS inclus, ~4,57 € TTC/mois), image Ubuntu 24.04 LTS. Créer le
-      serveur avec la clé publique SSH dédiée `claude-deploy-mybook` (générée
-      localement, jamais commitée) ajoutée dès la création, pour permettre les
-      déploiements pilotés directement en SSH.
-- [ ] Achat + configuration DNS de `thierrylacassin-auteur.fr` — décidé : OVHcloud
-      (~4,99 € la 1ère année, ~7,79 €/an au renouvellement), même compte que le
-      VPS, registrar français avec gestion DNS incluse.
+- [x] Provisionnement VPS OVHcloud — **fait**, VPS-1 2027 (2 vCore / 4 Go RAM /
+      40 Go NVMe) sous Ubuntu, accessible en SSH par clé dédiée. Pare-feu `ufw`
+      activé (22/80/443 uniquement, cf. audit de sécurité).
+- [x] Achat + configuration DNS de `thierrylacassin-auteur.fr` — **fait**, plus
+      `leblogdethierry.fr` (redirection 301) et `iabilis.fr` (Keycloak, cf.
+      [ADR-0027](architecture/decisions/0027-keycloak-iam.md)).
 - [x] Docker Compose prod (app + PostgreSQL + reverse proxy Caddy/HTTPS) —
       `docker-compose.prod.yml` + `Caddyfile` + `.env.example` + `scripts/deploy.sh`,
-      cf. [ADR-0016](architecture/decisions/0016-deploiement-caddy-prod.md). Config
-      prête et validée (`docker compose config`, `caddy validate`) mais **jamais
-      exécutée contre un vrai serveur** — reste bloquée sur le provisionnement VPS et
-      le DNS ci-dessous.
+      cf. [ADR-0016](architecture/decisions/0016-deploiement-caddy-prod.md).
+      **En production et exécuté régulièrement.** Un quatrième service
+      (`keycloak`) s'y est ajouté depuis, cf.
+      [ADR-0027](architecture/decisions/0027-keycloak-iam.md).
 - [x] Sauvegarde/restauration : `scripts/backup.sh` (`pg_dump` + archive du volume
       Docker `images-data`, via un conteneur éphémère `docker compose run`) et
       `scripts/restore.sh` (restauration gardée par une confirmation explicite,
       volontairement absente du back-office) — cf.
-      [ADR-0012](architecture/decisions/0012-sauvegarde-restauration.md). Reste à
-      planifier leur exécution régulière via cron sur le VPS.
-- [ ] Mise en ligne, vérification SEO de base (sitemap, meta descriptions, balises OG)
+      [ADR-0012](architecture/decisions/0012-sauvegarde-restauration.md).
+      **Planifié en cron** (`0 3 * * *`, journalisé dans `~/mybook-backup.log`) —
+      24 archives présentes au 2026-08-19. Les scripts couvrent aussi la base
+      Keycloak depuis ADR-0027.
+- [x] Mise en ligne — **faite**, le site est en production sous HTTPS.
+- [x] SEO : meta descriptions, balises Open Graph, `robots.txt`, slugs — faits
+      (cf. Phase 2). Balise de vérification Google Search Console posée dans le
+      layout public le 2026-08-19.
+- [ ] ⚠️ **`sitemap.xml` absent** (vérifié : HTTP 404 en production). `robots.txt`
+      répond bien mais ne référence donc aucun sitemap. À générer dynamiquement
+      depuis le catalogue (univers/collections/livres publiés + pages fixes) —
+      d'autant plus utile maintenant que l'indexation Google vient d'être
+      déclenchée.
 
 ## Phase 8 — Recette avec l'auteur
 
@@ -204,6 +216,42 @@
 - [ ] Recette fonctionnelle complète (parcours visiteur + parcours auteur)
 - [ ] Ajustements retours
 
+## Phase 9 — Keycloak (IAM) — cf. [ADR-0027](architecture/decisions/0027-keycloak-iam.md)
+
+- [x] Service `keycloak` 26.7 dans `docker-compose.prod.yml` (même instance
+      Postgres, base/rôle dédiés), exposé par Caddy sur `iabilis.fr` avec
+      en-têtes de sécurité, en production et `healthy`.
+- [x] Thème de connexion `lacassin-boat` (logo bateau SVG, masque toute mention
+      de Keycloak) versionné et monté dans le conteneur.
+- [x] `backup.sh`/`restore.sh` étendus à la base `keycloak`.
+- [ ] **Sélectionner le thème** dans la console (Realm Settings → Themes → Login
+      theme) — action manuelle, non automatisable sans import de royaume.
+- [ ] **Vérifier le rendu du thème** dans un navigateur et ajuster les sélecteurs
+      CSS si besoin : ils ont été écrits d'après le thème `keycloak.v2` sans
+      avoir pu inspecter la page réelle (limite connue de l'ADR-0027).
+- [ ] **Configurer l'envoi d'email** (authentification DNS du domaine chez Brevo
+      + clé SMTP + réglages Keycloak) — cf. mode-operatoire-deploiement.md §12.
+- [ ] Changer le mot de passe du compte admin bootstrap et lui renseigner une
+      adresse email (prérequis du bouton « Test connection »).
+- [ ] Panneau web de supervision du serveur, authentifié via Keycloak — **à
+      cadrer**, rien n'est encore décidé (périmètre, métriques, techno).
+- [ ] Rattacher le back-office du site à Keycloak (SSO OIDC) — remplacerait
+      l'authentification maison du domaine `identity`. Report explicite de
+      l'utilisateur, à cadrer.
+
+## Sécurité — cf. dossier d'audit du 2026-08-18
+
+- [x] C-2 : pare-feu `ufw` activé (22/80/443 uniquement).
+- [x] C-3 : Content-Security-Policy stricte (a incidemment révélé et fait
+      supprimer htmx, dépendance morte — cf.
+      [ADR-0025](architecture/decisions/0025-abandon-htmx.md)).
+- [x] C-4 : permissions des sauvegardes restreintes.
+- [ ] **C-1 : authentification SSH par mot de passe encore active** — mise de
+      côté explicitement par l'utilisateur, à reprendre plus tard (passage en
+      clé uniquement + `PasswordAuthentication no`).
+- [ ] C-5 à C-7 : durcissements de routine (COOP, `preload` HSTS…), faible
+      priorité.
+
 ## v2 (backlog, non détaillé)
 
 - [ ] Personnalisation avancée de la mise en page/du thème par l'auteur (cf. brief
@@ -214,10 +262,16 @@
 
 ## Décisions en attente
 
-- Fournisseur d'email transactionnel pour le formulaire de contact (Gmail existant vs
-  SMTP transactionnel dédié) — à trancher en Phase 5.
-- Prestataire ESP newsletter : implémenté avec Brevo (cf.
-  [ADR-0013](architecture/decisions/0013-newsletter-double-opt-in-brevo.md)), mais
-  non vérifié contre l'API réelle faute de compte — reste à créer le compte Brevo et
-  fournir `BREVO_API_KEY`, ou basculer vers Mailjet si Brevo ne convient finalement
-  pas (seul `infrastructure.email` serait à changer, le port restant identique).
+- **Périmètre du panneau de supervision** (Phase 9) : que veut-on y voir
+  exactement (état des conteneurs, espace disque, dernières sauvegardes,
+  santé applicative…) et jusqu'où va-t-on (lecture seule vs actions) ? Rien
+  n'est tranché.
+- **Bascule du back-office vers Keycloak** : remplacer l'authentification maison
+  (`identity`) ou faire cohabiter les deux ? Impacte directement le sort du
+  domaine `identity` (comptes, mot de passe oublié, anti brute-force Bucket4j),
+  aujourd'hui pleinement fonctionnel — la bascule est donc un vrai arbitrage,
+  pas une évidence.
+
+*(Décisions closes : fournisseur email transactionnel → Brevo pour tout, cf.
+[ADR-0027](architecture/decisions/0027-keycloak-iam.md) ; ESP newsletter →
+Brevo, clé et liste renseignées en production.)*
