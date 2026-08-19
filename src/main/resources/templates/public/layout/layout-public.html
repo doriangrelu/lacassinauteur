@@ -4,6 +4,13 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- Preuve de propriete du domaine pour Google Search Console (declenche
+         l'indexation et donne acces aux rapports de referencement). Posee dans le
+         layout, donc presente sur toutes les pages publiques : Google ne verifie
+         que la racine, mais la garder partout evite qu'un futur remaniement de
+         l'accueil la fasse disparaitre silencieusement. Ne pas supprimer sans
+         verifier d'abord dans la Search Console. -->
+    <meta name="google-site-verification" content="9kHhQFM6_JNyguAEe1Dkm9SusuRmZZkU7egE7lsf2Y0"/>
     <title layout:title-pattern="$CONTENT_TITLE — Thierry Lacassin">Thierry Lacassin</title>
     <link rel="stylesheet" th:href="@{/css/public.css}"/>
 </head>
