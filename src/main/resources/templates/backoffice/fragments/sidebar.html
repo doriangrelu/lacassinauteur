@@ -73,6 +73,12 @@
                 Messages
             </a>
         </li>
+        <li>
+            <a th:href="@{/backoffice/informations-legales}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: lockClosed('h-5 w-5')}"></span>
+                Informations légales
+            </a>
+        </li>
         <li sec:authorize="hasRole('ADMIN')">
             <a th:href="@{/backoffice/comptes}" class="nav-lien">
                 <span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>

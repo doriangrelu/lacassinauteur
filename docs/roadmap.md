@@ -256,6 +256,56 @@ Deux besoins du brief jamais livrés, retrouvés en confrontant le brief au code
       c'est l'auteur qui diffuse le QR code.
 - [ ] Recette utilisateur en local, puis déploiement.
 
+## Phase 11 — Conformité légale et référencement
+
+### US-4 — Informations légales éditables
+
+> **En tant que** Thierry, **je veux** modifier les informations qui figurent dans
+> les pages légales (mon identité, mon adresse de contact, l'hébergeur),
+> **afin de** les tenir à jour sans intervention technique.
+
+- Le **texte** des pages légales est figé (dans les gabarits) : seules les
+  **variables** sont éditables — éditeur, statut, adresse, email de contact,
+  directeur de publication, hébergeur, durée de conservation des données.
+- Écran `/backoffice/informations-legales`, enregistrement unique (ni création
+  ni suppression), même patron que la page auteur.
+
+### US-5 — Pages légales publiques
+
+> **En tant que** visiteur, **je veux** savoir qui édite le site et ce qu'il fait
+> de mes données, **afin de** pouvoir exercer mes droits.
+
+- `/mentions-legales` — obligation LCEN : identité de l'éditeur, directeur de
+  publication, hébergeur, contact.
+- `/confidentialite` — obligation RGPD : données collectées (newsletter, contact,
+  avis lecteurs), finalités, base légale, durées de conservation, destinataires
+  (Brevo), droits et modalités d'exercice.
+- Liens dans le pied de page, pages indexables.
+
+### US-6 — Recueil du consentement RGPD
+
+> **En tant que** visiteur, **je veux** consentir explicitement avant de laisser
+> mes données, **afin de** garder la main sur leur usage.
+
+- Case à cocher **obligatoire et non pré-cochée** sur les formulaires newsletter
+  et contact, avec lien vers `/confidentialite`.
+- Pas de colonne supplémentaire en base : le formulaire ne peut pas aboutir sans
+  la case, donc les dates déjà enregistrées (`date_inscription`,
+  `date_reception`) datent de fait le consentement — une colonne toujours vraie
+  n'apporterait aucune preuve de plus.
+
+### US-7 — `sitemap.xml`
+
+> **En tant que** moteur de recherche, **je veux** un sitemap, **afin d'**indexer
+> le site complètement et rapidement.
+
+- `/sitemap.xml` généré depuis le catalogue (univers, collections, livres
+  publiés) + pages fixes (accueil, auteur, actualités, newsletter, contact,
+  pages légales).
+- **Exclut** les fiches professionnelles `/livres/{slug}/pro` (`noindex`, cf.
+  ADR-0028), le back-office et les pages d'erreur.
+- Référencé depuis `robots.txt`.
+
 ## Sécurité — cf. dossier d'audit du 2026-08-18
 
 - [x] C-2 : pare-feu `ufw` activé (22/80/443 uniquement).

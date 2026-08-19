@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Informations légales</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h1 class="text-lg font-semibold tracking-tight text-slate-900">Informations légales</h1>
+        <div class="flex flex-wrap gap-4">
+            <a th:href="@{/mentions-legales}" target="_blank" rel="noopener" class="link-action text-slate-600 hover:text-slate-900">
+                <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-4 w-4')}"></span>
+                Mentions légales
+            </a>
+            <a th:href="@{/confidentialite}" target="_blank" rel="noopener" class="link-action text-slate-600 hover:text-slate-900">
+                <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-4 w-4')}"></span>
+                Confidentialité
+            </a>
+        </div>
+    </div>
+
+    <p th:if="${param.enregistre}" class="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+        Modifications enregistrées.
+    </p>
+
+    <!-- Les mentions légales sont une obligation (LCEN) : tant qu'elles sont
+         incomplètes, les pages publiques affichent « à compléter ». On le signale
+         ici plutôt que de laisser l'auteur le découvrir sur le site en ligne. -->
+    <div th:unless="${informations.completes}" class="flex items-start gap-3 rounded-lg bg-amber-50 p-4">
+        <span th:replace="~{backoffice/fragments/icons :: exclamationTriangle('h-5 w-5 shrink-0 text-amber-600')}"></span>
+        <div class="flex flex-col gap-1">
+            <p class="text-sm font-medium text-amber-900">Informations incomplètes</p>
+            <p class="text-xs text-amber-800">
+                Le nom de l'éditeur, son adresse, son email, le directeur de publication et l'hébergeur sont
+                obligatoires. Tant qu'ils manquent, la mention « à compléter » s'affiche publiquement sur les
+                pages légales.
+            </p>
+        </div>
+    </div>
+
+    <div class="card max-w-2xl p-6">
+        <p class="mb-5 text-sm text-slate-500">
+            Ces informations alimentent les pages « Mentions légales » et « Confidentialité ». Le texte de ces
+            pages est fixe : seules les valeurs ci-dessous changent.
+        </p>
+
+        <form th:action="@{/backoffice/informations-legales}" th:object="${formulaire}" method="post"
+              class="flex flex-col gap-6">
+            <fieldset class="flex flex-col gap-4">
+                <legend class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Éditeur</legend>
+                <div>
+                    <label class="champ-label" for="editeurNom">Nom ou raison sociale</label>
+                    <input class="champ-texte" type="text" id="editeurNom" th:field="*{editeurNom}" placeholder="Thierry Lacassin"/>
+                </div>
+                <div>
+                    <label class="champ-label" for="editeurStatut">Statut (facultatif)</label>
+                    <input class="champ-texte" type="text" id="editeurStatut" th:field="*{editeurStatut}"
+                           placeholder="Auteur auto-édité, entrepreneur individuel..."/>
+                </div>
+                <div>
+                    <label class="champ-label" for="editeurAdresse">Adresse</label>
+                    <textarea class="champ-texte" id="editeurAdresse" rows="3" th:field="*{editeurAdresse}"></textarea>
+                </div>
+                <div>
+                    <label class="champ-label" for="editeurEmail">Email de contact</label>
+                    <input class="champ-texte" type="email" id="editeurEmail" th:field="*{editeurEmail}"/>
+                    <p class="mt-1 text-xs text-slate-400">
+                        Adresse publiée sur les pages légales, utilisée aussi pour l'exercice des droits RGPD.
+                    </p>
+                </div>
+                <div>
+                    <label class="champ-label" for="directeurPublication">Directeur de la publication</label>
+                    <input class="champ-texte" type="text" id="directeurPublication" th:field="*{directeurPublication}"/>
+                </div>
+            </fieldset>
+
+            <fieldset class="flex flex-col gap-4">
+                <legend class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Hébergeur</legend>
+                <div>
+                    <label class="champ-label" for="hebergeurNom">Nom</label>
+                    <input class="champ-texte" type="text" id="hebergeurNom" th:field="*{hebergeurNom}"/>
+                </div>
+                <div>
+                    <label class="champ-label" for="hebergeurAdresse">Adresse</label>
+                    <input class="champ-texte" type="text" id="hebergeurAdresse" th:field="*{hebergeurAdresse}"/>
+                    <p class="mt-1 text-xs text-slate-400">Pré-rempli avec OVHcloud, qui héberge ce site.</p>
+                </div>
+            </fieldset>
+
+            <fieldset class="flex flex-col gap-4">
+                <legend class="mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">
+                    Conservation des données
+                </legend>
+                <div>
+                    <label class="champ-label" for="conservationNewsletterMois">Abonnés newsletter (mois)</label>
+                    <input class="champ-texte" type="number" min="1" id="conservationNewsletterMois"
+                           th:field="*{conservationNewsletterMois}"/>
+                    <p th:if="${#fields.hasErrors('conservationNewsletterMois')}"
+                       th:errors="*{conservationNewsletterMois}" class="champ-erreur"></p>
+                </div>
+                <div>
+                    <label class="champ-label" for="conservationContactMois">Messages de contact (mois)</label>
+                    <input class="champ-texte" type="number" min="1" id="conservationContactMois"
+                           th:field="*{conservationContactMois}"/>
+                    <p th:if="${#fields.hasErrors('conservationContactMois')}"
+                       th:errors="*{conservationContactMois}" class="champ-erreur"></p>
+                    <p class="mt-1 text-xs text-slate-400">
+                        Durées annoncées publiquement. Elles ne déclenchent aucune suppression automatique :
+                        c'est un engagement à tenir manuellement.
+                    </p>
+                </div>
+            </fieldset>
+
+            <button type="submit" class="btn btn-primary w-fit">Enregistrer</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

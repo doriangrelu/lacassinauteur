@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Politique de confidentialité</title>
+    <meta name="description" th:content="${metaDescription}"/>
+</head>
+<body>
+<main layout:fragment="contenu" class="flex-1">
+    <section class="page-conteneur flex flex-col items-center gap-2 py-12 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight">CONFIDENTIALITÉ</h1>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-mist">Vos données personnelles</p>
+    </section>
+
+    <section class="page-conteneur mx-auto flex max-w-2xl flex-col gap-8 pb-16">
+        <!-- Texte figé (cf. ADR-0029) : seuls le responsable de traitement et les
+             durées de conservation viennent du back-office. Le contenu décrit les
+             traitements réellement en place — newsletter (Brevo), contact, avis
+             lecteurs — et doit être revu si un nouveau traitement est ajouté. -->
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Responsable du traitement</h2>
+            <p class="text-sm leading-relaxed">
+                <span th:if="${informations.editeurNom}" th:text="${informations.editeurNom}">Nom</span>
+                <span th:unless="${informations.editeurNom}" class="italic text-mist">À compléter</span>,
+                joignable à
+                <a th:if="${informations.editeurEmail}" th:href="'mailto:' + ${informations.editeurEmail}"
+                   th:text="${informations.editeurEmail}" class="lien-souligne">email</a>
+                <span th:unless="${informations.editeurEmail}" class="italic text-mist">une adresse à compléter</span>.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Données collectées et finalités</h2>
+            <p class="text-sm leading-relaxed">
+                Ce site ne collecte que les données que vous saisissez vous-même. Aucun profilage, aucune
+                revente, aucune publicité.
+            </p>
+            <ul class="flex flex-col gap-3 text-sm leading-relaxed">
+                <li>
+                    <strong>Newsletter</strong> — prénom et adresse email, pour vous envoyer les actualités et
+                    parutions. Base légale : votre consentement, recueilli lors de l'inscription puis confirmé
+                    par un second clic dans l'email reçu (double opt-in). Conservation :
+                    <span th:text="${informations.conservationNewsletterMois}">36</span> mois après le dernier
+                    contact, ou immédiatement à votre désinscription.
+                </li>
+                <li>
+                    <strong>Formulaire de contact</strong> — nom, adresse email, objet et message, pour vous
+                    répondre. Base légale : votre consentement. Conservation :
+                    <span th:text="${informations.conservationContactMois}">12</span> mois après traitement de
+                    votre demande.
+                </li>
+                <li>
+                    <strong>Avis de lecteurs</strong> — le nom ou pseudonyme que vous choisissez et votre avis,
+                    publiés sur la page du livre après validation. Base légale : votre consentement, matérialisé
+                    par l'envoi du formulaire. Conservation : tant que l'avis reste publié.
+                </li>
+            </ul>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Destinataires</h2>
+            <p class="text-sm leading-relaxed">
+                Vos données sont hébergées chez
+                <span th:if="${informations.hebergeurNom}" th:text="${informations.hebergeurNom}">l'hébergeur</span>
+                <span th:unless="${informations.hebergeurNom}" class="italic text-mist">notre hébergeur</span>,
+                en France. Les adresses des abonnés à la newsletter sont également transmises à
+                <strong>Brevo</strong> (Sendinblue SAS, France), qui assure l'envoi des emails. Aucune donnée
+                n'est transférée hors de l'Union européenne.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Cookies</h2>
+            <p class="text-sm leading-relaxed">
+                Aucun cookie publicitaire ni de mesure d'audience n'est déposé. Seul un cookie technique de
+                session est utilisé pour l'espace d'administration, réservé à l'auteur. Le service reCAPTCHA de
+                Google protège les formulaires contre les envois automatisés et peut déposer ses propres
+                cookies lors de la soumission d'un formulaire.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Vos droits</h2>
+            <p class="text-sm leading-relaxed">
+                Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation et d'opposition
+                sur vos données, ainsi que du droit de retirer votre consentement à tout moment. Pour les
+                exercer, écrivez à
+                <a th:if="${informations.editeurEmail}" th:href="'mailto:' + ${informations.editeurEmail}"
+                   th:text="${informations.editeurEmail}" class="lien-souligne">email</a>
+                <span th:unless="${informations.editeurEmail}" class="italic text-mist">l'adresse indiquée ci-dessus</span>.
+                Pour la newsletter, un lien de désinscription figure dans chaque envoi.
+            </p>
+            <p class="text-sm leading-relaxed">
+                Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez
+                adresser une réclamation à la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener"
+                class="lien-souligne">cnil.fr</a>).
+            </p>
+        </div>
+
+        <a th:href="@{/}" class="lien-souligne self-start">Retour à l'accueil</a>
+    </section>
+</main>
+</body>
+</html>

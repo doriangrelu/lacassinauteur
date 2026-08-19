@@ -45,9 +45,10 @@ de vérité vivante, à tenir à jour à chaque évolution (pas une passe sépar
   `@ControllerAdvice` qui traduit les exceptions d'un domaine précis vit dans la
   `presentation` de ce domaine, pas dans `shared` (sens de dépendance à respecter).
 - Domaines métier explicites : `identity`, `catalogue`, `actualite`, `newsletter`,
-  `contact`, `biographie` — chacun suit exactement le même schéma de sous-packages.
-  (`biographie` porte la page « Auteur » ; nommé ainsi et pas `auteur` pour ne pas
-  entrer en collision avec le rôle `AUTEUR` d'`identity`, cf. ADR-0028.)
+  `contact`, `biographie`, `legal` — chacun suit exactement le même schéma de
+  sous-packages. (`biographie` porte la page « Auteur » ; nommé ainsi et pas
+  `auteur` pour ne pas entrer en collision avec le rôle `AUTEUR` d'`identity`, cf.
+  ADR-0028. `legal` porte les variables des pages légales, cf. ADR-0029.)
 - Java moderne (lambdas/streams, records pour les value objects), principes SOLID.
 - Séparation stricte des espaces front (public / back-office) : aucun layout ni
   fragment Thymeleaf partagé entre les deux, deux points d'entrée CSS Tailwind

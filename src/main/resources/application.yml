@@ -24,6 +24,11 @@ app:
     site-key: ${RECAPTCHA_SITE_KEY:}
     secret-key: ${RECAPTCHA_SECRET_KEY:}
     seuil-score: ${RECAPTCHA_SEUIL_SCORE:0.5}
+  site:
+    # Base des URL absolues du sitemap.xml (cf. ADR-0029) : un sitemap n'accepte
+    # que des URL absolues. Même valeur que les autres url-base, dupliquée pour
+    # rester cohérent avec le parti pris de non-couplage entre domaines.
+    url-base: ${APP_URL_BASE:http://localhost:8080}
   stockage:
     images:
       chemin: ${STOCKAGE_IMAGES_CHEMIN:./data/images}

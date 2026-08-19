@@ -1,5 +1,6 @@
 package fr.lacassinauteur.site.contact.presentation.form;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -21,6 +22,14 @@ public class MessageContactForm {
 
     @NotBlank
     private String message;
+
+    /**
+     * Consentement RGPD, obligatoire et jamais pré-coché (cf. ADR-0029). Pas de
+     * date de consentement stockée à part : le message ne peut pas être envoyé sans
+     * cette case, donc {@code date_reception} date de fait le consentement.
+     */
+    @AssertTrue(message = "Vous devez accepter que vos données soient utilisées pour traiter votre message.")
+    private boolean consentement;
 
     /**
      * Honeypot anti-spam (cf. docs/architecture/tech-stack.md, même approche que
@@ -62,6 +71,14 @@ public class MessageContactForm {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isConsentement() {
+        return consentement;
+    }
+
+    public void setConsentement(boolean consentement) {
+        this.consentement = consentement;
     }
 
     public String getSiteWeb() {

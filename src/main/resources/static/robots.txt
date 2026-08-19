@@ -1,3 +1,10 @@
 User-agent: *
 Disallow: /backoffice/
 Allow: /
+
+# Les fiches professionnelles (/livres/*/pro) ne sont volontairement PAS en
+# Disallow : elles portent une balise <meta name="robots" content="noindex">, et
+# un Disallow empecherait justement les moteurs de la lire — l'URL pourrait alors
+# rester indexee si un tiers la partageait. Cf. ADR-0028.
+
+Sitemap: https://thierrylacassin-auteur.fr/sitemap.xml
