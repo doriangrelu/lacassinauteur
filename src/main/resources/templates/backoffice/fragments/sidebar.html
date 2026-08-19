@@ -10,6 +10,12 @@
     </div>
     <ul class="flex flex-wrap gap-1 md:flex-col">
         <li>
+            <a th:href="@{/backoffice/auteur}" class="nav-lien">
+                <span th:replace="~{backoffice/fragments/icons :: userCircle('h-5 w-5')}"></span>
+                Page auteur
+            </a>
+        </li>
+        <li>
             <a th:href="@{/backoffice/univers}" class="nav-lien">
                 <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-5 w-5')}"></span>
                 Univers

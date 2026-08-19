@@ -13,6 +13,7 @@
 | `newsletter` | Abonnés, consentement, envoi de campagnes | `shared` |
 | `contact` | Messages entrants du formulaire de contact | `shared` |
 | `identity` | Comptes back-office, rôles, authentification | `shared` |
+| `biographie` | Présentation publique de l'auteur (page « Auteur ») | `shared` |
 | `shared` | Kernel technique commun (pas de logique métier) | — |
 
 Les domaines ne s'appellent pas directement entre eux par leurs classes internes : une
@@ -99,6 +100,26 @@ Le cœur du site : la présentation de l'œuvre de l'auteur.
 - Authentification (délégué en grande partie à Spring Security).
 - Gestion des comptes back-office (créer un compte, changer un rôle, désactiver) —
   réservé au rôle `ADMIN`.
+
+## Domaine `biographie`
+
+Présentation publique de l'auteur, affichée sur `/auteur` et éditable en
+back-office — cf. [ADR-0028](decisions/0028-domaine-biographie-et-qr-code-fiche-pro.md).
+
+- **`Biographie`** — id, texte de présentation, photo. **Enregistrement unique** :
+  créé une fois par le seeder, ensuite uniquement modifié, jamais créé ni supprimé
+  depuis le back-office. L'unicité est garantie en base (contrainte sur une colonne
+  `ligne_unique` toujours vraie), pas seulement par convention applicative — d'où un
+  port qui expose `charger()` sans identifiant plutôt qu'un `findById`.
+
+Nommé `biographie` et non `auteur` pour ne pas entrer en collision de vocabulaire
+avec le rôle `AUTEUR` du domaine `identity` ; l'URL publique et les libellés
+restent « auteur », qui est le mot du brief.
+
+### Cas d'usage principaux
+
+- Consulter la biographie (page publique).
+- Modifier le texte et la photo (back-office, rôles `AUTEUR` et `ADMIN`).
 
 ## Domaine `shared`
 

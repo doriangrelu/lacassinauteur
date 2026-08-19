@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>L'auteur</title>
+    <meta name="description" th:content="${metaDescription}"/>
+    <meta property="og:type" content="profile"/>
+    <meta property="og:title" content="Thierry Lacassin — Auteur"/>
+    <meta property="og:description" th:content="${metaDescription}"/>
+    <meta th:if="${biographie.photoUrl}" property="og:image" th:content="${biographie.photoUrl}"/>
+</head>
+<body>
+<main layout:fragment="contenu" class="flex-1">
+    <section class="page-conteneur flex flex-col items-center gap-2 py-12 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight md:text-5xl">L'AUTEUR</h1>
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-mist">Thierry Lacassin</p>
+    </section>
+
+    <section class="page-conteneur grid gap-10 pb-16 sm:grid-cols-[minmax(0,320px)_1fr] sm:items-start">
+        <img th:if="${biographie.photoUrl}" th:src="@{${biographie.photoUrl}}"
+             alt="Portrait de Thierry Lacassin"
+             fetchpriority="high" class="aspect-[3/4] w-full rounded object-cover shadow-lg"/>
+        <div class="flex flex-col gap-6">
+            <!-- Le texte est saisi librement en zone de texte : "whitespace-pre-line"
+                 restitue les sauts de ligne et les paragraphes tels que l'auteur les
+                 a tapes, sans decoupage cote serveur ni th:utext (qui exposerait a
+                 l'injection de HTML depuis le back-office). -->
+            <p th:text="${biographie.texte}" class="whitespace-pre-line text-lg leading-relaxed">Texte de présentation</p>
+        </div>
+    </section>
+
+    <section class="page-conteneur flex flex-col items-center gap-4 pb-16 text-center">
+        <p class="text-sm text-mist">Envie d'aller plus loin ?</p>
+        <div class="flex flex-wrap justify-center gap-6">
+            <a th:href="@{/}" class="lien-souligne">Découvrir les univers</a>
+            <a th:href="@{/actualites}" class="lien-souligne">Voir les actualités</a>
+            <a th:href="@{/contact}" class="lien-souligne">Écrire à l'auteur</a>
+        </div>
+    </section>
+</main>
+</body>
+</html>
