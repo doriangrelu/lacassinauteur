@@ -7,7 +7,7 @@
     <meta name="robots" content="noindex"/>
 </head>
 <body>
-<div layout:fragment="contenu">
+<main layout:fragment="contenu" class="flex-1">
     <section class="page-conteneur flex flex-col gap-8 py-10">
         <div>
             <p class="text-xs font-semibold uppercase tracking-wide text-mist">Fiche professionnelle</p>
@@ -60,6 +60,6 @@
             <p class="whitespace-pre-line text-sm leading-relaxed text-mist" th:text="${livre.synopsisEditeur}">Synopsis</p>
         </div>
     </section>
-</div>
+</main>
 </body>
 </html>

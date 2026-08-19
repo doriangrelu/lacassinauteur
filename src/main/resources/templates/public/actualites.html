@@ -10,7 +10,7 @@
     <meta property="og:description" th:content="${metaDescription}"/>
 </head>
 <body>
-<div layout:fragment="contenu">
+<main layout:fragment="contenu" class="flex-1">
     <section class="page-conteneur flex flex-col items-center gap-4 py-10 text-center">
         <h1 class="font-display text-3xl font-bold tracking-tight">Actualités</h1>
         <p class="max-w-xl text-sm text-mist">Salons, dédicaces et rencontres à venir.</p>
@@ -50,6 +50,6 @@
     <section class="page-conteneur flex flex-col items-center gap-4 py-12 text-center">
         <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
     </section>
-</div>
+</main>
 </body>
 </html>

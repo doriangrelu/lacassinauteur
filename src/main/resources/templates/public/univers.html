@@ -11,7 +11,7 @@
     <meta th:if="${univers.photoUrl}" property="og:image" th:content="${univers.photoUrl}"/>
 </head>
 <body>
-<div layout:fragment="contenu">
+<main layout:fragment="contenu" class="flex-1">
     <section class="relative aspect-[16/9] max-h-[60vh] w-full overflow-hidden bg-slate-900 sm:aspect-[21/9]">
         <img th:if="${univers.photoUrl}" th:src="@{${univers.photoUrl}}" th:alt="${univers.nom}" class="h-full w-full object-cover"/>
     </section>
@@ -46,6 +46,6 @@
         </a>
         <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
     </section>
-</div>
+</main>
 </body>
 </html>

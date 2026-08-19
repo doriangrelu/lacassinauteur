@@ -17,6 +17,7 @@
 # Domaine canonique : apex sans "www". Choix arbitraire (les deux se valent en SEO
 # du moment qu'une redirection 301 est en place) — cf. ADR-0016.
 thierrylacassin-auteur.fr {
+	encode gzip zstd
 	reverse_proxy app:8080
 }
 

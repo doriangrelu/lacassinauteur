@@ -83,7 +83,8 @@ proprement via `Assumptions` plutôt que d'échouer, même logique que
   en-tête `Accept` est transparente, aucune URL ne change.
 - **Redimensionnement/compression au-delà du changement de format** : hors
   périmètre de cette passe — pas demandé, ajouté seulement si un besoin réel
-  apparaît (proportionnalité, cf. CLAUDE.md).
+  apparaît (proportionnalité, cf. CLAUDE.md). *Mise à jour : ce besoin est apparu
+  (audit Lighthouse), cf. [ADR-0026](0026-redimensionnement-images-webp.md).*
 
 ## Conséquences
 

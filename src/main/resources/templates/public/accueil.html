@@ -10,7 +10,7 @@
     <meta property="og:description" th:content="${metaDescription}"/>
 </head>
 <body>
-<div layout:fragment="contenu">
+<main layout:fragment="contenu" class="flex-1">
     <section class="page-conteneur flex flex-col items-center gap-2 py-12 text-center">
         <h1 class="font-display text-4xl font-bold tracking-tight md:text-5xl">THIERRY LACASSIN</h1>
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-mist">Auteur</p>
@@ -18,9 +18,10 @@
     </section>
 
     <section class="grid gap-1 sm:grid-cols-2">
-        <a th:each="univers : ${universList}" th:href="@{'/univers/' + ${univers.slug}}"
+        <a th:each="univers, statut : ${universList}" th:href="@{'/univers/' + ${univers.slug}}"
            class="group relative block aspect-[4/5] overflow-hidden bg-slate-900">
             <img th:if="${univers.photoUrl}" th:src="@{${univers.photoUrl}}" th:alt="${univers.nom}"
+                 th:fetchpriority="${statut.first} ? 'high' : 'auto'"
                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"/>
             <div class="absolute inset-x-0 bottom-0 flex flex-col items-start gap-1 bg-gradient-to-t from-black/70 via-black/10 to-transparent p-6 backdrop-blur-sm md:p-10">
                 <span class="font-display text-2xl font-bold text-white md:text-3xl" th:text="${univers.nom}">Univers</span>
@@ -32,7 +33,7 @@
     <section th:if="${derniereParution}" class="page-conteneur flex flex-col items-center gap-6 py-16 text-center">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-mist">Dernière parution</p>
         <img th:if="${derniereParution.couvertureUrl}" th:src="@{${derniereParution.couvertureUrl}}" th:alt="${derniereParution.titre}"
-             loading="lazy" class="h-72 w-auto rounded shadow-lg"/>
+             loading="lazy" class="aspect-[2/3] h-72 rounded object-contain shadow-lg"/>
         <h2 class="font-display text-2xl font-bold" th:text="${derniereParution.titre}">Titre</h2>
         <p class="max-w-md text-sm text-mist" th:text="${derniereParution.pitchCourt}">Pitch</p>
         <div class="flex flex-wrap justify-center gap-6">
@@ -41,6 +42,6 @@
                class="lien-souligne" th:text="'Acheter sur ' + ${derniereParution.lienAchatLibelle}">Acheter</a>
         </div>
     </section>
-</div>
+</main>
 </body>
 </html>

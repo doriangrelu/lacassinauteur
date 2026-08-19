@@ -11,7 +11,7 @@
     <meta th:if="${univers.photoUrl}" property="og:image" th:content="${univers.photoUrl}"/>
 </head>
 <body>
-<div layout:fragment="contenu">
+<main layout:fragment="contenu" class="flex-1">
     <section class="page-conteneur flex flex-col items-center gap-3 py-10 text-center">
         <img th:if="${univers.photoUrl}" th:src="@{${univers.photoUrl}}" th:alt="${univers.nom}" loading="lazy" class="h-16 w-16 rounded-full object-cover"/>
         <h1 class="font-display text-3xl font-bold tracking-tight" th:text="${collection.nom}">Collection</h1>
@@ -40,6 +40,6 @@
         <a th:href="@{'/univers/' + ${univers.slug}}" class="text-sm text-mist hover:text-ink">Retour à l'univers</a>
         <a th:href="@{/}" class="text-sm text-mist hover:text-ink">Retour à l'accueil</a>
     </section>
-</div>
+</main>
 </body>
 </html>
