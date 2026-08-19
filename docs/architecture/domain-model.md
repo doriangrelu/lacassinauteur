@@ -14,6 +14,7 @@
 | `contact` | Messages entrants du formulaire de contact | `shared` |
 | `identity` | Comptes back-office, rôles, authentification | `shared` |
 | `biographie` | Présentation publique de l'auteur (page « Auteur ») | `shared` |
+| `legal` | Variables des pages légales (éditeur, hébergeur, RGPD) | `shared` |
 | `shared` | Kernel technique commun (pas de logique métier) | — |
 
 Les domaines ne s'appellent pas directement entre eux par leurs classes internes : une
@@ -120,6 +121,28 @@ restent « auteur », qui est le mot du brief.
 
 - Consulter la biographie (page publique).
 - Modifier le texte et la photo (back-office, rôles `AUTEUR` et `ADMIN`).
+
+## Domaine `legal`
+
+Variables injectées dans les pages « Mentions légales » et « Confidentialité » —
+cf. [ADR-0029](decisions/0029-informations-legales-consentement-sitemap.md).
+
+- **`InformationsLegales`** — identité de l'éditeur (nom, statut, adresse, email),
+  directeur de publication, hébergeur, durées de conservation des données.
+  **Enregistrement unique**, même mécanisme que `Biographie` (contrainte en base).
+
+Le **texte** des pages légales n'est pas en base : il vit dans les gabarits, car
+il engage juridiquement et gagne à être versionné et relu plutôt que modifiable
+à la volée. Seules ces valeurs varient.
+
+`completes()` indique si les mentions obligatoires (LCEN) sont toutes
+renseignées : sert à alerter en back-office, jamais à masquer la page — une page
+légale incomplète reste préférable à une page absente.
+
+### Cas d'usage principaux
+
+- Consulter les informations légales (pages publiques).
+- Modifier les informations légales (back-office).
 
 ## Domaine `shared`
 

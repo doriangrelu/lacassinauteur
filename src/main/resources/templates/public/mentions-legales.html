@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{public/layout/layout-public}">
+<head>
+    <title>Mentions légales</title>
+    <meta name="description" th:content="${metaDescription}"/>
+</head>
+<body>
+<main layout:fragment="contenu" class="flex-1">
+    <section class="page-conteneur flex flex-col items-center gap-2 py-12 text-center">
+        <h1 class="font-display text-4xl font-bold tracking-tight">MENTIONS LÉGALES</h1>
+    </section>
+
+    <section class="page-conteneur mx-auto flex max-w-2xl flex-col gap-8 pb-16">
+        <!-- Le texte est figé ici : seules les valeurs (nom, adresse, hébergeur…)
+             sont éditables en back-office, cf. ADR-0029. Chaque valeur manquante
+             est signalée explicitement plutôt que laissée vide, pour qu'un oubli
+             se voie au lieu de produire une phrase tronquée. -->
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Éditeur du site</h2>
+            <p class="text-sm leading-relaxed">
+                <span th:if="${informations.editeurNom}" th:text="${informations.editeurNom}">Nom</span>
+                <span th:unless="${informations.editeurNom}" class="italic text-mist">Nom de l'éditeur à compléter</span>
+                <span th:if="${informations.editeurStatut}" th:text="' — ' + ${informations.editeurStatut}"></span>
+            </p>
+            <p th:if="${informations.editeurAdresse}" th:text="${informations.editeurAdresse}"
+               class="whitespace-pre-line text-sm leading-relaxed">Adresse</p>
+            <p th:unless="${informations.editeurAdresse}" class="text-sm italic text-mist">Adresse à compléter.</p>
+            <p class="text-sm leading-relaxed">
+                Contact :
+                <a th:if="${informations.editeurEmail}" th:href="'mailto:' + ${informations.editeurEmail}"
+                   th:text="${informations.editeurEmail}" class="lien-souligne">email</a>
+                <span th:unless="${informations.editeurEmail}" class="italic text-mist">adresse email à compléter</span>
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Directeur de la publication</h2>
+            <p class="text-sm leading-relaxed">
+                <span th:if="${informations.directeurPublication}" th:text="${informations.directeurPublication}">Nom</span>
+                <span th:unless="${informations.directeurPublication}" class="italic text-mist">À compléter.</span>
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Hébergeur</h2>
+            <p class="text-sm leading-relaxed">
+                <span th:if="${informations.hebergeurNom}" th:text="${informations.hebergeurNom}">Hébergeur</span>
+                <span th:unless="${informations.hebergeurNom}" class="italic text-mist">À compléter.</span>
+            </p>
+            <p th:if="${informations.hebergeurAdresse}" th:text="${informations.hebergeurAdresse}"
+               class="text-sm leading-relaxed">Adresse de l'hébergeur</p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Propriété intellectuelle</h2>
+            <p class="text-sm leading-relaxed">
+                Les textes, extraits d'œuvres, visuels de couverture et photographies présents sur ce site sont
+                protégés par le droit d'auteur. Toute reproduction ou représentation, totale ou partielle, sans
+                autorisation écrite préalable est interdite.
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <h2 class="font-display text-2xl font-bold">Données personnelles</h2>
+            <p class="text-sm leading-relaxed">
+                Le traitement de vos données est détaillé dans la
+                <a th:href="@{/confidentialite}" class="lien-souligne">politique de confidentialité</a>.
+            </p>
+        </div>
+
+        <a th:href="@{/}" class="lien-souligne self-start">Retour à l'accueil</a>
+    </section>
+</main>
+</body>
+</html>

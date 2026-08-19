@@ -110,8 +110,8 @@ fr.lacassinauteur.site
             └── CollectionViewModelMapper.java
 ```
 
-Les domaines `actualite`, `newsletter`, `contact`, `identity`, `biographie` suivent
-**exactement le même schéma de sous-packages** (`domain.model` / `domain.port` / `domain.exception`,
+Les domaines `actualite`, `newsletter`, `contact`, `identity`, `biographie`, `legal`
+suivent **exactement le même schéma de sous-packages** (`domain.model` / `domain.port` / `domain.exception`,
 `application.usecase.<sous-thème>` / `application.service` / `application.command` /
 `application.query` / `application.result`, `infrastructure.persistence.*` /
 `infrastructure.<adaptateur technique>`, `presentation.web` /
@@ -174,6 +174,13 @@ l'infrastructure. La génération de QR code (`GenerationQrCodePort` +
 `ZxingQrCodeAdapter`, cf. [ADR-0028](decisions/0028-domaine-biographie-et-qr-code-fiche-pro.md))
 répond au même critère : une capacité technique, sans connaissance d'un domaine.
 
+Le `sitemap.xml` (`shared.web.SitemapController`) doit en revanche connaître des URL
+issues de plusieurs domaines. Plutôt que d'importer leurs use cases — ce qui ferait
+dépendre `shared` du catalogue — il expose un port
+`FournisseurUrlsPubliquesPort` que **les domaines implémentent** : la dépendance va
+du domaine vers `shared`, dans le bon sens. Cf.
+[ADR-0029](decisions/0029-informations-legales-consentement-sitemap.md).
+
 ## Ressources (hors code Java)
 
 Séparation stricte public / back-office, cf.
@@ -198,6 +205,8 @@ src/main/resources
 │   │   ├── contact.html
 │   │   ├── actualites.html
 │   │   ├── auteur.html                 (page « Auteur », domaine biographie, cf. ADR-0028)
+│   │   ├── mentions-legales.html       (domaine legal, cf. ADR-0029)
+│   │   ├── confidentialite.html        (domaine legal, cf. ADR-0029)
 │   │   └── page-pro.html
 │   └── backoffice
 │       ├── layout

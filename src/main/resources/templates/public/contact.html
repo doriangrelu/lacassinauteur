@@ -51,6 +51,19 @@
             </div>
             <input type="hidden" th:field="*{captchaToken}"/>
 
+            <!-- Consentement RGPD : obligatoire, jamais pré-coché (cf. ADR-0029). -->
+            <div class="flex flex-col gap-1">
+                <label for="consentement" class="flex items-start gap-2 text-xs text-mist">
+                    <input type="checkbox" id="consentement" th:field="*{consentement}" class="mt-0.5 shrink-0"/>
+                    <span>
+                        J'accepte que mes données soient utilisées pour traiter et répondre à mon message,
+                        conformément à la
+                        <a th:href="@{/confidentialite}" class="lien-souligne">politique de confidentialité</a>.
+                    </span>
+                </label>
+                <p th:if="${#fields.hasErrors('consentement')}" th:errors="*{consentement}" class="champ-erreur"></p>
+            </div>
+
             <button type="submit" class="btn self-start">Envoyer</button>
         </form>
     </section>
