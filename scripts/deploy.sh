@@ -30,6 +30,20 @@ git pull
 echo "==> Reconstruction de l'image applicative et redemarrage de la stack..."
 docker compose -f "$COMPOSE_FICHIER" up -d --build
 
+# Le Caddyfile est monte en bind mount ("./Caddyfile:/etc/caddy/Caddyfile") : le
+# conteneur suit l'INODE monte au demarrage, pas le chemin. Or "git pull" ne
+# modifie pas le fichier en place, il le REMPLACE par un nouvel inode — le
+# conteneur continue donc de servir l'ancienne version indefiniment. Et "up -d"
+# ne le recree pas de lui-meme, puisque la definition du service n'a pas change.
+# Un "caddy reload" ne suffit pas non plus : il recharge fidelement... l'ancien
+# fichier (symptome observe : "config is unchanged" dans les logs alors que le
+# fichier a bien change sur l'hote).
+# Recreer le conteneur est le seul geste fiable, et il est quasi gratuit (Caddy
+# demarre en moins d'une seconde) : on le fait donc systematiquement plutot que
+# de dependre de la vigilance de l'operateur.
+echo "==> Recreation du conteneur Caddy (prise en compte du Caddyfile)..."
+docker compose -f "$COMPOSE_FICHIER" up -d --force-recreate caddy
+
 echo "==> Nettoyage des images Docker intermediaires devenues obsoletes..."
 docker image prune -f
 

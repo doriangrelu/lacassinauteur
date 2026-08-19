@@ -101,6 +101,15 @@ Identifiants de dev (profil `dev` uniquement, jamais en prod) :
 - **Slugs SEO** (univers/collections/livres) : générés une seule fois à la création,
   jamais recalculés lors d'une modification, pour ne pas casser un lien déjà
   indexé/partagé.
+- **`Caddyfile` en bind mount** : le conteneur suit l'**inode** monté au démarrage,
+  pas le chemin. `git pull` ne modifie pas le fichier en place, il le **remplace**
+  par un nouvel inode → le conteneur sert l'ancienne version indéfiniment, et
+  `docker compose up -d` ne le recrée pas (définition de service inchangée). Un
+  `caddy reload` ne sauve pas non plus : il recharge fidèlement l'ancien fichier
+  (symptôme trompeur : `"config is unchanged"` dans les logs alors que le fichier
+  a bien changé sur l'hôte). `scripts/deploy.sh` force donc désormais
+  `up -d --force-recreate caddy` à chaque déploiement — si tu modifies le
+  `Caddyfile` hors de ce script, pense à recréer le conteneur toi-même.
 - **Bash tool lent sur cet environnement Windows** : préférer PowerShell pour les
   commandes shell (git, docker, mvn, manipulation de fichiers) quand la latence
   compte.
