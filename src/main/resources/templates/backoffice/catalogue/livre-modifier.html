@@ -83,7 +83,36 @@
                     <!-- Le QR code et le lien ne sont proposés que si la page pro
                          existera réellement (livre publié + fiche renseignée) :
                          mêmes conditions que PageProfessionnelleController, sinon on
-                         imprimerait un QR code menant a un 404. -->
+                         imprimerait un QR code menant a un 404.
+                         Quand une condition manque, on explique laquelle et comment
+                         la lever : l'absence silencieuse du bloc laissait l'auteur
+                         sans aucun moyen de comprendre ce qu'il manquait. -->
+                    <div th:if="${!livre.disponible}"
+                         class="flex items-start gap-3 rounded-lg bg-amber-50 p-4">
+                        <span th:replace="~{backoffice/fragments/icons :: exclamationTriangle('h-5 w-5 shrink-0 text-amber-600')}"></span>
+                        <div class="flex flex-col gap-1">
+                            <p class="text-sm font-medium text-amber-900">Pas encore de page pour les libraires</p>
+                            <p class="text-xs text-amber-800">
+                                Ce livre n'est pas encore publié. Renseignez son lien d'achat dans le bloc
+                                « Disponibilité » : vous pourrez ensuite compléter la fiche ci-dessus, et un
+                                QR code à diffuser aux libraires apparaîtra ici.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div th:if="${livre.disponible and !livre.ficheProfessionnelleRenseignee}"
+                         class="flex items-start gap-3 rounded-lg bg-amber-50 p-4">
+                        <span th:replace="~{backoffice/fragments/icons :: exclamationTriangle('h-5 w-5 shrink-0 text-amber-600')}"></span>
+                        <div class="flex flex-col gap-1">
+                            <p class="text-sm font-medium text-amber-900">Pas encore de page pour les libraires</p>
+                            <p class="text-xs text-amber-800">
+                                Renseignez au moins un champ ci-dessus (ISBN, format, prix…) puis enregistrez :
+                                la page destinée aux libraires et aux éditeurs sera créée, avec un QR code
+                                à imprimer sur une plaquette.
+                            </p>
+                        </div>
+                    </div>
+
                     <div th:if="${livre.disponible and livre.ficheProfessionnelleRenseignee}"
                          class="flex flex-col gap-3 rounded-lg bg-slate-50 p-4 sm:flex-row sm:items-center sm:gap-5">
                         <img th:src="@{'/backoffice/livres/' + ${livreId} + '/qr-code.svg'}"
