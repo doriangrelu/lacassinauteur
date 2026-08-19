@@ -57,11 +57,13 @@ services:
     deploy:
       resources:
         limits:
-          # Budget serre (VPS 2 vCore/4 Go, cf. ADR-0022) : plafond volontairement
-          # conservateur pour un IAM a faible trafic, a ajuster via "docker stats"
-          # si necessaire, cf. ADR-0027.
-          cpus: "0.5"
-          memory: 512M
+          # Budget serre (VPS 2 vCore/4 Go, cf. ADR-0022). 512M/0.5 CPU s'est
+          # revele insuffisant des le premier demarrage (phase de build/
+          # augmentation Quarkus : observe a 97% memoire et CPU sature via
+          # "docker stats", conteneur bloque) -- releve a 768M/0.75, a
+          # reajuster encore si besoin, cf. ADR-0027.
+          cpus: "0.75"
+          memory: 768M
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://db:5432/${KEYCLOAK_DB}

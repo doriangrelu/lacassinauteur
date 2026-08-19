@@ -59,10 +59,16 @@ archive.
 - Pas de `ports` publiés sur l'hôte, seulement `expose: ["8080"]` — joignable
   uniquement via le réseau Compose interne (`keycloak:8080`), même pattern que
   `app`.
-- Limites de ressources : `cpus: "0.5"`, `memory: 512M` — reste dans le budget
-  serré du VPS mais volontairement conservateur pour un IAM à faible trafic. À
-  ajuster via `docker stats` après mise en charge si besoin, même logique que
-  ADR-0022.
+- Limites de ressources : `cpus: "0.75"`, `memory: 768M`. Un premier essai à
+  `0.5`/`512M` s'est révélé insuffisant dès le premier démarrage — la phase de
+  build/augmentation Quarkus de Keycloak (recompilation interne de sa
+  configuration, spécifique au tout premier boot après un changement de
+  config) a saturé les deux plafonds simultanément (`docker stats` : ~97 %
+  mémoire, CPU au maximum du quota), bloquant durablement le démarrage.
+  Reste dans le budget du VPS : mémoire cumulée `db` (768M) + `app` (1536M) +
+  `caddy` (128M) + `keycloak` (768M) = 3200 Mo sur 4096 Mo disponibles. Toujours
+  à ajuster via `docker stats` en régime de croisière si besoin, même logique
+  que ADR-0022.
 - Pas de cache/service supplémentaire : le cache Infinispan embarqué de
   Keycloak suffit pour un nœud unique, aucune configuration additionnelle.
 
