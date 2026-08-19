@@ -128,6 +128,25 @@ compte Brevo). Configuration réalisée directement dans la console Keycloak
 (Realm Settings → Email) — pas de variable d'environnement Docker pour ça,
 juste une action manuelle documentée dans `mode-operatoire-deploiement.md`.
 
+**Adresse expéditrice : `no-reply@iabilis.fr`**, pas l'adresse newsletter
+existante du site. Réutiliser `newsletter@thierrylacassin-auteur.fr` aurait
+été gratuit (expéditeur déjà déclaré dans Brevo) mais aurait révélé le lien
+entre les deux domaines à chaque email de réinitialisation — exactement ce que
+le thème personnalisé ci-dessus cherche à éviter — en plus d'être déroutant
+pour le destinataire. `iabilis.fr` dispose déjà de MX OVH, les réponses
+éventuelles arrivent donc bien quelque part.
+
+**Prérequis DNS, découvert à la configuration** : `iabilis.fr` n'avait aucune
+authentification Brevo (vérifié : pas d'enregistrement DKIM `mail._domainkey`).
+Envoyer depuis `@iabilis.fr` exige donc d'abord d'**authentifier le domaine**
+dans Brevo (TXT de propriété `brevo-code:` + TXT DKIM à créer dans la zone OVH),
+avec 15 min à 1 h de propagation — c'est l'étape la plus longue, et tant
+qu'elle n'est pas au vert Brevo rejette les envois (`sender not valid`). Le SPF
+existant (`v=spf1 include:mx.ovh.com -all`, en `-all` strict) n'a en revanche
+pas besoin d'être modifié : Brevo signe avec son propre Return-Path, c'est le
+DKIM qui assure l'alignement DMARC. Procédure détaillée dans
+[mode-operatoire-deploiement.md §12](../../mode-operatoire-deploiement.md).
+
 ## Alternatives envisagées
 
 - **Conteneur PostgreSQL dédié à Keycloak** : écarté explicitement par
@@ -168,8 +187,9 @@ juste une action manuelle documentée dans `mode-operatoire-deploiement.md`.
 - **Non fait dans cette passe**, nécessite une action humaine ou une décision
   ultérieure :
   - Exécution réelle du bootstrap SQL et premier déploiement sur le VPS.
-  - Génération de la clé SMTP Brevo dédiée et configuration dans la console
-    Keycloak.
+  - Authentification du domaine `iabilis.fr` dans Brevo (enregistrements DNS
+    chez OVH), génération de la clé SMTP dédiée, puis configuration dans la
+    console Keycloak — cf. mode-operatoire-deploiement.md §12.
   - Vérification visuelle du thème une fois Keycloak démarré (sélecteurs CSS
     à confirmer, cf. limite connue ci-dessus).
   - Panneau de supervision web authentifié via Keycloak (à concevoir

@@ -229,13 +229,99 @@ démarré, se connecter à `https://iabilis.fr/admin/` avec le compte
 dans le royaume concerné : **Realm Settings → Themes → Login theme →
 `lacassin-boat`**, sauvegarder.
 
-**c. Configurer l'envoi d'email** (recommandation : réutiliser le relais SMTP
-Brevo déjà utilisé pour la newsletter, cf. ADR-0027) : **Realm Settings →
-Email**, renseigner `smtp-relay.brevo.com` / port `587`, avec une **clé SMTP**
-Brevo (différente de `BREVO_API_KEY` — à générer dans le compte Brevo,
-Paramètres → SMTP & API).
+**c. Configurer l'envoi d'email** — voir §12 ci-dessous, c'est l'étape la plus
+longue (elle demande de toucher aux DNS et d'attendre une propagation).
 
-## 12. Lexique rapide
+## 12. Configurer l'envoi d'email de Keycloak (via Brevo)
+
+Keycloak envoie des emails automatiquement (réinitialisation de mot de passe,
+vérification d'adresse, alertes de connexion). Sans cette configuration, ces
+fonctionnalités échouent silencieusement.
+
+Le relais SMTP retenu est **Brevo**, déjà utilisé pour la newsletter du site
+(cf. [ADR-0027](architecture/decisions/0027-keycloak-iam.md)) — pas de
+troisième fournisseur d'email à gérer.
+
+### Adresse expéditrice : `no-reply@iabilis.fr`
+
+Surtout **ne pas** réutiliser `newsletter@thierrylacassin-auteur.fr` : un email
+de réinitialisation pour `iabilis.fr` partant de l'adresse newsletter de
+l'auteur révélerait le lien entre les deux domaines (ce qu'on cherche
+justement à éviter, cf. ADR-0027) et serait déroutant pour le destinataire.
+
+`iabilis.fr` a déjà des MX OVH, donc les réponses éventuelles arriveront bien.
+
+### a. Authentifier le domaine dans Brevo (~15 min + propagation)
+
+**Brevo → Paramètres → Expéditeurs, domaines & IPs dédiées → onglet Domaines →
+Ajouter un domaine** → `iabilis.fr`.
+
+Brevo fournit alors deux enregistrements à créer dans la **zone DNS OVH** de
+`iabilis.fr` :
+
+| Type | Nom | Valeur |
+|---|---|---|
+| TXT | `@` (racine) | `brevo-code:xxxxxxxxxxxx` (preuve de propriété) |
+| TXT | `mail._domainkey` | `k=rsa;p=MIGfMA0GCSq...` (clé DKIM, longue) |
+
+Puis **Vérifier** dans Brevo. Compter de 15 min à 1 h de propagation DNS.
+
+> **SPF** : la zone contient `v=spf1 include:mx.ovh.com -all` (un `-all`
+> strict). Il n'y a **pas** besoin d'y toucher : Brevo signe avec son propre
+> Return-Path, c'est le DKIM ci-dessus qui assure l'alignement DMARC. Ne
+> modifier le SPF que si des rejets SPF sont réellement constatés.
+
+### b. Générer la clé SMTP Brevo
+
+**Brevo → Paramètres → SMTP & API → onglet SMTP → Générer une nouvelle clé
+SMTP.** Trois valeurs s'affichent — les noter immédiatement, **la clé n'est
+montrée qu'une seule fois** :
+
+- Serveur : `smtp-relay.brevo.com`
+- Login : un identifiant technique du type `9a1b2c001@smtp-brevo.com`
+  (⚠️ **pas** l'email du compte Brevo)
+- Clé SMTP : commence par `xsmtpsib-...`
+
+⚠️ Ne pas confondre avec la **clé API** (`xkeysib-...`) déjà utilisée par la
+newsletter du site : ce sont deux objets distincts, la clé API ne fonctionne
+pas en SMTP.
+
+### c. Renseigner Keycloak
+
+`https://iabilis.fr/admin/` → **Realm Settings → Email**.
+
+Section **Template** :
+
+| Champ | Valeur |
+|---|---|
+| From | `no-reply@iabilis.fr` |
+| From display name | `Iabilis` |
+| Reply to | *(vide)* |
+| Envelope from | *(vide)* |
+
+Section **Connection & Authentication** :
+
+| Champ | Valeur |
+|---|---|
+| Host | `smtp-relay.brevo.com` |
+| Port | `587` |
+| Encryption | ✅ **Enable StartTLS** (surtout pas *Enable SSL*, réservé au port 465) |
+| Authentication | ✅ activé |
+| Username | le login `...@smtp-brevo.com` de l'étape b |
+| Password | la clé `xsmtpsib-...` de l'étape b |
+
+### Deux pièges qui font perdre du temps
+
+- **Le bouton « Test connection » échoue si le compte admin connecté n'a pas
+  d'adresse email.** Le compte bootstrap n'en a aucune : renseigner d'abord
+  **Users → admin → Details → Email**, sinon le test échoue avec une erreur
+  trompeuse alors que la configuration est correcte.
+- **Ne pas tester avant que la vérification du domaine soit au vert dans
+  Brevo.** Tant que le DKIM n'est pas validé, Brevo refuse les envois depuis
+  `@iabilis.fr` (`sender not valid`) — on croit alors à tort que la
+  configuration Keycloak est en cause.
+
+## 13. Lexique rapide
 
 | Commande | Ce que ça fait |
 |---|---|
