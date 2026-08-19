@@ -110,8 +110,8 @@ fr.lacassinauteur.site
             └── CollectionViewModelMapper.java
 ```
 
-Les domaines `actualite`, `newsletter`, `contact`, `identity` suivent **exactement le
-même schéma de sous-packages** (`domain.model` / `domain.port` / `domain.exception`,
+Les domaines `actualite`, `newsletter`, `contact`, `identity`, `biographie` suivent
+**exactement le même schéma de sous-packages** (`domain.model` / `domain.port` / `domain.exception`,
 `application.usecase.<sous-thème>` / `application.service` / `application.command` /
 `application.query` / `application.result`, `infrastructure.persistence.*` /
 `infrastructure.<adaptateur technique>`, `presentation.web` /
@@ -169,7 +169,10 @@ fr.lacassinauteur.site
 `shared` reste réservé aux capacités réellement transverses (aucune logique métier
 d'un domaine ne doit s'y échapper) — le stockage de fichiers en est un exemple
 légitime : catalogue en a besoin aujourd'hui (photos, couvertures), d'autres domaines
-pourront le réutiliser (ex. visuels d'actualités) sans dupliquer l'infrastructure.
+le réutilisent déjà (visuels d'actualités, photo de la page auteur) sans dupliquer
+l'infrastructure. La génération de QR code (`GenerationQrCodePort` +
+`ZxingQrCodeAdapter`, cf. [ADR-0028](decisions/0028-domaine-biographie-et-qr-code-fiche-pro.md))
+répond au même critère : une capacité technique, sans connaissance d'un domaine.
 
 ## Ressources (hors code Java)
 
@@ -194,6 +197,7 @@ src/main/resources
 │   │   ├── newsletter.html
 │   │   ├── contact.html
 │   │   ├── actualites.html
+│   │   ├── auteur.html                 (page « Auteur », domaine biographie, cf. ADR-0028)
 │   │   └── page-pro.html
 │   └── backoffice
 │       ├── layout

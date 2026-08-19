@@ -239,6 +239,23 @@
       l'authentification maison du domaine `identity`. Report explicite de
       l'utilisateur, à cadrer.
 
+## Phase 10 — Page Auteur et QR codes — cf. [ADR-0028](architecture/decisions/0028-domaine-biographie-et-qr-code-fiche-pro.md)
+
+Deux besoins du brief jamais livrés, retrouvés en confrontant le brief au code.
+
+- [x] **US-1 — Page publique `/auteur`** (photo + texte), nouveau domaine
+      `biographie`, contenu initial repris de `docs/business/source/Texte.docx`
+      (§ « Page auteur ») et de la photo fournie. Indexable, ajoutée au header et
+      au footer.
+- [x] **US-2 — Édition en back-office** (`/backoffice/auteur`) : texte et photo,
+      réutilise le pipeline d'upload existant (stockage local + WebP +
+      redimensionnement). Ni création ni suppression : enregistrement unique.
+- [x] **US-3 — QR code des fiches professionnelles** : affiché et téléchargeable
+      (SVG imprimable) dans le formulaire de modification du livre, uniquement si
+      la page pro existera réellement. La page pro reste `noindex` et hors menus —
+      c'est l'auteur qui diffuse le QR code.
+- [ ] Recette utilisateur en local, puis déploiement.
+
 ## Sécurité — cf. dossier d'audit du 2026-08-18
 
 - [x] C-2 : pare-feu `ufw` activé (22/80/443 uniquement).

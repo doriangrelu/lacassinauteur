@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{backoffice/layout/layout-backoffice}">
+<head>
+    <title>Page auteur</title>
+</head>
+<body>
+<section layout:fragment="contenu" class="page-conteneur flex flex-col gap-6">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+        <h1 class="text-lg font-semibold tracking-tight text-slate-900">Page auteur</h1>
+        <a th:href="@{/auteur}" target="_blank" rel="noopener" class="link-action text-slate-600 hover:text-slate-900">
+            <span th:replace="~{backoffice/fragments/icons :: globeAlt('h-4 w-4')}"></span>
+            Voir la page publique
+        </a>
+    </div>
+
+    <p th:if="${param.enregistre}" class="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+        Modifications enregistrées.
+    </p>
+
+    <div class="card max-w-2xl p-6">
+        <p class="mb-5 text-sm text-slate-500">
+            Cette photo et ce texte sont affichés sur la page « L'auteur » du site public.
+        </p>
+
+        <form th:action="@{/backoffice/auteur}" th:object="${formulaire}" method="post"
+              enctype="multipart/form-data" class="flex flex-col gap-4">
+            <div>
+                <label class="champ-label" for="texte">Texte de présentation</label>
+                <textarea class="champ-texte" id="texte" rows="10" th:field="*{texte}"></textarea>
+                <p th:if="${#fields.hasErrors('texte')}" th:errors="*{texte}" class="champ-erreur"></p>
+                <p class="mt-1 text-xs text-slate-400">
+                    Les sauts de ligne sont conservés tels quels : laisser une ligne vide entre deux paragraphes.
+                </p>
+            </div>
+            <div>
+                <label class="champ-label" for="photo">Photo</label>
+                <img th:if="${biographie.photoUrl}" th:src="@{${biographie.photoUrl}}" alt="Photo actuelle"
+                     class="mb-2 aspect-[3/4] w-32 rounded object-cover"/>
+                <input class="champ-texte" type="file" id="photo" th:field="*{photo}" accept="image/*"/>
+                <p class="mt-1 text-xs text-slate-400">Laisser vide pour conserver la photo actuelle.</p>
+            </div>
+            <button type="submit" class="btn btn-primary mt-1">Enregistrer</button>
+        </form>
+    </div>
+</section>
+</body>
+</html>

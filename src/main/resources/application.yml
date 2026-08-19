@@ -28,6 +28,12 @@ app:
     images:
       chemin: ${STOCKAGE_IMAGES_CHEMIN:./data/images}
       prefixe-url: /media
+  catalogue:
+    # Base des URL absolues encodées dans les QR codes des fiches professionnelles
+    # (cf. ADR-0028) : un QR code imprimé ne peut pas être relatif. Même valeur que
+    # app.newsletter.url-base, dupliquée pour ne pas coupler les deux domaines
+    # (même parti pris que app.identity.url-base ci-dessous).
+    url-base: ${APP_URL_BASE:http://localhost:8080}
   newsletter:
     # Base des liens absolus (confirmation/désinscription) insérés dans les emails
     # transactionnels — un email n'a pas de "current origin" comme un navigateur.
