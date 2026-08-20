@@ -1,110 +1,17 @@
-# Stack de production (VPS OVHcloud unique, cf. docs/architecture/tech-stack.md
-# §Déploiement — OVHcloud et ADR-0016). Fichier autonome, pas un override du
-# docker-compose.yml de dev : les deux stacks divergent sur trop de points
-# structurants (pas de build local, port PostgreSQL non publié, service Caddy en
-# plus) pour qu'une fusion de fichiers reste lisible — cf. ADR-0016 pour le détail
-# de ce choix.
+# Stack de production du site (VPS OVHcloud unique, cf. ADR-0016 et ADR-0030).
+#
+# Ne contient plus que l'application : PostgreSQL et Caddy ont été extraits dans
+# un socle partagé (~/infra sur le VPS), car ils servent aussi Keycloak et les
+# futures applications de la machine — cf.
+# docs/architecture/decisions/0030-socle-vps-partage.md.
 #
 # Toutes les valeurs sensibles viennent de variables d'environnement, fournies par
-# un fichier ".env" à la racine (jamais commité, cf. .env.example pour la liste
-# complète documentée).
-#
-# Astuce : un ".env" contenant "COMPOSE_FILE=docker-compose.prod.yml" fait que les
-# commandes "docker compose" lancées sans "-f" (c'est le cas de scripts/backup.sh
-# et scripts/restore.sh, écrits pour être agnostiques de l'environnement) ciblent
-# automatiquement cette stack prod plutôt que le docker-compose.yml de dev — cf.
-# .env.example et ADR-0016.
+# un fichier ".env" à la racine (jamais commité, cf. .env.example).
 
 services:
-  db:
-    image: postgres:16
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - ../volumes/db-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-    ports:
-      # Lié uniquement à la boucle locale du VPS ("127.0.0.1:", jamais
-      # "0.0.0.0:") : invisible depuis le réseau public, contrairement au port
-      # publié sur toutes les interfaces du docker-compose.yml de dev. Sert de
-      # point d'entrée à un tunnel SSH (cf. mode-operatoire-deploiement.md —
-      # accès à la base) pour un client desktop type DBeaver/pgAdmin, sans
-      # jamais exposer Postgres à Internet — cf. ADR-0021.
-      - "127.0.0.1:5432:5432"
-    deploy:
-      resources:
-        limits:
-          # VPS-1 2027 = 2 vCore / 4 Go RAM (cf. tech-stack.md) : plafonds par
-          # conteneur pour qu'aucun service ne puisse à lui seul épuiser les
-          # ressources de la machine, cf. ADR-0022.
-          cpus: "1.0"
-          memory: 768M
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.7
-    restart: unless-stopped
-    command: start
-    depends_on:
-      db:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          # Budget serre (VPS 2 vCore/4 Go, cf. ADR-0022). 512M/0.5 CPU s'est
-          # revele insuffisant des le premier demarrage (phase de build/
-          # augmentation Quarkus : observe a 97% memoire et CPU sature via
-          # "docker stats", conteneur bloque) -- releve a 768M/0.75, a
-          # reajuster encore si besoin, cf. ADR-0027.
-          cpus: "0.75"
-          memory: 768M
-    environment:
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://db:5432/${KEYCLOAK_DB}
-      KC_DB_USERNAME: ${KEYCLOAK_DB_USER}
-      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
-      # Caddy termine le HTTPS (cf. bloc "iabilis.fr" du Caddyfile) : Keycloak sert
-      # du HTTP en clair sur le reseau Compose interne, comme "app".
-      KC_HTTP_ENABLED: "true"
-      KC_HOSTNAME: https://iabilis.fr
-      # Fait confiance aux en-tetes X-Forwarded-* envoyes par Caddy (nom d'option
-      # Keycloak 26 courant, remplace l'ancien "KC_PROXY=edge"), cf. ADR-0027.
-      KC_PROXY_HEADERS: xforwarded
-      KC_HEALTH_ENABLED: "true"
-      # N'a d'effet qu'au tout premier demarrage (compte deja cree ensuite,
-      # ignore aux redemarrages suivants).
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KC_BOOTSTRAP_ADMIN_USERNAME}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KC_BOOTSTRAP_ADMIN_PASSWORD}
-    volumes:
-      # Theme personnalise versionne (cf. ADR-0027) : lecture seule, jamais de
-      # donnees a sauvegarder ici (tout l'etat persistant vit dans Postgres).
-      - ./keycloak-themes:/opt/keycloak/themes:ro
-    healthcheck:
-      # Pas de curl/wget dans l'image officielle (base RHEL/UBI minimale) : on
-      # utilise /dev/tcp de bash a la place, sur le port 9000 (l'interface de
-      # management, ou vivent /health/ready et consorts en Keycloak 26 -- pas
-      # le port 8080 principal).
-      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && echo -e 'GET /health/ready HTTP/1.1\r\nhost: localhost\r\nConnection: close\r\n\r\n' >&3 && grep -q '\"status\": \"UP\"' <&3"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-    expose:
-      - "8080"
-    # Pas de "ports" publie : seul Caddy ecoute en 80/443, joignable uniquement
-    # via le reseau Compose interne ("keycloak:8080"), meme pattern que "app".
-
   app:
     build: .
     restart: unless-stopped
-    depends_on:
-      db:
-        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -112,6 +19,8 @@ services:
           memory: 1536M
     environment:
       SPRING_PROFILES_ACTIVE: prod
+      # "db" est résolu via le réseau partagé "socle" : Compose publie le nom du
+      # service comme alias réseau, y compris entre projets différents.
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
@@ -137,34 +46,18 @@ services:
       - ../volumes/logs-data:/data/logs
     expose:
       - "8080"
-    # Pas de section "ports" publiée sur l'hôte : seul Caddy (ci-dessous) écoute en
-    # 80/443, "app" n'est joignable que via le réseau Compose interne ("app:8080").
+    # Pas de "ports" publié : seul Caddy (dans ~/infra) écoute en 80/443 et
+    # atteint ce service via "app:8080" sur le réseau partagé.
+    #
+    # Pas de "depends_on" sur la base : elle vit dans un autre projet Compose, où
+    # cette clé n'a pas de portée. Au démarrage de la machine, l'application peut
+    # donc redémarrer une ou deux fois avant que PostgreSQL réponde — c'est le
+    # rôle de "restart: unless-stopped" d'absorber ce cas.
+    networks:
+      - socle
 
-  caddy:
-    image: caddy:2
-    restart: unless-stopped
-    depends_on:
-      - app
-      - keycloak
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 128M
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ../volumes/caddy-data:/data
-      - ../volumes/caddy-config:/config
-    environment:
-      CADDY_ACME_EMAIL: ${CADDY_ACME_EMAIL}
-
-# Pas de section "volumes:" top-level : toutes les données persistantes sont des
-# bind mounts vers "../volumes/<nom>" (donc "~/volumes", au même niveau que ce
-# dépôt sur le VPS) plutôt que des volumes gérés par Docker — visibles et
-# inspectables directement sur le disque de l'hôte sans détour par
-# "docker volume inspect"/"/var/lib/docker/volumes/...". Cf. ADR-0023. Ces
-# dossiers survivent aux redéploiements exactement comme les anciens volumes
-# nommés ("up --build" ne recrée que les conteneurs, jamais les bind mounts).
+# Réseau partagé avec le socle (~/infra) et Keycloak (~/keycloak). Créé une seule
+# fois sur le VPS : "docker network create socle".
+networks:
+  socle:
+    external: true
