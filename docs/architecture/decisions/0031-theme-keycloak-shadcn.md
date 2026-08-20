@@ -1,7 +1,14 @@
-# ADR-0031 — Thème Keycloak : `shadcn-theme` (tiers maintenu) plutôt qu'un thème maison
+# ADR-0031 — Thème Keycloak : tentative `shadcn-theme`, puis retour au thème natif
 
-**Statut** : Acté — remplace la section « thème » d'[ADR-0027](0027-keycloak-iam.md)
+**Statut** : **Annulé** — `shadcn-theme` a été déployé puis retiré le jour même.
+Les deux royaumes utilisent désormais le thème natif `keycloak.v2`. Remplace la
+section « thème » d'[ADR-0027](0027-keycloak-iam.md).
 **Date** : 2026-08-20
+
+> **Conclusion en une ligne** : aucun thème personnalisé n'est en place. Le
+> chemin parcouru est conservé ci-dessous parce qu'il documente *pourquoi*, et
+> surtout un critère de choix qu'on n'avait pas vu venir : la couverture
+> fonctionnelle des parcours d'authentification.
 
 ## Contexte
 
@@ -69,17 +76,57 @@ configuration et rend le changement effectif.
   chaîne Node/React à maintenir sur le VPS pour un résultat équivalent à un
   thème tiers déjà packagé.
 
-## Conséquences
+## Conséquences (état final)
 
-- `~/keycloak/providers/shadcn-theme.jar` + montage `providers` dans le compose.
-- Les deux royaumes utilisent `shadcn-theme` comme thème de connexion.
-- L'ancien thème `lacassin-boat` est supprimé de `~/keycloak/themes/`.
-- **Dépendance à un tiers en version 0.9.x**, dont le dépôt prévient que « les
-  API peuvent changer sans préavis » : la version est donc **épinglée**
-  (v0.9.1), à ne pas suivre aveuglément lors des mises à jour.
-- **Retour arrière** en une commande, sans console d'administration :
-  `UPDATE realm SET login_theme = NULL WHERE name = '<royaume>';` puis
-  redémarrage du conteneur.
+- **Aucun thème personnalisé** : les deux royaumes sont sur `keycloak.v2`, le
+  thème natif de Keycloak 26. Passkeys fonctionnels sur `master` (10 marqueurs).
+- `~/keycloak/providers/` et le JAR sont supprimés, le montage retiré du compose.
+- L'ancien thème maison `lacassin-boat` est supprimé lui aussi : personne ne
+  l'utilisait et l'utilisateur n'en voulait pas.
+- `~/keycloak/themes/` est désormais vide, le montage est conservé pour un futur
+  thème.
+- Le retour arrière s'est fait **en base** (`realm.login_theme`) plus
+  redémarrage, sans passer par la console — utile à savoir si un thème casse un
+  jour la page de connexion au point de rendre l'administration inaccessible.
+
+## Annulation : `shadcn-theme` supprime les passkeys
+
+Après déploiement, l'utilisateur a constaté que **l'option passkey avait disparu**
+de la page de connexion. Mesure comparative sur la même page :
+
+| Thème | Marqueurs `passkey` / `webauthn` dans la page |
+|---|---|
+| `keycloak.v2` (natif) | **10** |
+| `shadcn-theme` | **0** |
+
+Zéro — pas même dans le contexte Keycloakify sérialisé. Le thème ne stylise donc
+pas mal ce parcours : **il ne l'implémente pas du tout**. C'est la conséquence
+directe du modèle Keycloakify, où chaque écran est réimplémenté en React : tout
+parcours que l'auteur n'a pas traité disparaît silencieusement, sans erreur ni
+avertissement.
+
+Le thème annonçait pourtant WebAuthn dans ses fonctionnalités. **La leçon** :
+pour un thème d'authentification, la maintenance et la compatibilité de version
+ne suffisent pas comme critères — il faut vérifier la **couverture réelle des
+parcours** avant de déployer. Le contrôle « la page de connexion s'affiche » ne
+dit rien des chemins alternatifs (passkey, OTP, fédération d'identité).
+
+Retour au thème natif sur les deux royaumes, JAR et montage `providers`
+supprimés.
+
+**Conséquence acceptée** : la marque Keycloak redevient visible sur les pages de
+connexion, à rebours de l'objectif initial d'ADR-0027. Un parcours
+d'authentification complet vaut mieux qu'une page anonyme mais amputée. Si
+l'habillage redevient une priorité, le critère d'entrée est désormais explicite :
+couverture des passkeys vérifiée **avant** déploiement.
+
+### Précision utile pour la suite
+
+Le royaume du site n'affiche aucun marqueur passkey même sous le thème natif :
+ses deux exécutions `webauthn-authenticator` sont au niveau *DISABLED*, alors
+que `master` en a au niveau *ALTERNATIVE*. C'est donc une question de
+**configuration du royaume**, sans rapport avec le thème — à activer si les
+passkeys sont voulus côté site.
 
 ## Correctif associé : le healthcheck mentait
 
