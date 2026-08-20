@@ -90,14 +90,14 @@ fois le back-office du site branché en cross-origin sur ce domaine (prévu
 
 ### Thème de connexion personnalisé ("lacassin-boat")
 
+> **Remplacé** — cf. [ADR-0031](0031-theme-keycloak-shadcn.md) : ce thème maison
+> n'a pas convaincu l'utilisateur et a été remplacé par `shadcn-theme`, un thème
+> tiers maintenu. La section ci-dessous est conservée pour l'historique de la
+> décision, elle ne décrit plus l'état du système.
+
 L'utilisateur veut éviter qu'on devine que Keycloak est utilisé derrière ce
 domaine. Dossier `lacassin-boat/login/`, monté en lecture seule dans le
 conteneur (`/opt/keycloak/themes`) :
-
-> **Emplacement depuis [ADR-0030](0030-socle-vps-partage.md)** : le thème a
-> quitté ce dépôt pour `~/keycloak/themes/` sur le VPS, avec le reste de la
-> configuration Keycloak. Il n'est donc plus versionné dans Git, mais il est
-> inclus dans la sauvegarde du socle (`~/infra/backup.sh`).
 
 - `theme.properties` avec `parent=keycloak.v2` — hérite de tout le thème par
   défaut, pas besoin de dupliquer les templates FreeMarker.
