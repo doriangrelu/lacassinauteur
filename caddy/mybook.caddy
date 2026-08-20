@@ -1,0 +1,34 @@
+# Fragment Caddy du site Thierry Lacassin (cf. ADR-0030).
+#
+# Copié par scripts/deploy.sh dans ~/infra/conf.d/mybook.caddy sur le VPS, où il
+# est chargé par le Caddyfile du socle via "import conf.d/*.caddy". Le routage du
+# site reste ainsi versionné avec le site, alors que le serveur Caddy lui-même
+# appartient au socle partagé.
+#
+# Pas de bloc global ici (email ACME, etc.) : il vit dans ~/infra/Caddyfile, car
+# il s'applique à tous les domaines de la machine.
+#
+# "reverse_proxy" ajoute par défaut les en-têtes X-Forwarded-For/-Proto/-Host vers
+# l'upstream ; côté application, "server.forward-headers-strategy: framework"
+# (application-prod.yml) les exploite déjà pour restituer la vraie IP client
+# (nécessaire au rate limiting anti brute-force, ADR-0008) et le bon schéma.
+
+# Domaine canonique : apex sans "www" — cf. ADR-0016.
+thierrylacassin-auteur.fr {
+	encode gzip zstd
+	reverse_proxy app:8080
+}
+
+www.thierrylacassin-auteur.fr {
+	redir https://thierrylacassin-auteur.fr{uri} permanent
+}
+
+# Second nom de domaine deja pointe vers ce serveur : redirection pure vers le
+# domaine canonique, pour eviter le contenu duplique (penalite SEO).
+leblogdethierry.fr {
+	redir https://thierrylacassin-auteur.fr{uri} permanent
+}
+
+www.leblogdethierry.fr {
+	redir https://thierrylacassin-auteur.fr{uri} permanent
+}

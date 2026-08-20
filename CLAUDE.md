@@ -66,17 +66,24 @@ SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run
 # Postgres local seul (dev : l'app tourne alors hors Docker)
 docker compose up -d db
 
-# Stack complète (app + db), comme en production
+# Stack complète (app + db) en local — le docker-compose.yml de dev reste
+# monolithique, contrairement à la production éclatée en trois projets (ADR-0030)
 docker compose up -d
 
 # Compilation Tailwind (watch, en dev — binaire standalone dans tools/, gitignoré)
 tools/tailwindcss.exe -i frontend/public.css -o src/main/resources/static/css/public.css --watch
 tools/tailwindcss.exe -i frontend/backoffice.css -o src/main/resources/static/css/backoffice.css --watch
 
-# Sauvegarde / restauration (DB + images, cf. ADR-0012)
-scripts/backup.sh
-scripts/restore.sh <archive.tar.gz>
+# Sauvegarde / restauration : sur le VPS uniquement, dans le socle partagé
+# (cf. ADR-0012 amendé par ADR-0030 — ces scripts ne sont plus dans ce dépôt)
+~/infra/backup.sh
+~/infra/restore.sh <archive.tar.gz>
 ```
+
+**Production** : trois projets Compose distincts sur le VPS (cf.
+[ADR-0030](docs/architecture/decisions/0030-socle-vps-partage.md)) — `~/infra`
+(Caddy + Postgres, partagés), `~/keycloak` (SSO) et `~/mybook` (l'application
+seule). Déployer le site ne touche donc ni la base, ni le SSO.
 
 Identifiants de dev (profil `dev` uniquement, jamais en prod) :
 `admin@lacassinauteur.local` / `admin123` (créés par `DevUtilisateurSeeder`).
@@ -104,15 +111,15 @@ Identifiants de dev (profil `dev` uniquement, jamais en prod) :
 - **Slugs SEO** (univers/collections/livres) : générés une seule fois à la création,
   jamais recalculés lors d'une modification, pour ne pas casser un lien déjà
   indexé/partagé.
-- **`Caddyfile` en bind mount** : le conteneur suit l'**inode** monté au démarrage,
-  pas le chemin. `git pull` ne modifie pas le fichier en place, il le **remplace**
-  par un nouvel inode → le conteneur sert l'ancienne version indéfiniment, et
-  `docker compose up -d` ne le recrée pas (définition de service inchangée). Un
-  `caddy reload` ne sauve pas non plus : il recharge fidèlement l'ancien fichier
-  (symptôme trompeur : `"config is unchanged"` dans les logs alors que le fichier
-  a bien changé sur l'hôte). `scripts/deploy.sh` force donc désormais
-  `up -d --force-recreate caddy` à chaque déploiement — si tu modifies le
-  `Caddyfile` hors de ce script, pense à recréer le conteneur toi-même.
+- **Bind mount d'un *fichier* unique** : le conteneur suit l'**inode** monté au
+  démarrage, pas le chemin. `git pull` ne modifie pas le fichier en place, il le
+  **remplace** par un nouvel inode → le conteneur sert l'ancienne version
+  indéfiniment, et `docker compose up -d` ne le recrée pas (définition de service
+  inchangée). Symptôme trompeur : `"config is unchanged"` dans les logs de Caddy
+  alors que le fichier a bien changé sur l'hôte. Ce piège a coûté une demi-journée
+  sur le `Caddyfile` ; depuis [ADR-0030](docs/architecture/decisions/0030-socle-vps-partage.md)
+  on monte un **répertoire** (`conf.d/`) au lieu d'un fichier, ce qui l'élimine —
+  mais la règle reste valable pour tout futur bind mount de fichier.
 - **Bash tool lent sur cet environnement Windows** : préférer PowerShell pour les
   commandes shell (git, docker, mvn, manipulation de fichiers) quand la latence
   compte.
