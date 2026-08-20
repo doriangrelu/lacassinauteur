@@ -123,3 +123,9 @@ Identifiants de dev (profil `dev` uniquement, jamais en prod) :
 - **Bash tool lent sur cet environnement Windows** : préférer PowerShell pour les
   commandes shell (git, docker, mvn, manipulation de fichiers) quand la latence
   compte.
+- **Transfert de scripts vers le VPS : utiliser `scp`, jamais un pipe PowerShell.**
+  Un `Get-Content ... | ssh "cat > fichier.sh"` ajoute un **BOM UTF-8** en tête.
+  Le noyau ne reconnaît alors plus la ligne shebang et exécute le script avec
+  `sh` : les constructions bash échouent sur un `Bad substitution` très trompeur,
+  et on voit passer un `#!/bin/sh: not found` facile à prendre pour du bruit.
+  Vérification : `head -c 2 fichier.sh | od -An -tx1` doit donner `23 21`.

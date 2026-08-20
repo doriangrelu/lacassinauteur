@@ -126,3 +126,22 @@ Deux améliorations au passage :
   au prix de quelques secondes de latence au boot.
 - Trois `docker compose` à connaître au lieu d'un : le mode opératoire est mis à
   jour en conséquence.
+
+## Ce que la bascule a révélé
+
+Trois défauts préexistants, invisibles jusqu'à ce que l'opération les expose :
+
+1. **La base Keycloak n'a jamais été sauvegardée.** Le dump conditionnel ajouté
+   la veille testait `${KEYCLOAK_DB:-}`, mais `scripts/backup.sh` ne sourçait pas
+   le `.env` : la variable était toujours vide côté shell, la condition toujours
+   fausse, et l'archive ne contenait que `base.dump`. Le passage à `pg_dumpall`
+   supprime cette classe de bug — il n'y a plus de liste de bases à tenir à jour.
+2. **Aucune purge des archives.** L'ancien script empilait les sauvegardes sans
+   limite ; le disque se serait rempli en silence. Rétention à 14 archives.
+3. **Les rôles n'étaient pas sauvegardés**, cf. ci-dessus.
+
+Un piège d'exécution mérite aussi d'être noté : les scripts transférés via un
+pipe PowerShell arrivaient avec un **BOM UTF-8**, qui casse la ligne shebang —
+le noyau ne la reconnaît plus et retombe sur `sh`, où les constructions bash
+(`${BASH_SOURCE[0]}`) échouent avec un `Bad substitution` trompeur. Utiliser
+`scp` plutôt qu'un pipe règle le problème (cf. CLAUDE.md).
