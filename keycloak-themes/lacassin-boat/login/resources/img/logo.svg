@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Logo">
-  <path d="M32 6 L32 34" stroke="#1e3a5f" stroke-width="2" stroke-linecap="round"/>
-  <path d="M33 9 L48 24 L33 24 Z" fill="#3d6ea5"/>
-  <path d="M31 12 L20 24 L31 24 Z" fill="#1e3a5f"/>
-  <path d="M12 34 L52 34 L46 46 C40 49 24 49 18 46 Z" fill="#1e3a5f"/>
-  <path d="M6 50 C11 47 15 47 20 50 C25 53 29 53 34 50 C39 47 43 47 48 50 C53 53 57 53 58 50"
-        fill="none" stroke="#3d6ea5" stroke-width="2.5" stroke-linecap="round"/>
-</svg>

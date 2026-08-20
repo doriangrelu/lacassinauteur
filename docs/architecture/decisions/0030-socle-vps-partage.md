@@ -126,6 +126,10 @@ Deux améliorations au passage :
   au prix de quelques secondes de latence au boot.
 - Trois `docker compose` à connaître au lieu d'un : le mode opératoire est mis à
   jour en conséquence.
+- Le thème Keycloak quitte ce dépôt pour `~/keycloak/themes/`. **Contrepartie
+  assumée** : il n'est plus versionné (ni historique, ni diff), mais il est
+  couvert par la sauvegarde du socle. Vérifié avant retrait : le thème est bien
+  servi depuis le nouvel emplacement dans le conteneur.
 
 ## Ce que la bascule a révélé
 

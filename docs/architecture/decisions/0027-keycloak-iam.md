@@ -91,8 +91,13 @@ fois le back-office du site branché en cross-origin sur ce domaine (prévu
 ### Thème de connexion personnalisé ("lacassin-boat")
 
 L'utilisateur veut éviter qu'on devine que Keycloak est utilisé derrière ce
-domaine. Nouveau dossier versionné `keycloak-themes/lacassin-boat/login/`,
-monté en lecture seule dans le conteneur (`/opt/keycloak/themes`) :
+domaine. Dossier `lacassin-boat/login/`, monté en lecture seule dans le
+conteneur (`/opt/keycloak/themes`) :
+
+> **Emplacement depuis [ADR-0030](0030-socle-vps-partage.md)** : le thème a
+> quitté ce dépôt pour `~/keycloak/themes/` sur le VPS, avec le reste de la
+> configuration Keycloak. Il n'est donc plus versionné dans Git, mais il est
+> inclus dans la sauvegarde du socle (`~/infra/backup.sh`).
 
 - `theme.properties` avec `parent=keycloak.v2` — hérite de tout le thème par
   défaut, pas besoin de dupliquer les templates FreeMarker.
@@ -181,7 +186,8 @@ DKIM qui assure l'alignement DMARC. Procédure détaillée dans
   `KC_BOOTSTRAP_ADMIN_PASSWORD`.
 - `scripts/backup.sh`/`scripts/restore.sh` : dump/restore conditionnel de la
   base `keycloak`.
-- Nouveau dossier versionné `keycloak-themes/lacassin-boat/login/`.
+- Nouveau dossier `lacassin-boat/login/` (déplacé hors de ce dépôt vers
+  `~/keycloak/themes/` par ADR-0030).
 - `docs/mode-operatoire-deploiement.md` : nouvelle section (bootstrap SQL,
   sélection du thème, configuration SMTP — actions manuelles ponctuelles).
 - **Non fait dans cette passe**, nécessite une action humaine ou une décision
