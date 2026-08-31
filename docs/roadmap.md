@@ -318,6 +318,14 @@ Deux besoins du brief jamais livrés, retrouvés en confrontant le brief au code
       clé uniquement + `PasswordAuthentication no`).
 - [ ] C-5 à C-7 : durcissements de routine (COOP, `preload` HSTS…), faible
       priorité.
+- [x] **CVE-2026-18963** (Keycloak, CVSS 9.1, prise de contrôle de compte sans
+      authentification via le flux `reset-credentials`) — **non exposé**, vérifié
+      le 2026-08-20 : le serveur tourne en 26.7.2 (triple vérifié :
+      `kc.sh --version`, log de démarrage, digest de l'image), exactement la
+      version corrigée (plage vulnérable `>=26.7.0 <26.7.2`). Le conteneur a été
+      recréé le 20 août, après la publication du correctif le 19 — jamais
+      vulnérable depuis le déploiement. Défense en profondeur constatée au
+      passage : `reset_password_allowed=false` sur les deux royaumes.
 
 ## v2 (backlog, non détaillé)
 
