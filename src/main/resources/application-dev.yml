@@ -2,8 +2,10 @@ spring:
   thymeleaf:
     cache: false
 
-# Compte ADMIN créé automatiquement au démarrage en dev par DevUtilisateurSeeder :
-# admin@lacassinauteur.local / admin123 (jamais utilisé en prod, cf. ce seeder).
+# Authentification back-office : Keycloak reste le royaume réel du site, mais un
+# client dédié "-local" et un royaume de test (cf. ADR-0033) — jamais le client
+# de prod. KEYCLOAK_ISSUER_URI/CLIENT_ID/CLIENT_SECRET à fournir en variables
+# d'environnement locales (cf. .env.example), pas de valeur par défaut ici.
 
 logging:
   level:

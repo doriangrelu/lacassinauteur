@@ -47,8 +47,11 @@ de vérité vivante, à tenir à jour à chaque évolution (pas une passe sépar
 - Domaines métier explicites : `identity`, `catalogue`, `actualite`, `newsletter`,
   `contact`, `biographie`, `legal` — chacun suit exactement le même schéma de
   sous-packages. (`biographie` porte la page « Auteur » ; nommé ainsi et pas
-  `auteur` pour ne pas entrer en collision avec le rôle `AUTEUR` d'`identity`, cf.
-  ADR-0028. `legal` porte les variables des pages légales, cf. ADR-0029.)
+  `auteur` pour ne pas entrer en collision avec le rôle `AUTEUR`, qui existait alors
+  dans `identity` (supprimé depuis le passage à Keycloak, cf. ADR-0033) — cf.
+  ADR-0028. `legal` porte les variables des pages légales, cf. ADR-0029. `identity`
+  ne porte plus aucun compte local depuis ADR-0033 : uniquement l'intégration OIDC
+  avec Keycloak.)
 - Java moderne (lambdas/streams, records pour les value objects), principes SOLID.
 - Séparation stricte des espaces front (public / back-office) : aucun layout ni
   fragment Thymeleaf partagé entre les deux, deux points d'entrée CSS Tailwind
@@ -85,8 +88,11 @@ tools/tailwindcss.exe -i frontend/backoffice.css -o src/main/resources/static/cs
 (Caddy + Postgres, partagés), `~/keycloak` (SSO) et `~/mybook` (l'application
 seule). Déployer le site ne touche donc ni la base, ni le SSO.
 
-Identifiants de dev (profil `dev` uniquement, jamais en prod) :
-`admin@lacassinauteur.local` / `admin123` (créés par `DevUtilisateurSeeder`).
+Authentification back-office : Keycloak (OIDC, client confidentiel + PKCE, jetons
+opaques + introspection — cf. [ADR-0033](docs/architecture/decisions/0033-sso-keycloak-backoffice.md)),
+plus aucun compte local. En dev, un client Keycloak dédié suffixé `-local` sur un
+royaume de test — jamais le client de prod (`KEYCLOAK_ISSUER_URI`/`CLIENT_ID`/
+`CLIENT_SECRET` en variables d'environnement locales, cf. `.env.example`).
 
 ## Pièges connus (voir aussi `architecture.md §12.2`)
 

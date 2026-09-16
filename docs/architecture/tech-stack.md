@@ -89,16 +89,34 @@
 
 ## Sécurité
 
-- **Spring Security** pour le back-office (`/backoffice/**`), formulaire de connexion
-  classique (pas de SSO nécessaire pour 1-2 utilisateurs).
-- Rôles `ADMIN` et `AUTEUR` (cf. [ADR-0003](decisions/0003-roles-multiples.md)).
-- Mots de passe hachés avec `BCryptPasswordEncoder`.
+- **Spring Security** pour le back-office (`/backoffice/**`) : SSO OIDC via
+  Keycloak (`spring-boot-starter-oauth2-client`), plus aucun compte maison —
+  cf. [ADR-0033](decisions/0033-sso-keycloak-backoffice.md), qui remplace
+  l'authentification par formulaire et les rôles `ADMIN`/`AUTEUR` décrits par
+  [ADR-0003](decisions/0003-roles-multiples.md).
+  - Client OAuth2.1 **confidentiel** (secret côté serveur) **+ PKCE S256**
+    forcé malgré tout (`OAuth2AuthorizationRequestCustomizers.withPkce()`),
+    conforme à OAuth 2.1. Deux clients Keycloak distincts selon
+    l'environnement (prod / dev local), jamais un client partagé avec un
+    Redirect URI `localhost` en prod.
+  - Autorisation : un unique rôle **realm** Keycloak `AUTEUR`
+    (`hasAuthority("AUTEUR")` sur `/backoffice/**`) — pas de granularité
+    supplémentaire, Thierry n'étant pas administrateur Keycloak.
+  - **Jamais l'endpoint userinfo** : les autorités sont déterminées par
+    **introspection RFC 7662** du jeton d'accès
+    (`KeycloakIntrospectionOidcUserService`), quel que soit son format réel
+    (JWT signé constaté en pratique) — le site ne le décode jamais lui-même.
+  - Gestion du compte (mot de passe compris) entièrement déléguée à
+    l'Account Console Keycloak, lien exposé dans le topbar back-office.
+  - Déconnexion RP-Initiated (`OidcClientInitiatedLogoutSuccessHandler`) :
+    ferme aussi la session Keycloak, pas seulement la session applicative.
 - CSRF activé sur tous les formulaires (public et back-office) — comportement par
   défaut Spring Security à conserver, jamais désactivé.
 - CORS jamais configuré de façon permissive (pas de `*`) — le monolithe SSR n'a pas
   de besoin cross-origin par conception.
-- **Bucket4j** pour la limitation anti brute-force sur l'authentification back-office
-  (cf. [ADR-0008](decisions/0008-anti-bruteforce-bucket4j.md)).
+- Anti brute-force sur l'authentification back-office : porté par Keycloak
+  (Realm Settings → Security Defenses), plus par Bucket4j — cf. ADR-0033, qui
+  remplace [ADR-0008](decisions/0008-anti-bruteforce-bucket4j.md).
 - Protection anti-spam des formulaires publics (newsletter, contact, avis lecteur) :
   honeypot + limitation de fréquence par IP en v1 ; CAPTCHA (ex. Cloudflare Turnstile,
   respectueux de la vie privée) en option si le spam devient un problème réel.

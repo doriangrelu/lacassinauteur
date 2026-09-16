@@ -15,6 +15,32 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 5MB
+  security:
+    oauth2:
+      client:
+        registration:
+          # Identifiant fixe "keycloak" : réutilisé tel quel par SecurityConfig et
+          # CompteKeycloakModelAttributeAdvice — ne pas renommer sans les mettre à
+          # jour. Client confidentiel + PKCE S256 (cf. ADR-0033) : deux clients
+          # Keycloak distincts existent (prod et "-local"), jamais le même en dev
+          # et en prod (redirect URI localhost interdit sur le client de prod).
+          # Les valeurs ci-dessous changent donc selon l'environnement qui lance
+          # l'appli, pas selon un profil Spring.
+          keycloak:
+            client-id: ${KEYCLOAK_CLIENT_ID:}
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:}
+            authorization-grant-type: authorization_code
+            scope: openid,email,profile
+            # Doit être exactement l'un des Redirect URI valides déclarés sur le
+            # client Keycloak utilisé.
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            # Découverte OIDC (.well-known/openid-configuration) : fournit entre
+            # autres l'introspection_endpoint utilisé par
+            # KeycloakIntrospectionOidcUserService (jetons opaques, cf. ADR-0033) —
+            # jamais l'endpoint userinfo, volontairement inutilisé.
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:}
 
 app:
   captcha:
@@ -36,8 +62,7 @@ app:
   catalogue:
     # Base des URL absolues encodées dans les QR codes des fiches professionnelles
     # (cf. ADR-0028) : un QR code imprimé ne peut pas être relatif. Même valeur que
-    # app.newsletter.url-base, dupliquée pour ne pas coupler les deux domaines
-    # (même parti pris que app.identity.url-base ci-dessous).
+    # app.newsletter.url-base, dupliquée pour ne pas coupler les deux domaines.
     url-base: ${APP_URL_BASE:http://localhost:8080}
   newsletter:
     # Base des liens absolus (confirmation/désinscription) insérés dans les emails
@@ -53,23 +78,6 @@ app:
       # chaque confirmation/désinscription (0 = non configurée, synchronisation
       # ignorée). À renseigner une fois la liste créée dans Brevo.
       liste-id: ${BREVO_LISTE_ID:0}
-  identity:
-    # Base des liens absolus (réinitialisation de mot de passe) insérés dans les
-    # emails transactionnels — même valeur que app.newsletter.url-base, dupliquée
-    # pour ne pas coupler les deux domaines (cf. package-structure.md).
-    url-base: ${APP_URL_BASE:http://localhost:8080}
-    jwt:
-      # Cf. ADR-0018 : jamais commise, à générer et fournir en variable
-      # d'environnement en production (valeur par défaut utilisable en dev
-      # uniquement).
-      secret: ${JWT_RESET_SECRET:dev-uniquement-a-remplacer-en-prod-min-32-caracteres-svp}
-      duree-validite-minutes: 15
-    brevo:
-      # Même compte Brevo que app.newsletter.brevo (mêmes variables
-      # d'environnement, cf. BrevoIdentityProperties).
-      api-key: ${BREVO_API_KEY:}
-      expediteur-email: ${BREVO_EXPEDITEUR_EMAIL:newsletter@thierrylacassin-auteur.fr}
-      expediteur-nom: ${BREVO_EXPEDITEUR_NOM:Thierry Lacassin}
   contact:
     # Adresse de l'auteur qui reçoit les notifications du formulaire de contact.
     email-auteur: ${CONTACT_EMAIL_AUTEUR:thierry@thierrylacassin-auteur.fr}

@@ -3,9 +3,10 @@ spring:
     cache: true
 
 server:
-  # Derrière le reverse proxy Caddy (cf. tech-stack.md) : restaure la vraie IP client
-  # (X-Forwarded-For) pour request.getRemoteAddr(), utilisé par le rate limiting
-  # anti brute-force (ADR-0008).
+  # Derrière le reverse proxy Caddy (cf. tech-stack.md) : restaure le vrai schéma/hôte
+  # (X-Forwarded-*) vus par l'application — indispensable pour que Spring construise
+  # une redirect_uri OAuth2 en https:// vers le bon domaine (cf. ADR-0033), pas
+  # seulement pour les liens absolus applicatifs.
   forward-headers-strategy: framework
 
 app:

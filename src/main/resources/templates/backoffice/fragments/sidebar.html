@@ -79,12 +79,6 @@
                 Informations légales
             </a>
         </li>
-        <li sec:authorize="hasRole('ADMIN')">
-            <a th:href="@{/backoffice/comptes}" class="nav-lien">
-                <span th:replace="~{backoffice/fragments/icons :: users('h-5 w-5')}"></span>
-                Comptes
-            </a>
-        </li>
     </ul>
 </nav>
 </body>

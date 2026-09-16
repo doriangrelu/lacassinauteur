@@ -12,7 +12,7 @@
 | `actualite` | Événements et actus (à venir / passées) | `shared` |
 | `newsletter` | Abonnés, consentement, envoi de campagnes | `shared` |
 | `contact` | Messages entrants du formulaire de contact | `shared` |
-| `identity` | Comptes back-office, rôles, authentification | `shared` |
+| `identity` | Intégration SSO Keycloak du back-office (aucun compte maison) | `shared` |
 | `biographie` | Présentation publique de l'auteur (page « Auteur ») | `shared` |
 | `legal` | Variables des pages légales (éditeur, hébergeur, RGPD) | `shared` |
 | `shared` | Kernel technique commun (pas de logique métier) | — |
@@ -93,14 +93,15 @@ Le cœur du site : la présentation de l'œuvre de l'auteur.
 
 ## Domaine `identity`
 
-- **`Utilisateur`** — id, email, mot de passe (haché), rôle (`ADMIN` / `AUTEUR`),
-  statut actif/inactif.
-
-### Cas d'usage principaux
-
-- Authentification (délégué en grande partie à Spring Security).
-- Gestion des comptes back-office (créer un compte, changer un rôle, désactiver) —
-  réservé au rôle `ADMIN`.
+Depuis [ADR-0033](decisions/0033-sso-keycloak-backoffice.md), aucun compte ni
+mot de passe ne vit plus dans ce dépôt : l'authentification du back-office
+est entièrement déléguée à Keycloak (SSO OIDC), qui est l'unique source de
+vérité pour l'identité, les mots de passe et l'autorisation (un rôle realm
+Keycloak, `AUTEUR`). `identity` ne porte donc plus aucun modèle de domaine ni
+cas d'usage métier — uniquement l'intégration technique (traduire le
+principal OIDC authentifié par Keycloak en session Spring Security) et
+l'exposition du lien vers l'Account Console Keycloak pour la gestion du
+compte, cf. [package-structure.md](package-structure.md).
 
 ## Domaine `biographie`
 

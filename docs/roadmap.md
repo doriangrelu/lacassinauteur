@@ -235,9 +235,26 @@
       adresse email (prérequis du bouton « Test connection »).
 - [ ] Panneau web de supervision du serveur, authentifié via Keycloak — **à
       cadrer**, rien n'est encore décidé (périmètre, métriques, techno).
-- [ ] Rattacher le back-office du site à Keycloak (SSO OIDC) — remplacerait
-      l'authentification maison du domaine `identity`. Report explicite de
-      l'utilisateur, à cadrer.
+- [ ] **Rattacher le back-office du site à Keycloak (SSO OIDC)** — cf.
+      [ADR-0033](architecture/decisions/0033-sso-keycloak-backoffice.md).
+      Implémenté et vérifié de bout en bout sur un royaume de test (branche
+      `feature/sso-keycloak`, pas encore mergée/déployée) : suppression
+      complète de l'authentification maison du domaine `identity` (comptes,
+      réinitialisation de mot de passe, rate-limiting Bucket4j), client
+      OAuth2.1 confidentiel + PKCE S256, autorisation par rôle realm `AUTEUR`
+      via introspection du jeton d'accès (jamais userinfo), gestion du
+      compte déléguée à l'Account Console Keycloak.
+      - [ ] Créer le client Keycloak de production (`mybook-backoffice`) —
+            cf. mode-operatoire-deploiement.md §13.
+      - [ ] Repasser `reset_password_allowed` à `true` sur le royaume de
+            prod (nécessaire pour le changement de mot de passe en
+            self-service depuis l'Account Console).
+      - [ ] Vérifier/activer la protection anti brute-force Keycloak (Realm
+            Settings → Security Defenses), qui remplace Bucket4j.
+      - [ ] Confirmer manuellement le bouton « Se déconnecter » dans un vrai
+            navigateur (l'outil de test automatisé n'a pas pu conclure sur ce
+            point précis, cf. ADR-0033).
+      - [ ] Merger la branche et déployer.
 
 ## Phase 10 — Page Auteur et QR codes — cf. [ADR-0028](architecture/decisions/0028-domaine-biographie-et-qr-code-fiche-pro.md)
 
@@ -341,12 +358,9 @@ Deux besoins du brief jamais livrés, retrouvés en confrontant le brief au code
   exactement (état des conteneurs, espace disque, dernières sauvegardes,
   santé applicative…) et jusqu'où va-t-on (lecture seule vs actions) ? Rien
   n'est tranché.
-- **Bascule du back-office vers Keycloak** : remplacer l'authentification maison
-  (`identity`) ou faire cohabiter les deux ? Impacte directement le sort du
-  domaine `identity` (comptes, mot de passe oublié, anti brute-force Bucket4j),
-  aujourd'hui pleinement fonctionnel — la bascule est donc un vrai arbitrage,
-  pas une évidence.
 
 *(Décisions closes : fournisseur email transactionnel → Brevo pour tout, cf.
 [ADR-0027](architecture/decisions/0027-keycloak-iam.md) ; ESP newsletter →
-Brevo, clé et liste renseignées en production.)*
+Brevo, clé et liste renseignées en production ; bascule du back-office vers
+Keycloak (SSO), authentification maison entièrement supprimée, cf.
+[ADR-0033](architecture/decisions/0033-sso-keycloak-backoffice.md).)*

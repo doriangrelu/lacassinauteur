@@ -1,24 +1,31 @@
 package fr.lacassinauteur.site.config;
 
-import fr.lacassinauteur.site.identity.infrastructure.security.LoginRateLimiter;
-import fr.lacassinauteur.site.identity.infrastructure.security.LoginRateLimitingFilter;
+import fr.lacassinauteur.site.identity.infrastructure.security.KeycloakIntrospectionOidcUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.oauth2.client.oidc.web.logout.OidcClientInitiatedLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestCustomizers;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+
+import static org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter.DEFAULT_AUTHORIZATION_REQUEST_BASE_URI;
 
 @Configuration
-@EnableMethodSecurity
 public class SecurityConfig {
 
-    private static final String PAGE_CONNEXION = "/backoffice/connexion";
+    private static final String URL_DECONNEXION = "/backoffice/deconnexion";
 
     // reCAPTCHA v3 (cf. ADR-0019) est le seul contenu tiers du site : script +
-    // iframe/XHR internes servis depuis google.com/gstatic.com. Aucun script ni
-    // style inline nulle part dans les templates (vérifié) — pas de 'unsafe-inline'
-    // nécessaire.
+    // iframe/XHR internes servis depuis google.com/gstatic.com. La bascule vers
+    // Keycloak (cf. ADR-0033) ne change rien ici : la redirection d'authentification
+    // et la déconnexion RP-Initiated sont des navigations top-level (redirections
+    // HTTP), jamais des appels fetch/XHR — aucune origine Keycloak à ajouter à
+    // cette CSP. Aucun script ni style inline nulle part dans les templates
+    // (vérifié) — pas de 'unsafe-inline' nécessaire.
     private static final String CSP =
             "default-src 'self'; "
                     + "script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; "
@@ -33,30 +40,57 @@ public class SecurityConfig {
                     + "frame-ancestors 'none'";
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, LoginRateLimiter loginRateLimiter) throws Exception {
+    public SecurityFilterChain filterChain(
+            HttpSecurity http,
+            ClientRegistrationRepository clientRegistrationRepository,
+            KeycloakIntrospectionOidcUserService keycloakIntrospectionOidcUserService)
+            throws Exception {
         http.headers(headers -> headers.contentSecurityPolicy(csp -> csp.policyDirectives(CSP)))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PAGE_CONNEXION, "/backoffice/mot-de-passe-oublie", "/backoffice/reinitialiser-mot-de-passe")
-                        .permitAll()
-                        .requestMatchers("/backoffice/**").hasAnyRole("ADMIN", "AUTEUR")
+                        .requestMatchers("/backoffice/**")
+                        .hasAuthority(KeycloakIntrospectionOidcUserService.ROLE_REALM_BACKOFFICE)
                         .anyRequest().permitAll())
-                .formLogin(form -> form
-                        .loginPage(PAGE_CONNEXION)
-                        .loginProcessingUrl(PAGE_CONNEXION)
-                        // "/backoffice/comptes" est reserve a l'ADMIN (cf. CompteController) : la
-                        // redirection par defaut apres connexion doit pointer vers une page
-                        // accessible aux deux roles, sans quoi un AUTEUR tombe sur une erreur
-                        // 403 juste apres s'etre connecte.
-                        .defaultSuccessUrl("/backoffice/univers", true)
-                        .failureUrl(PAGE_CONNEXION + "?erreur")
-                        .permitAll())
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(authorization -> authorization
+                                .authorizationRequestResolver(pkceAuthorizationRequestResolver(clientRegistrationRepository)))
+                        .userInfoEndpoint(userInfo -> userInfo.oidcUserService(keycloakIntrospectionOidcUserService))
+                        // "/backoffice/comptes" n'existe plus (gestion de comptes déplacée dans la
+                        // console Keycloak, cf. ADR-0033) : la redirection par défaut peut à nouveau
+                        // pointer vers n'importe quelle page accessible à tout utilisateur autorisé.
+                        .defaultSuccessUrl("/backoffice/univers", true))
                 .logout(logout -> logout
-                        .logoutUrl("/backoffice/deconnexion")
-                        .logoutSuccessUrl(PAGE_CONNEXION + "?deconnecte"))
-                .addFilterBefore(
-                        new LoginRateLimitingFilter(loginRateLimiter, PAGE_CONNEXION),
-                        UsernamePasswordAuthenticationFilter.class);
+                        .logoutUrl(URL_DECONNEXION)
+                        .logoutSuccessHandler(oidcLogoutSuccessHandler(clientRegistrationRepository)));
 
         return http.build();
+    }
+
+    /**
+     * PKCE en plus du secret client (cf. ADR-0033) : Spring ne l'active
+     * automatiquement que pour un client public ({@code client-authentication-method: none}).
+     * Notre client reste confidentiel (secret gardé côté serveur, comme
+     * {@code BREVO_API_KEY}) — {@code withPkce()} force PKCE malgré tout, en
+     * défense en profondeur contre le vol de code d'autorisation, conformément à
+     * OAuth 2.1.
+     */
+    private OAuth2AuthorizationRequestResolver pkceAuthorizationRequestResolver(
+            ClientRegistrationRepository clientRegistrationRepository) {
+        DefaultOAuth2AuthorizationRequestResolver resolver = new DefaultOAuth2AuthorizationRequestResolver(
+                clientRegistrationRepository, DEFAULT_AUTHORIZATION_REQUEST_BASE_URI);
+        resolver.setAuthorizationRequestCustomizer(OAuth2AuthorizationRequestCustomizers.withPkce());
+        return resolver;
+    }
+
+    /**
+     * Déconnexion RP-Initiated (OIDC) : ferme aussi la session Keycloak, pas
+     * seulement la session Spring — sans ça, une reconnexion immédiate après
+     * "déconnexion" ne re-demanderait aucun identifiant (session Keycloak encore
+     * active côté navigateur).
+     */
+    private LogoutSuccessHandler oidcLogoutSuccessHandler(ClientRegistrationRepository clientRegistrationRepository) {
+        OidcClientInitiatedLogoutSuccessHandler handler =
+                new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
+        handler.setPostLogoutRedirectUri("{baseUrl}/");
+        return handler;
     }
 }

@@ -110,7 +110,7 @@ fr.lacassinauteur.site
             └── CollectionViewModelMapper.java
 ```
 
-Les domaines `actualite`, `newsletter`, `contact`, `identity`, `biographie`, `legal`
+Les domaines `actualite`, `newsletter`, `contact`, `biographie`, `legal`
 suivent **exactement le même schéma de sous-packages** (`domain.model` / `domain.port` / `domain.exception`,
 `application.usecase.<sous-thème>` / `application.service` / `application.command` /
 `application.query` / `application.result`, `infrastructure.persistence.*` /
@@ -130,6 +130,23 @@ newsletter/infrastructure/
 └── email/
     ├── BrevoEmailAdapter.java        (implements domain.port.EnvoiEmailPort)
     └── config/BrevoClientConfig.java
+```
+
+### Exception : `identity`
+
+Depuis [ADR-0033](decisions/0033-sso-keycloak-backoffice.md), `identity` ne
+suit **pas** ce schéma complet : aucun compte maison ne subsiste, donc aucun
+`domain` ni `application` (rien à modéliser, aucun cas d'usage métier). Seuls
+subsistent :
+
+```
+identity
+├── infrastructure
+│   └── security
+│       ├── KeycloakIntrospectionOidcUserService.java   (implements OAuth2UserService<OidcUserRequest, OidcUser>)
+│       └── config/KeycloakIntrospectionClientConfig.java
+└── presentation
+    └── CompteKeycloakModelAttributeAdvice.java   (@ControllerAdvice, lien Account Console)
 ```
 
 ## Packages transverses (hors domaines)

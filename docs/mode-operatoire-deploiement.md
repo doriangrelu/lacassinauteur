@@ -321,7 +321,89 @@ Section **Connection & Authentication** :
   `@iabilis.fr` (`sender not valid`) — on croit alors à tort que la
   configuration Keycloak est en cause.
 
-## 13. Lexique rapide
+## 13. Créer le client Keycloak du back-office du site (SSO)
+
+Depuis [ADR-0033](architecture/decisions/0033-sso-keycloak-backoffice.md), le
+back-office (`/backoffice/**`) n'a plus de comptes maison : l'authentification
+est entièrement déléguée à Keycloak (OIDC, royaume `thierrylacassin-auteur`).
+Ces étapes ne se font qu'**une seule fois** par environnement (une pour la
+prod, une pour chaque poste de développement local).
+
+**a. Créer le client**
+
+`https://iabilis.fr/admin/` → royaume `thierrylacassin-auteur` → **Clients →
+Create client**.
+
+| Champ | Valeur |
+|---|---|
+| Client ID | `mybook-backoffice` en prod, `mybook-backoffice-local` en dev — **jamais le même client dans les deux environnements** (cf. ci-dessous) |
+| Client authentication | ✅ activé (client confidentiel) |
+| Standard flow | ✅ activé |
+| Direct access grants / Service accounts | ❌ désactivés (inutiles pour ce parcours) |
+
+Onglet **Advanced** :
+
+| Champ | Valeur |
+|---|---|
+| Proof Key for Code Exchange Code Challenge Method | **S256** |
+
+Onglet **Settings** :
+
+| Champ | Valeur |
+|---|---|
+| Valid redirect URIs | `https://thierrylacassin-auteur.fr/login/oauth2/code/keycloak` (prod) **ou** `http://localhost:8080/login/oauth2/code/keycloak` (dev) — un seul des deux par client, jamais les deux sur le même |
+| Valid post logout redirect URIs | `https://thierrylacassin-auteur.fr/` (prod) ou `http://localhost:8080/` (dev) |
+| Web origins | l'origine correspondante, même règle |
+
+⚠️ **Ne jamais ajouter un Redirect URI `localhost` sur le client de prod** :
+un client public-facing qui accepterait une redirection vers `localhost`
+ouvre une voie d'interception du code d'autorisation par n'importe quel
+processus local de la machine de la victime. C'est pour ça que deux clients
+distincts existent plutôt qu'un seul avec deux URIs.
+
+Noter le **Client secret** (onglet Credentials) : à mettre dans `.env`
+(`KEYCLOAK_CLIENT_ID`/`KEYCLOAK_CLIENT_SECRET`, prod) ou dans la configuration
+locale du poste de développement concerné (jamais commis).
+
+**b. Créer le rôle d'accès et l'assigner**
+
+**Realm roles → Create role** → nom `AUTEUR`. Puis **Users → (l'utilisateur
+concerné) → Role mapping → Assign role → AUTEUR**. Sans ce rôle réellement
+assigné à l'utilisateur, `/backoffice/**` répond 403 même après une connexion
+réussie.
+
+**c. Ajouter l'audience du client au jeton d'accès**
+
+⚠️ **Étape facile à oublier et qui casse tout silencieusement** : sans
+mapper d'audience, Keycloak inclut par défaut `"aud": "account"` dans le
+jeton d'accès (jamais l'identifiant du client lui-même). Résultat observé :
+le jeton est parfaitement valide et non expiré, mais **l'endpoint
+d'introspection répond `{"active": false}`** — sans message d'erreur plus
+explicite, ce qui rend le diagnostic long.
+
+**Client scopes → (scope par défaut du client, ou en créer un dédié) → Add
+mapper → By configuration → Audience** :
+
+| Champ | Valeur |
+|---|---|
+| Included Client Audience | le client lui-même (`mybook-backoffice` / `mybook-backoffice-local`) |
+| Add to ID token | non nécessaire |
+| Add to access token | ✅ activé |
+
+Vérifier après coup : un jeton d'accès fraîchement obtenu doit contenir
+`"aud"` incluant l'identifiant du client, pas seulement `"account"`.
+
+**d. Autoriser le changement de mot de passe en self-service**
+
+Le bouton « Mon compte » du back-office renvoie vers l'Account Console
+Keycloak (`/realms/thierrylacassin-auteur/account`) pour toute gestion du
+compte, y compris le mot de passe. Si `reset_password_allowed` est à `false`
+sur le royaume (c'était le cas, posé en défense en profondeur lors de
+l'audit CVE, cf. `roadmap.md` §Sécurité), l'utilisateur ne peut pas changer
+son mot de passe depuis cette console. **Realm Settings → Login → Forgot
+password → ✅**.
+
+## 14. Lexique rapide
 
 | Commande | Ce que ça fait |
 |---|---|
