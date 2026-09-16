@@ -20,12 +20,22 @@ public class SecurityConfig {
     private static final String URL_DECONNEXION = "/backoffice/deconnexion";
 
     // reCAPTCHA v3 (cf. ADR-0019) est le seul contenu tiers du site : script +
-    // iframe/XHR internes servis depuis google.com/gstatic.com. La bascule vers
-    // Keycloak (cf. ADR-0033) ne change rien ici : la redirection d'authentification
-    // et la déconnexion RP-Initiated sont des navigations top-level (redirections
-    // HTTP), jamais des appels fetch/XHR — aucune origine Keycloak à ajouter à
-    // cette CSP. Aucun script ni style inline nulle part dans les templates
-    // (vérifié) — pas de 'unsafe-inline' nécessaire.
+    // iframe/XHR internes servis depuis google.com/gstatic.com. La redirection de
+    // connexion (GET, déclenchée par l'AuthenticationEntryPoint) n'est pas
+    // concernée par "form-action" — seules les soumissions de <form> le sont.
+    // Aucun script ni style inline nulle part dans les templates (vérifié) — pas
+    // de 'unsafe-inline' nécessaire.
+    //
+    // "form-action" DOIT en revanche inclure Keycloak : la déconnexion
+    // (formulaire POST vers /backoffice/deconnexion) déclenche une redirection
+    // HTTP vers l'endpoint de fin de session Keycloak (cross-origin), et
+    // "form-action" s'applique à TOUTE la chaîne de redirection issue d'une
+    // soumission de formulaire, pas seulement à l'URL déclarée dans l'attribut
+    // "action" — un piège découvert en production (cf. ADR-0033) : la
+    // déconnexion locale fonctionnait, mais le navigateur bloquait
+    // silencieusement le saut vers Keycloak (net::ERR_ABORTED, aucune erreur
+    // visible côté utilisateur), laissant la session Keycloak active et
+    // permettant une reconnexion muette au prochain accès au back-office.
     private static final String CSP =
             "default-src 'self'; "
                     + "script-src 'self' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; "
@@ -36,7 +46,7 @@ public class SecurityConfig {
                     + "frame-src https://www.google.com/recaptcha/; "
                     + "object-src 'none'; "
                     + "base-uri 'self'; "
-                    + "form-action 'self'; "
+                    + "form-action 'self' https://iabilis.fr; "
                     + "frame-ancestors 'none'";
 
     @Bean
