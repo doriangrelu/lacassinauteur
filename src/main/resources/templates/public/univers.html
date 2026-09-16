@@ -18,7 +18,7 @@
 
     <section class="page-conteneur flex flex-col items-center gap-4 py-10 text-center">
         <h1 class="font-display text-3xl font-bold tracking-tight" th:text="${univers.nom}">Univers</h1>
-        <p class="max-w-xl text-sm text-mist" th:text="${univers.texte}">Texte de présentation</p>
+        <p class="max-w-xl whitespace-pre-line text-sm text-mist" th:text="${univers.texte}">Texte de présentation</p>
     </section>
 
     <section class="grid gap-1 sm:grid-cols-2">
@@ -27,7 +27,7 @@
                 <h2 class="font-display text-2xl font-bold" th:text="${collection.nom}">Collection</h2>
                 <p class="font-display italic text-mist" th:text="${collection.sousTitre}">Sous-titre</p>
             </a>
-            <p class="text-sm text-mist" th:text="${collection.texte}">Texte</p>
+            <p class="whitespace-pre-line text-sm text-mist" th:text="${collection.texte}">Texte</p>
             <div class="flex gap-3 overflow-x-auto pb-2">
                 <a th:each="livre : ${livresParCollection.get(collection.id)}" th:href="@{'/livres/' + ${livre.slug}}"
                    class="group relative block shrink-0 overflow-hidden rounded shadow">
