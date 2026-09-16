@@ -50,6 +50,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                         + "Deux collections différentes, reliées par la même question : qu'est-ce que les hommes "
                         + "laissent derrière eux ?",
                 "/images/univers/sobriete.jpg",
+                null,
                 1));
 
         Univers universTrajectoire = universRepository.save(Univers.creer(
@@ -63,6 +64,7 @@ public class CatalogueInitialContentSeeder implements ApplicationRunner {
                         + "changer sans contrainte. Deux collections différentes, reliées par une même envie : aller "
                         + "voir ce qui se passe plus loin.",
                 "/images/univers/urbain-graffiti.png",
+                null,
                 2));
 
         Collection lacassinNoir = collectionRepository.save(Collection.creer(

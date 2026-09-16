@@ -29,19 +29,28 @@ public class UniversJpaEntity {
     @Column(name = "photo_url")
     private String photoUrl;
 
+    @Column(name = "photo_complementaire_url")
+    private String photoComplementaireUrl;
+
+    @Column(name = "photo_complementaire_legende", columnDefinition = "text")
+    private String photoComplementaireLegende;
+
     @Column(nullable = false)
     private int ordre;
 
     protected UniversJpaEntity() {
     }
 
-    public UniversJpaEntity(UUID id, String slug, String nom, String sousTitre, String texte, String photoUrl, int ordre) {
+    public UniversJpaEntity(UUID id, String slug, String nom, String sousTitre, String texte, String photoUrl,
+                             String photoComplementaireUrl, String photoComplementaireLegende, int ordre) {
         this.id = id;
         this.slug = slug;
         this.nom = nom;
         this.sousTitre = sousTitre;
         this.texte = texte;
         this.photoUrl = photoUrl;
+        this.photoComplementaireUrl = photoComplementaireUrl;
+        this.photoComplementaireLegende = photoComplementaireLegende;
         this.ordre = ordre;
     }
 
@@ -67,6 +76,14 @@ public class UniversJpaEntity {
 
     public String getPhotoUrl() {
         return photoUrl;
+    }
+
+    public String getPhotoComplementaireUrl() {
+        return photoComplementaireUrl;
+    }
+
+    public String getPhotoComplementaireLegende() {
+        return photoComplementaireLegende;
     }
 
     public int getOrdre() {

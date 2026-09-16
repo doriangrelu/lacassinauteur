@@ -19,7 +19,7 @@ class CreerActualiteUseCaseTest {
 
         ActualiteResult result = useCase.execute(new CreerActualiteCommand(
                 "Salon du livre de Paris", "Dédicace à 14h", LocalDate.now().plusMonths(1), "Paris",
-                "https://billetterie.example", null, null, false, false));
+                "https://billetterie.example", null, null, null, null, null, false, false));
 
         assertThat(result.titre()).isEqualTo("Salon du livre de Paris");
         assertThat(result.imageUrl()).isNull();
@@ -34,7 +34,7 @@ class CreerActualiteUseCaseTest {
 
         ActualiteResult result = useCase.execute(new CreerActualiteCommand(
                 "Dédicace", "Texte", LocalDate.now().plusDays(5), "Lyon", null,
-                "contenu".getBytes(), "photo.png", false, false));
+                "contenu".getBytes(), "photo.png", null, null, null, false, false));
 
         assertThat(result.imageUrl()).isEqualTo("/media/actualites/fichier-1");
     }

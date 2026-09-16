@@ -4,6 +4,7 @@ import fr.lacassinauteur.site.actualite.application.command.ModifierActualiteCom
 import fr.lacassinauteur.site.actualite.application.result.ActualiteResult;
 import fr.lacassinauteur.site.actualite.domain.exception.ActualiteIntrouvableException;
 import fr.lacassinauteur.site.actualite.domain.model.Actualite;
+import fr.lacassinauteur.site.actualite.domain.model.PhotoLegendee;
 import fr.lacassinauteur.site.actualite.domain.port.ActualiteRepository;
 import fr.lacassinauteur.site.shared.domain.port.StockageFichierPort;
 import org.springframework.stereotype.Component;
@@ -32,9 +33,19 @@ public class ModifierActualiteUseCase {
                     command.nouvelleImageContenu(), command.nouvelleImageNomFichier(), SOUS_DOSSIER);
         }
 
+        String photoComplementaireUrl = actualite.photoComplementaire().map(PhotoLegendee::url).orElse(null);
+        if (command.nouvellePhotoComplementaireContenu() != null && command.nouvellePhotoComplementaireContenu().length > 0) {
+            actualite.photoComplementaire().ifPresent(photo -> stockageFichierPort.supprimerSiGere(photo.url()));
+            photoComplementaireUrl = stockageFichierPort.enregistrer(
+                    command.nouvellePhotoComplementaireContenu(), command.nouvellePhotoComplementaireNomFichier(), SOUS_DOSSIER);
+        }
+        PhotoLegendee photoComplementaire = photoComplementaireUrl == null
+                ? null
+                : new PhotoLegendee(photoComplementaireUrl, command.photoComplementaireLegende());
+
         actualite.modifier(
                 command.titre(), command.texte(), command.date(), command.lieu(), command.lienBilletterie(),
-                imageUrl, command.archiveeManuellement(), command.misEnAvant());
+                imageUrl, photoComplementaire, command.archiveeManuellement(), command.misEnAvant());
 
         return ActualiteResult.depuis(actualiteRepository.save(actualite));
     }

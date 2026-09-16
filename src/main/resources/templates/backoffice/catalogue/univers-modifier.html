@@ -35,6 +35,16 @@
                 <input class="champ-texte" type="file" id="photo" th:field="*{photo}" accept="image/*"/>
                 <p class="mt-1 text-xs text-slate-400">Laisser vide pour conserver la photo actuelle.</p>
             </div>
+            <div>
+                <label class="champ-label" for="photoComplementaire">Photo complémentaire</label>
+                <img th:if="${univers.photoComplementaireUrl}" th:src="@{${univers.photoComplementaireUrl}}" alt="Photo complémentaire actuelle" class="mb-2 h-24 w-24 rounded object-cover"/>
+                <input class="champ-texte" type="file" id="photoComplementaire" th:field="*{photoComplementaire}" accept="image/*"/>
+                <p class="mt-1 text-xs text-slate-400">Affichée sur la page de l'univers, sous le texte de présentation. Laisser vide pour conserver la photo actuelle.</p>
+            </div>
+            <div>
+                <label class="champ-label" for="photoComplementaireLegende">Légende de la photo complémentaire</label>
+                <textarea class="champ-texte" id="photoComplementaireLegende" rows="2" th:field="*{photoComplementaireLegende}"></textarea>
+            </div>
             <button type="submit" class="btn btn-primary mt-1">Enregistrer</button>
         </form>
     </div>

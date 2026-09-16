@@ -21,6 +21,11 @@
         <p class="max-w-xl whitespace-pre-line text-sm text-mist" th:text="${univers.texte}">Texte de présentation</p>
     </section>
 
+    <section th:if="${univers.photoComplementaireUrl}" class="page-conteneur flex flex-col items-center gap-3 pb-10 text-center">
+        <img th:src="@{${univers.photoComplementaireUrl}}" th:alt="${univers.nom}" loading="lazy" class="max-h-[50vh] w-auto rounded object-cover"/>
+        <p th:if="${univers.photoComplementaireLegende}" class="max-w-xl whitespace-pre-line font-display text-sm italic text-mist" th:text="${univers.photoComplementaireLegende}">Légende</p>
+    </section>
+
     <section class="grid gap-1 sm:grid-cols-2">
         <div th:each="collection : ${collections}" class="flex flex-col gap-6 border-t border-black/5 px-6 py-10 md:px-10">
             <a th:href="@{'/collections/' + ${collection.slug}}" class="flex flex-col gap-1">

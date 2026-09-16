@@ -44,6 +44,16 @@
                 <input class="champ-texte" type="file" id="image" th:field="*{image}" accept="image/*"/>
                 <p class="mt-1 text-xs text-slate-400">Laisser vide pour conserver l'image actuelle.</p>
             </div>
+            <div>
+                <label class="champ-label" for="photoComplementaire">Photo complémentaire</label>
+                <img th:if="${actualite.photoComplementaireUrl}" th:src="@{${actualite.photoComplementaireUrl}}" alt="Photo complémentaire actuelle" class="mb-2 h-24 w-24 rounded object-cover"/>
+                <input class="champ-texte" type="file" id="photoComplementaire" th:field="*{photoComplementaire}" accept="image/*"/>
+                <p class="mt-1 text-xs text-slate-400">Affichée uniquement sur les événements à venir. Laisser vide pour conserver la photo actuelle.</p>
+            </div>
+            <div>
+                <label class="champ-label" for="photoComplementaireLegende">Légende de la photo complémentaire</label>
+                <textarea class="champ-texte" id="photoComplementaireLegende" rows="2" th:field="*{photoComplementaireLegende}"></textarea>
+            </div>
             <label class="flex items-center gap-2 text-sm text-slate-700">
                 <input type="checkbox" th:field="*{misEnAvant}" class="h-4 w-4 rounded border-slate-300"/>
                 Mettre en avant dans « dernières actualités » (une fois la date passée)

@@ -15,7 +15,7 @@ public class ActualiteViewModelMapper {
     public ActualiteViewModel versViewModel(ActualiteResult result) {
         return new ActualiteViewModel(
                 result.id(), result.titre(), result.texte(), result.date(), FORMAT_DATE.format(result.date()),
-                result.lieu(), result.lienBilletterie(), result.imageUrl(), result.archiveeManuellement(),
-                result.misEnAvant(), result.type());
+                result.lieu(), result.lienBilletterie(), result.imageUrl(), result.photoComplementaireUrl(),
+                result.photoComplementaireLegende(), result.archiveeManuellement(), result.misEnAvant(), result.type());
     }
 }

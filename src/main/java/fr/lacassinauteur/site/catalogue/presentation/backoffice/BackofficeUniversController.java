@@ -71,7 +71,9 @@ public class BackofficeUniversController {
         int prochainOrdre = listerUniversUseCase.execute().size() + 1;
         creerUniversUseCase.execute(new CreerUniversCommand(
                 formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(),
-                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), prochainOrdre));
+                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()),
+                octets(formulaire.getPhotoComplementaire()), nomOriginal(formulaire.getPhotoComplementaire()),
+                formulaire.getPhotoComplementaireLegende(), prochainOrdre));
 
         return "redirect:/backoffice/univers";
     }
@@ -85,6 +87,7 @@ public class BackofficeUniversController {
             formulaire.setNom(univers.nom());
             formulaire.setSousTitre(univers.sousTitre());
             formulaire.setTexte(univers.texte());
+            formulaire.setPhotoComplementaireLegende(univers.photoComplementaireLegende());
             model.addAttribute("formulaire", formulaire);
         }
         model.addAttribute("univers", univers);
@@ -102,7 +105,9 @@ public class BackofficeUniversController {
         int ordreActuel = consulterUniversUseCase.execute(id).ordre();
         modifierUniversUseCase.execute(new ModifierUniversCommand(
                 id, formulaire.getNom(), formulaire.getSousTitre(), formulaire.getTexte(),
-                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()), ordreActuel));
+                octets(formulaire.getPhoto()), nomOriginal(formulaire.getPhoto()),
+                octets(formulaire.getPhotoComplementaire()), nomOriginal(formulaire.getPhotoComplementaire()),
+                formulaire.getPhotoComplementaireLegende(), ordreActuel));
 
         return "redirect:/backoffice/univers";
     }

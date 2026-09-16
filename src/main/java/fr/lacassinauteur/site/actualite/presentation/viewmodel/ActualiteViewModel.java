@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record ActualiteViewModel(UUID id, String titre, String texte, LocalDate date, String dateAffichage,
-                                  String lieu, String lienBilletterie, String imageUrl, boolean archiveeManuellement,
+                                  String lieu, String lienBilletterie, String imageUrl, String photoComplementaireUrl,
+                                  String photoComplementaireLegende, boolean archiveeManuellement,
                                   boolean misEnAvant, TypeActualite type) {
 }

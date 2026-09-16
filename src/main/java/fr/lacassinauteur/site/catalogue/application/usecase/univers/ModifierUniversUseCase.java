@@ -3,6 +3,7 @@ package fr.lacassinauteur.site.catalogue.application.usecase.univers;
 import fr.lacassinauteur.site.catalogue.application.command.ModifierUniversCommand;
 import fr.lacassinauteur.site.catalogue.application.result.UniversResult;
 import fr.lacassinauteur.site.catalogue.domain.exception.UniversIntrouvableException;
+import fr.lacassinauteur.site.catalogue.domain.model.PhotoLegendee;
 import fr.lacassinauteur.site.catalogue.domain.model.Univers;
 import fr.lacassinauteur.site.catalogue.domain.port.UniversRepository;
 import fr.lacassinauteur.site.shared.domain.port.StockageFichierPort;
@@ -32,7 +33,17 @@ public class ModifierUniversUseCase {
                     command.nouvellePhotoContenu(), command.nouvellePhotoNomFichier(), SOUS_DOSSIER);
         }
 
-        univers.modifier(command.nom(), command.sousTitre(), command.texte(), photoUrl, command.ordre());
+        String photoComplementaireUrl = univers.photoComplementaire().map(PhotoLegendee::url).orElse(null);
+        if (command.nouvellePhotoComplementaireContenu() != null && command.nouvellePhotoComplementaireContenu().length > 0) {
+            univers.photoComplementaire().ifPresent(photo -> stockageFichierPort.supprimerSiGere(photo.url()));
+            photoComplementaireUrl = stockageFichierPort.enregistrer(
+                    command.nouvellePhotoComplementaireContenu(), command.nouvellePhotoComplementaireNomFichier(), SOUS_DOSSIER);
+        }
+        PhotoLegendee photoComplementaire = photoComplementaireUrl == null
+                ? null
+                : new PhotoLegendee(photoComplementaireUrl, command.photoComplementaireLegende());
+
+        univers.modifier(command.nom(), command.sousTitre(), command.texte(), photoUrl, photoComplementaire, command.ordre());
 
         return UniversResult.depuis(universRepository.save(univers));
     }

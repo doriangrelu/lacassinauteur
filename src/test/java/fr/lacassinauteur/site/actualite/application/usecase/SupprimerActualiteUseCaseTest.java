@@ -14,7 +14,7 @@ class SupprimerActualiteUseCaseTest {
     @Test
     void supprimer_retire_lactualite_et_nettoie_son_image() {
         FakeActualiteRepository actualiteRepository = new FakeActualiteRepository();
-        Actualite actualite = Actualite.creer("Titre", "Texte", LocalDate.now(), "Paris", null, "/media/photo.png", false, false);
+        Actualite actualite = Actualite.creer("Titre", "Texte", LocalDate.now(), "Paris", null, "/media/photo.png", null, false, false);
         actualiteRepository.save(actualite);
         FakeStockageFichierPort stockage = new FakeStockageFichierPort();
 

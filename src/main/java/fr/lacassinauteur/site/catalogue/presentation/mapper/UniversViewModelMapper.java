@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 public class UniversViewModelMapper {
 
     public UniversViewModel versViewModel(UniversResult result) {
-        return new UniversViewModel(result.id(), result.nom(), result.sousTitre(), result.texte(), result.photoUrl(), result.ordre());
+        return new UniversViewModel(result.id(), result.nom(), result.sousTitre(), result.texte(), result.photoUrl(),
+                result.photoComplementaireUrl(), result.photoComplementaireLegende(), result.ordre());
     }
 }

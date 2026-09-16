@@ -13,8 +13,8 @@ class ReordonnerUniversUseCaseTest {
     @Test
     void reordonne_les_univers_selon_la_liste_dids_fournie() {
         FakeUniversRepository universRepository = new FakeUniversRepository();
-        Univers premier = Univers.creer("premier", "Premier", null, null, null, 1);
-        Univers second = Univers.creer("second", "Second", null, null, null, 2);
+        Univers premier = Univers.creer("premier", "Premier", null, null, null, null, 1);
+        Univers second = Univers.creer("second", "Second", null, null, null, null, 2);
         universRepository.save(premier);
         universRepository.save(second);
 

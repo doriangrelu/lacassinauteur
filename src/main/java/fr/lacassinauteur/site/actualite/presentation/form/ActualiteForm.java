@@ -24,6 +24,10 @@ public class ActualiteForm {
 
     private MultipartFile image;
 
+    private MultipartFile photoComplementaire;
+
+    private String photoComplementaireLegende;
+
     private boolean archiveeManuellement;
 
     private boolean misEnAvant;
@@ -74,6 +78,22 @@ public class ActualiteForm {
 
     public void setImage(MultipartFile image) {
         this.image = image;
+    }
+
+    public MultipartFile getPhotoComplementaire() {
+        return photoComplementaire;
+    }
+
+    public void setPhotoComplementaire(MultipartFile photoComplementaire) {
+        this.photoComplementaire = photoComplementaire;
+    }
+
+    public String getPhotoComplementaireLegende() {
+        return photoComplementaireLegende;
+    }
+
+    public void setPhotoComplementaireLegende(String photoComplementaireLegende) {
+        this.photoComplementaireLegende = photoComplementaireLegende;
     }
 
     public boolean isArchiveeManuellement() {

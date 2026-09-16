@@ -1,6 +1,7 @@
 package fr.lacassinauteur.site.actualite.domain.model;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Actualite {
@@ -12,11 +13,13 @@ public class Actualite {
     private String lieu;
     private String lienBilletterie;
     private String imageUrl;
+    private PhotoLegendee photoComplementaire;
     private boolean archiveeManuellement;
     private boolean misEnAvant;
 
     public Actualite(UUID id, String titre, String texte, LocalDate date, String lieu, String lienBilletterie,
-                      String imageUrl, boolean archiveeManuellement, boolean misEnAvant) {
+                      String imageUrl, PhotoLegendee photoComplementaire, boolean archiveeManuellement,
+                      boolean misEnAvant) {
         this.id = id;
         this.titre = titre;
         this.texte = blancVersNull(texte);
@@ -24,6 +27,7 @@ public class Actualite {
         this.lieu = blancVersNull(lieu);
         this.lienBilletterie = blancVersNull(lienBilletterie);
         this.imageUrl = imageUrl;
+        this.photoComplementaire = photoComplementaire;
         this.archiveeManuellement = archiveeManuellement;
         this.misEnAvant = misEnAvant;
     }
@@ -38,19 +42,22 @@ public class Actualite {
     }
 
     public static Actualite creer(String titre, String texte, LocalDate date, String lieu, String lienBilletterie,
-                                   String imageUrl, boolean archiveeManuellement, boolean misEnAvant) {
+                                   String imageUrl, PhotoLegendee photoComplementaire, boolean archiveeManuellement,
+                                   boolean misEnAvant) {
         return new Actualite(UUID.randomUUID(), titre, texte, date, lieu, lienBilletterie, imageUrl,
-                archiveeManuellement, misEnAvant);
+                photoComplementaire, archiveeManuellement, misEnAvant);
     }
 
     public void modifier(String titre, String texte, LocalDate date, String lieu, String lienBilletterie,
-                          String imageUrl, boolean archiveeManuellement, boolean misEnAvant) {
+                          String imageUrl, PhotoLegendee photoComplementaire, boolean archiveeManuellement,
+                          boolean misEnAvant) {
         this.titre = titre;
         this.texte = blancVersNull(texte);
         this.date = date;
         this.lieu = blancVersNull(lieu);
         this.lienBilletterie = blancVersNull(lienBilletterie);
         this.imageUrl = imageUrl;
+        this.photoComplementaire = photoComplementaire;
         this.archiveeManuellement = archiveeManuellement;
         this.misEnAvant = misEnAvant;
     }
@@ -92,6 +99,10 @@ public class Actualite {
 
     public String imageUrl() {
         return imageUrl;
+    }
+
+    public Optional<PhotoLegendee> photoComplementaire() {
+        return Optional.ofNullable(photoComplementaire);
     }
 
     public boolean archiveeManuellement() {

@@ -14,6 +14,10 @@ public class UniversForm {
 
     private MultipartFile photo;
 
+    private MultipartFile photoComplementaire;
+
+    private String photoComplementaireLegende;
+
     public String getNom() {
         return nom;
     }
@@ -44,5 +48,21 @@ public class UniversForm {
 
     public void setPhoto(MultipartFile photo) {
         this.photo = photo;
+    }
+
+    public MultipartFile getPhotoComplementaire() {
+        return photoComplementaire;
+    }
+
+    public void setPhotoComplementaire(MultipartFile photoComplementaire) {
+        this.photoComplementaire = photoComplementaire;
+    }
+
+    public String getPhotoComplementaireLegende() {
+        return photoComplementaireLegende;
+    }
+
+    public void setPhotoComplementaireLegende(String photoComplementaireLegende) {
+        this.photoComplementaireLegende = photoComplementaireLegende;
     }
 }

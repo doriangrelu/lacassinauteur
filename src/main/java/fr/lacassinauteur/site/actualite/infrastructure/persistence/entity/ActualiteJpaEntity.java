@@ -32,6 +32,12 @@ public class ActualiteJpaEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "photo_complementaire_url")
+    private String photoComplementaireUrl;
+
+    @Column(name = "photo_complementaire_legende", columnDefinition = "text")
+    private String photoComplementaireLegende;
+
     @Column(name = "archivee_manuellement", nullable = false)
     private boolean archiveeManuellement;
 
@@ -42,7 +48,8 @@ public class ActualiteJpaEntity {
     }
 
     public ActualiteJpaEntity(UUID id, String titre, String texte, LocalDate date, String lieu, String lienBilletterie,
-                               String imageUrl, boolean archiveeManuellement, boolean misEnAvant) {
+                               String imageUrl, String photoComplementaireUrl, String photoComplementaireLegende,
+                               boolean archiveeManuellement, boolean misEnAvant) {
         this.id = id;
         this.titre = titre;
         this.texte = texte;
@@ -50,6 +57,8 @@ public class ActualiteJpaEntity {
         this.lieu = lieu;
         this.lienBilletterie = lienBilletterie;
         this.imageUrl = imageUrl;
+        this.photoComplementaireUrl = photoComplementaireUrl;
+        this.photoComplementaireLegende = photoComplementaireLegende;
         this.archiveeManuellement = archiveeManuellement;
         this.misEnAvant = misEnAvant;
     }
@@ -80,6 +89,14 @@ public class ActualiteJpaEntity {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    public String getPhotoComplementaireUrl() {
+        return photoComplementaireUrl;
+    }
+
+    public String getPhotoComplementaireLegende() {
+        return photoComplementaireLegende;
     }
 
     public boolean isArchiveeManuellement() {

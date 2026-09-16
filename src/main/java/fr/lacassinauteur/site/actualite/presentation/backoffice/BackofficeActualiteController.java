@@ -69,6 +69,8 @@ public class BackofficeActualiteController {
         creerActualiteUseCase.execute(new CreerActualiteCommand(
                 formulaire.getTitre(), formulaire.getTexte(), formulaire.getDate(), formulaire.getLieu(),
                 formulaire.getLienBilletterie(), octets(formulaire.getImage()), nomOriginal(formulaire.getImage()),
+                octets(formulaire.getPhotoComplementaire()), nomOriginal(formulaire.getPhotoComplementaire()),
+                formulaire.getPhotoComplementaireLegende(),
                 formulaire.isArchiveeManuellement(), formulaire.isMisEnAvant()));
 
         return "redirect:/backoffice/actualites";
@@ -85,6 +87,7 @@ public class BackofficeActualiteController {
             formulaire.setDate(actualite.date());
             formulaire.setLieu(actualite.lieu());
             formulaire.setLienBilletterie(actualite.lienBilletterie());
+            formulaire.setPhotoComplementaireLegende(actualite.photoComplementaireLegende());
             formulaire.setArchiveeManuellement(actualite.archiveeManuellement());
             formulaire.setMisEnAvant(actualite.misEnAvant());
             model.addAttribute("formulaire", formulaire);
@@ -104,6 +107,8 @@ public class BackofficeActualiteController {
         modifierActualiteUseCase.execute(new ModifierActualiteCommand(
                 id, formulaire.getTitre(), formulaire.getTexte(), formulaire.getDate(), formulaire.getLieu(),
                 formulaire.getLienBilletterie(), octets(formulaire.getImage()), nomOriginal(formulaire.getImage()),
+                octets(formulaire.getPhotoComplementaire()), nomOriginal(formulaire.getPhotoComplementaire()),
+                formulaire.getPhotoComplementaireLegende(),
                 formulaire.isArchiveeManuellement(), formulaire.isMisEnAvant()));
 
         return "redirect:/backoffice/actualites";
