@@ -1,8 +1,9 @@
 # Guide de mise en ligne
 
 > **Document historique** (première mise en ligne, août 2026). Plusieurs points
-> ne sont plus vrais : la clé `claude-deploy-mybook` donne maintenant accès au
-> compte `ia` (plus `ubuntu`), PostgreSQL et Caddy vivent dans le socle
+> ne sont plus vrais : les IA se connectent au compte `ia` (plus `ubuntu`) avec
+> la clé WSL `~/.ssh/life_manager_vps` (la clé `claude-deploy-mybook` ci-dessous
+> n'est plus utilisée), PostgreSQL et Caddy vivent dans le socle
 > partagé (`~/infra`), et les sauvegardes du §5 sont remplacées par celles du
 > socle (cf. [ADR-0030](architecture/decisions/0030-socle-vps-partage.md) et
 > [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md)).

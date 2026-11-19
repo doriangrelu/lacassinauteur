@@ -41,8 +41,11 @@ L'alternative « dépôt dédié » écartée par ADR-0030 est donc retenue.
 
 ### 2. Les IA ont leur propre compte : `ia`
 
-- La clé `claude-deploy-mybook` n'est plus acceptée sur `ubuntu` ; elle est sur
-  l'utilisateur **`ia`** (`sudo` sans mot de passe, groupe `docker`).
+- La clé `claude-deploy-mybook` n'est plus acceptée sur `ubuntu` ; elle a été
+  déplacée sur l'utilisateur **`ia`** (`sudo` sans mot de passe, groupe
+  `docker`). Sa partie privée n'étant plus sur le poste de Dorian, les sessions
+  mybook utilisent depuis le 2026-11-19 la clé WSL `~/.ssh/life_manager_vps`
+  (autorisée sur `ia`), comme celles de Life Manager.
 - Une IA se connecte en `ssh ia@152.228.237.190` et travaille avec
   `sudo -iu ubuntu`, car tous les fichiers (dont `~/mybook`) appartiennent à
   `ubuntu`. Pour un script : `ssh ia@… "sudo -iu ubuntu bash -s" < script.sh`.

@@ -101,10 +101,17 @@ tous les sites. La référence du serveur n'est pas ce dépôt mais
 `JOURNAL.md`), versionnés dans `vps-socle` (copie locale dans WSL :
 `~/projets/vps-socle`). En cas de contradiction, c'est `vps-socle` qui a raison.
 
-- **Connexion** : toujours `ssh ia@152.228.237.190` (clé `claude-deploy-mybook`),
-  **jamais `ubuntu@`** — la clé n'y est plus acceptée. Les fichiers (dont
+- **Où travailler** : dans la copie WSL `/home/dorian/projets/lacassinauteur`
+  (vue de Windows : `\\wsl.localhost\ubuntu\home\dorian\projets\lacassinauteur`),
+  après un `git pull`. Les commandes SSH se lancent depuis WSL
+  (`wsl -d ubuntu -- bash <script.sh>` si le shell est PowerShell).
+- **Connexion** : toujours en `ia`, depuis WSL, avec la clé `~/.ssh/life_manager_vps`
+  (la même que les sessions Life Manager ; l'ancienne clé `claude-deploy-mybook`
+  n'est plus sur le poste) :
+  `ssh -i ~/.ssh/life_manager_vps -o IdentitiesOnly=yes ia@152.228.237.190`.
+  **Jamais `ubuntu@`** — cette clé n'y est pas acceptée. Les fichiers (dont
   `~/mybook`) appartiennent à `ubuntu` : travailler avec `sudo -iu ubuntu`, ou
-  envoyer un script : `ssh ia@152.228.237.190 "sudo -iu ubuntu bash -s" < script.sh`.
+  envoyer un script : `ssh -i ~/.ssh/life_manager_vps -o IdentitiesOnly=yes ia@152.228.237.190 "sudo -iu ubuntu bash -s" < script.sh`.
   Les commandes `ssh ubuntu@…` de `docs/` sont destinées à Dorian, qui garde son
   propre accès.
 - **Avant d'agir** : lire `/home/ubuntu/AGENTS.md`, lancer `~/admin/etat.sh`, lire
@@ -118,8 +125,10 @@ tous les sites. La référence du serveur n'est pas ce dépôt mais
   qui, quoi, pourquoi, retour arrière, à vérifier) **et** un commit sur le
   serveur, en `ubuntu`, dans `/home/ubuntu` (dépôt `vps-socle`) — jamais de
   `git reset --hard`, `checkout -- .`, `stash` ni `clean` dedans. Le VPS n'a pas
-  accès à GitHub : signaler à Dorian qu'un relais est à lancer depuis WSL
-  (procédure 11 de `PROCEDURES.md`). Le code du site, lui, se commite ici et se
+  accès à GitHub : lancer ensuite le relais depuis WSL,
+  `bash /home/dorian/projets/life-manager/.claude-local/scripts/vps-git-sync.sh`
+  (procédure 11 de `PROCEDURES.md`), qui doit finir par « VPS, WSL et GitHub
+  alignés ». Le code du site, lui, se commite ici et se
   déploie par `scripts/deploy.sh` depuis `~/mybook` (procédure 5).
 - **Fail2ban** : regrouper les commandes en **une seule connexion SSH** par lot.
   Dans un script envoyé par `ssh … bash -s`, tout `docker exec` /
