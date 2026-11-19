@@ -1,6 +1,11 @@
 # ADR-0012 — Sauvegarde et restauration : `pg_dump`/`pg_restore` + volume d'images, via scripts ops
 
-**Statut** : Acté
+**Statut** : Acté — scripts déplacés dans le socle par
+[ADR-0030](0030-socle-vps-partage.md) (`~/infra/backup.sh`, `~/infra/restore.sh`) ;
+copie chiffrée hors site (OneDrive) ajoutée par
+[ADR-0034](0034-administration-vps-socle-versionne.md). `scripts/backup.sh`,
+`scripts/restore.sh` et le dossier `~/mybook/backups` du serveur (arrêté en
+août 2026) ne servent plus.
 **Date** : 2026-08-12
 
 ## Contexte

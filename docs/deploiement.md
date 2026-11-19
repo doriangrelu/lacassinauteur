@@ -1,5 +1,13 @@
 # Guide de mise en ligne
 
+> **Document historique** (première mise en ligne, août 2026). Plusieurs points
+> ne sont plus vrais : la clé `claude-deploy-mybook` donne maintenant accès au
+> compte `ia` (plus `ubuntu`), PostgreSQL et Caddy vivent dans le socle
+> partagé (`~/infra`), et les sauvegardes du §5 sont remplacées par celles du
+> socle (cf. [ADR-0030](architecture/decisions/0030-socle-vps-partage.md) et
+> [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md)).
+> Pour le quotidien : [`mode-operatoire-deploiement.md`](mode-operatoire-deploiement.md).
+
 > Marche à suivre pour la toute première mise en production, une fois les accès
 > (VPS, domaine) disponibles. La configuration technique est déjà prête et validée
 > (cf. [ADR-0016](architecture/decisions/0016-deploiement-caddy-prod.md)) — ce qui
@@ -98,6 +106,12 @@ docker-compose.prod.yml up -d` (sans rebuild) suffit à les prendre en compte ap
 modification du `.env`.
 
 ## 5. Sauvegardes régulières
+
+> **Obsolète** : `scripts/backup.sh` n'existe plus et `~/mybook/backups` est
+> arrêté depuis août 2026. Les sauvegardes sont faites par `~/infra/backup.sh`
+> (3 h UTC) avec copie chiffrée vers OneDrive (3 h 30), cf.
+> [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md).
+> Texte d'origine conservé ci-dessous.
 
 `scripts/backup.sh` existe et fonctionne (cf. [ADR-0012](architecture/decisions/0012-sauvegarde-restauration.md))
 mais n'est pas encore planifié. Une fois le VPS en place, je mettrai en place une

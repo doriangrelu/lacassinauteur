@@ -2,7 +2,10 @@
 
 **Statut** : Acté — modifie [ADR-0016](0016-deploiement-caddy-prod.md) (stack unique),
 [ADR-0012](0012-sauvegarde-restauration.md) (emplacement des sauvegardes) et
-[ADR-0027](0027-keycloak-iam.md) (emplacement de Keycloak)
+[ADR-0027](0027-keycloak-iam.md) (emplacement de Keycloak). Partiellement
+remplacé par [ADR-0034](0034-administration-vps-socle-versionne.md) (2026-11-19) :
+`~/infra` et `~/keycloak` sont désormais **versionnés** dans le dépôt
+`vps-socle` ; les mentions « non versionné » ci-dessous sont historiques.
 **Date** : 2026-08-20
 
 ## Contexte

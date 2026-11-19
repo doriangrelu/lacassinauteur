@@ -185,7 +185,9 @@
       [ADR-0012](architecture/decisions/0012-sauvegarde-restauration.md).
       **Planifié en cron** (`0 3 * * *`, journalisé dans `~/mybook-backup.log`) —
       24 archives présentes au 2026-08-19. Les scripts couvrent aussi la base
-      Keycloak depuis ADR-0027.
+      Keycloak depuis ADR-0027. *Remplacé depuis par `~/infra/backup.sh`
+      (ADR-0030) + copie chiffrée OneDrive (ADR-0034) ; `~/mybook/backups` ne
+      sert plus.*
 - [x] Mise en ligne — **faite**, le site est en production sous HTTPS.
 - [x] SEO : meta descriptions, balises Open Graph, `robots.txt`, slugs — faits
       (cf. Phase 2). Balise de vérification Google Search Console posée dans le
@@ -233,8 +235,12 @@
       + clé SMTP + réglages Keycloak) — cf. mode-operatoire-deploiement.md §12.
 - [ ] Changer le mot de passe du compte admin bootstrap et lui renseigner une
       adresse email (prérequis du bouton « Test connection »).
-- [ ] Panneau web de supervision du serveur, authentifié via Keycloak — **à
-      cadrer**, rien n'est encore décidé (périmètre, métriques, techno).
+- [x] Panneau web de supervision du serveur, authentifié via Keycloak — **fait
+      hors de ce dépôt** le 2026-11-19 : Dozzle (journaux,
+      https://docker.dorian-grelu.fr) et Beszel (métriques,
+      https://metrics.dorian-grelu.fr), derrière oauth2-proxy + Keycloak (realm
+      `infra`), versionnés dans `vps-socle`. Portainer abandonné. Cf.
+      [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md).
 - [ ] **Rattacher le back-office du site à Keycloak (SSO OIDC)** — cf.
       [ADR-0033](architecture/decisions/0033-sso-keycloak-backoffice.md).
       Implémenté et vérifié de bout en bout sur un royaume de test (branche
@@ -330,9 +336,10 @@ Deux besoins du brief jamais livrés, retrouvés en confrontant le brief au code
       supprimer htmx, dépendance morte — cf.
       [ADR-0025](architecture/decisions/0025-abandon-htmx.md)).
 - [x] C-4 : permissions des sauvegardes restreintes.
-- [ ] **C-1 : authentification SSH par mot de passe encore active** — mise de
-      côté explicitement par l'utilisateur, à reprendre plus tard (passage en
-      clé uniquement + `PasswordAuthentication no`).
+- [x] **C-1 : authentification SSH par mot de passe** — corrigé le 2026-11-19
+      (clé uniquement, `/etc/ssh/sshd_config.d/00-cles-uniquement.conf`) ; les
+      IA ont leur propre compte `ia`, cf.
+      [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md).
 - [ ] C-5 à C-7 : durcissements de routine (COOP, `preload` HSTS…), faible
       priorité.
 - [x] **CVE-2026-18963** (Keycloak, CVSS 9.1, prise de contrôle de compte sans
@@ -354,12 +361,8 @@ Deux besoins du brief jamais livrés, retrouvés en confrontant le brief au code
 
 ## Décisions en attente
 
-- **Périmètre du panneau de supervision** (Phase 9) : que veut-on y voir
-  exactement (état des conteneurs, espace disque, dernières sauvegardes,
-  santé applicative…) et jusqu'où va-t-on (lecture seule vs actions) ? Rien
-  n'est tranché.
-
-*(Décisions closes : fournisseur email transactionnel → Brevo pour tout, cf.
+*(Décisions closes : panneau de supervision → Dozzle + Beszel, lecture
+seule, cf. [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md) ; fournisseur email transactionnel → Brevo pour tout, cf.
 [ADR-0027](architecture/decisions/0027-keycloak-iam.md) ; ESP newsletter →
 Brevo, clé et liste renseignées en production ; bascule du back-office vers
 Keycloak (SSO), authentification maison entièrement supprimée, cf.

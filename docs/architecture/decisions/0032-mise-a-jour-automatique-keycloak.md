@@ -1,6 +1,11 @@
 # ADR-0032 — Mise à jour automatique nocturne de Keycloak sur `latest`
 
-**Statut** : Accepté et déployé.
+**Statut** : Accepté et déployé — **suivi de `latest` remplacé** par
+[ADR-0034](0034-administration-vps-socle-versionne.md) (2026-11-19) : Keycloak
+est fixé sur la branche `26.8` ; `auto-update.sh` (et son filet de sécurité
+décrit ci-dessous) reste en place mais n'applique plus que les correctifs de
+cette branche. Changer de branche se fait à la main. Le compose de Keycloak
+est désormais versionné dans le dépôt `vps-socle`.
 **Date** : 2026-08-31
 
 ## Contexte

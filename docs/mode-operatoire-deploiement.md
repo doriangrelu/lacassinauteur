@@ -9,28 +9,44 @@
 
 ## 1. Rappel de ce qui tourne sur le serveur
 
-Un seul VPS (OVHcloud), quatre conteneurs Docker gérés par **Docker Compose** :
+Un seul VPS (OVHcloud), **partagé** avec Life Manager. Depuis
+[ADR-0030](architecture/decisions/0030-socle-vps-partage.md), trois projets
+Docker Compose distincts :
 
-| Conteneur | Rôle |
-|---|---|
-| `app` | Le site (Spring Boot), reconstruit à chaque déploiement |
-| `db` | La base PostgreSQL (les données — partagée avec `keycloak`, bases séparées) |
-| `caddy` | Le reverse proxy qui gère le HTTPS automatique |
-| `keycloak` | L'IAM (comptes/connexion), exposé sur `iabilis.fr`, cf. [ADR-0027](architecture/decisions/0027-keycloak-iam.md) |
+| Dossier | Conteneurs | Rôle |
+|---|---|---|
+| `~/mybook` | `mybook-app-1` | Le site (Spring Boot), reconstruit à chaque déploiement — **ce dépôt** |
+| `~/infra` | `infra-db-1`, `infra-caddy-1` | Le socle partagé : la base PostgreSQL (une base par application) et le reverse proxy HTTPS |
+| `~/keycloak` | `keycloak-keycloak-1` | L'IAM (connexion), exposé sur `iabilis.fr`, branche fixe `26.8` |
 
-Tout se pilote depuis le dossier `~/mybook` **sur le serveur** (pas sur ta
-machine), via `docker compose` (sans tiret entre "docker" et "compose").
+`~/infra` et `~/keycloak` sont décrits et versionnés dans le dépôt
+**`vps-socle`** (cf. [ADR-0034](architecture/decisions/0034-administration-vps-socle-versionne.md)) ;
+la référence du serveur, ce sont les fichiers `~/AGENTS.md` et `~/admin/`
+(`INVENTAIRE.md`, `PROCEDURES.md`, `JOURNAL.md`). Ce guide ne couvre que le site.
+
+Le site se pilote depuis le dossier `~/mybook` **sur le serveur** (pas sur ta
+machine), via `docker compose -f docker-compose.prod.yml` (sans tiret entre
+"docker" et "compose"). Le `-f docker-compose.prod.yml` est important : sans
+lui, Docker prendrait le fichier de **développement** (`docker-compose.yml`).
 
 ## 2. Se connecter au serveur
 
-Depuis un terminal (PowerShell sur Windows) :
+Depuis un terminal (PowerShell sur Windows, ou WSL) :
 
 ```bash
 ssh ubuntu@152.228.237.190
 ```
 
-Le mot de passe est celui que tu as utilisé pour ajouter ma clé SSH la
-première fois. Une fois connecté, place-toi dans le dossier du projet :
+La connexion se fait **par clé SSH uniquement** (les mots de passe sont refusés
+depuis le 2026-11-19) : ta clé doit être sur le PC d'où tu te connectes. Si
+elle est refusée, voir la procédure 9 de `~/admin/PROCEDURES.md` (console OVH).
+
+> Les IA (Claude) ne se connectent plus en `ubuntu` mais avec leur propre
+> compte : `ssh ia@152.228.237.190`, puis `sudo -iu ubuntu` (cf. `CLAUDE.md`).
+> Tu peux couper leur accès à tout moment sans toucher au tien :
+> `sudo usermod -L -e 1 ia`.
+
+Une fois connecté, place-toi dans le dossier du projet :
 
 ```bash
 cd ~/mybook
@@ -38,19 +54,21 @@ cd ~/mybook
 
 Toutes les commandes ci-dessous supposent que tu es dans ce dossier.
 
-**Conseil pour plus tard** : passer toi aussi à une connexion par clé SSH
-(comme moi) plutôt que par mot de passe est plus sûr. Dis-le-moi si tu veux
-qu'on mette ça en place — je peux générer une clé pour toi et t'expliquer
-comment l'utiliser depuis ton PC.
-
 ## 3. Vérifier l'état actuel (avant de toucher à quoi que ce soit)
 
 ```bash
-docker compose ps
+~/admin/etat.sh
 ```
 
-Tu dois voir les trois conteneurs (`app`, `db`, `caddy`) avec le statut `Up`
-(et `healthy` pour `db`). Si l'un d'eux manque ou est `Exited`, quelque chose
+Résumé de tout le serveur en quelques secondes (conteneurs, sites, disque,
+dernière sauvegarde) : il dit si tout va bien ou liste les écarts. Pour le site
+seul :
+
+```bash
+docker compose -f docker-compose.prod.yml ps
+```
+
+Le conteneur `app` doit être `Up`. S'il manque ou est `Exited`, quelque chose
 ne va pas — regarde les logs (§6) avant d'aller plus loin.
 
 ## 4. Déployer une nouvelle version
@@ -63,11 +81,12 @@ scripts/deploy.sh
 ```
 
 Ce script fait tout, dans l'ordre, et affiche ce qu'il fait :
-1. Sauvegarde de sécurité (base + images) — `scripts/backup.sh` en interne.
+1. Sauvegarde de sécurité de tout le serveur — `~/infra/backup.sh` (socle).
 2. `git pull` — récupère le dernier code.
-3. Reconstruit l'image et redémarre l'application (`docker compose up -d
-   --build`).
-4. Nettoie les anciennes images Docker devenues inutiles.
+3. Reconstruit l'image et redémarre l'application (`docker compose -f
+   docker-compose.prod.yml up -d --build`).
+4. Publie le fragment Caddy du site et recharge Caddy (sans coupure).
+5. Nettoie les anciennes images Docker devenues inutiles.
 
 Ça prend en général 30 à 60 secondes. Le script affiche des indications de
 vérification à la fin — passe directement à l'étape suivante.
@@ -90,23 +109,29 @@ normalement.
 
 ## 6. Consulter les logs en cas de doute
 
-Logs de l'application (le plus utile en cas de problème) :
+Le plus simple, depuis ton navigateur : **https://docker.dorian-grelu.fr**
+(Dozzle, journaux de tous les conteneurs en direct) et
+**https://metrics.dorian-grelu.fr** (Beszel, mémoire/disque/CPU avec
+historique). Connexion par Keycloak (realm `infra`, avec ton code OTP).
+
+En ligne de commande, logs de l'application (le plus utile en cas de problème) :
 
 ```bash
-docker compose logs app --tail 100
+docker compose -f docker-compose.prod.yml logs app --tail 100
 ```
 
 Suivre les logs en direct (utile pendant que tu testes le site) :
 
 ```bash
-docker compose logs app -f
+docker compose -f docker-compose.prod.yml logs app -f
 ```
 *(`Ctrl+C` pour arrêter de suivre — ça n'arrête pas l'application.)*
 
-Logs d'un autre conteneur (remplace `app` par `db` ou `caddy`) :
+Logs de la base ou de Caddy (ils appartiennent au socle, pas au site) :
 
 ```bash
-docker compose logs caddy --tail 50
+docker logs --tail 50 infra-caddy-1
+docker logs --tail 50 infra-db-1
 ```
 
 **Logs persistants sur disque** : en plus de la sortie console ci-dessus (qui
@@ -115,7 +140,7 @@ un fichier, conservé 7 jours et gardé au redémarrage du conteneur (volume
 Docker nommé `logs-data`) :
 
 ```bash
-docker compose exec app tail -f /data/logs/application.log
+docker compose -f docker-compose.prod.yml exec app tail -f /data/logs/application.log
 ```
 
 Utile si tu veux consulter un incident survenu il y a quelques jours, ou
@@ -136,25 +161,36 @@ soit pris en compte (pas besoin de reconstruire l'image, juste redémarrer le
 conteneur) :
 
 ```bash
-docker compose up -d app
+docker compose -f docker-compose.prod.yml up -d app
 ```
 
 ## 8. Sauvegarder / restaurer manuellement
 
-Une sauvegarde automatique tourne déjà chaque nuit à 3h (cf. cron), mais tu
-peux en déclencher une à tout moment :
+Les sauvegardes sont faites par le **socle**, pour tout le serveur (toutes les
+bases, les images du site, la configuration) :
+
+- chaque nuit à 3 h UTC, `~/infra/backup.sh` (14 archives gardées dans
+  `~/infra/backups`) ;
+- à 3 h 30 UTC, une copie **chiffrée** part sur OneDrive (`Sauvegardes/VPS`,
+  30 jours gardés) ;
+- toutes les 10 minutes, l'état du serveur (dont l'âge de la dernière
+  sauvegarde) est contrôlé et tu reçois une alerte Healthchecks.io en cas
+  de souci.
+
+Pour en déclencher une à la main (par exemple avant une opération risquée) :
 
 ```bash
-scripts/backup.sh
+~/infra/backup.sh </dev/null
+ls -lt ~/infra/backups | head
 ```
 
-L'archive est créée dans `backups/` (nom horodaté). Pour restaurer une
-sauvegarde (⚠️ **écrase les données actuelles**, demande confirmation avant
-d'agir) :
+Pour restaurer (⚠️ **écrase les données actuelles de tous les sites**, pas
+seulement celui-ci) : suivre la procédure 7 de `~/admin/PROCEDURES.md`
+(`~/infra/restore.sh <archive>`).
 
-```bash
-scripts/restore.sh backups/sauvegarde-20260101-030000.tar.gz
-```
+> Les anciens `scripts/backup.sh` / `scripts/restore.sh` du site n'existent
+> plus, et le dossier `~/mybook/backups` du serveur (arrêté en août 2026) ne
+> sert plus : ne pas s'en servir pour restaurer.
 
 ## 9. Accéder à la base de données avec un outil graphique
 
@@ -197,7 +233,7 @@ d'un changement de code) :
 ```bash
 git log --oneline -5          # repérer le commit d'avant le déploiement problématique
 git checkout <hash-du-commit-precedent>
-docker compose up -d --build
+docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 Une fois revenu à une version stable, préviens-moi (ou attends que je m'en
@@ -214,7 +250,9 @@ déploiement qui ajoute le service `keycloak` (cf.
 revenir aux déploiements suivants.
 
 **a. Créer la base et le rôle Postgres dédiés** (avant le premier démarrage de
-`keycloak`, sinon il échouera à se connecter) :
+`keycloak`, sinon il échouera à se connecter). *Déjà fait — commandes gardées
+pour l'historique ; elles datent d'avant [ADR-0030](architecture/decisions/0030-socle-vps-partage.md),
+la base vit maintenant dans `~/infra` (`infra-db-1`).* :
 
 ```bash
 docker compose exec db psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c \
@@ -405,8 +443,12 @@ password → ✅**.
 
 ## 14. Lexique rapide
 
+Dans `~/mybook`, ajouter `-f docker-compose.prod.yml` juste après
+`docker compose` (cf. §1) — omis ci-dessous pour la lisibilité.
+
 | Commande | Ce que ça fait |
 |---|---|
+| `~/admin/etat.sh` | Résumé de l'état de tout le serveur |
 | `docker compose ps` | Liste les conteneurs et leur état |
 | `docker compose logs <service> --tail 100` | Affiche les 100 dernières lignes de logs |
 | `docker compose logs <service> -f` | Suit les logs en direct |
