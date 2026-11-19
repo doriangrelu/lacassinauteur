@@ -24,7 +24,10 @@ FRAGMENT_CADDY="caddy/mybook.caddy"
 
 if [ -x "$SOCLE/backup.sh" ]; then
     echo "==> Sauvegarde de securite avant deploiement (socle, cf. ADR-0012)..."
-    "$SOCLE/backup.sh"
+    # </dev/null : backup.sh fait des "docker compose exec" qui liraient sinon
+    # l'entree standard, et avaleraient la suite d'un script envoye par
+    # "ssh ia@... 'sudo -iu ubuntu bash -s' < script" (cf. ~/AGENTS.md).
+    "$SOCLE/backup.sh" </dev/null
 else
     echo "/!\\ ATTENTION : $SOCLE/backup.sh introuvable, deploiement SANS sauvegarde prealable."
     echo "    Verifier l'installation du socle (cf. ADR-0030) avant de continuer."

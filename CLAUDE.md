@@ -78,15 +78,59 @@ tools/tailwindcss.exe -i frontend/public.css -o src/main/resources/static/css/pu
 tools/tailwindcss.exe -i frontend/backoffice.css -o src/main/resources/static/css/backoffice.css --watch
 
 # Sauvegarde / restauration : sur le VPS uniquement, dans le socle partagé
-# (cf. ADR-0012 amendé par ADR-0030 — ces scripts ne sont plus dans ce dépôt)
-~/infra/backup.sh
+# (cf. ADR-0012 amendé par ADR-0030 et ADR-0034 — ces scripts ne sont plus dans
+# ce dépôt ; ~/mybook/backups est un reste arrêté en août 2026, ne plus s'en servir)
+~/infra/backup.sh </dev/null
 ~/infra/restore.sh <archive.tar.gz>
 ```
 
 **Production** : trois projets Compose distincts sur le VPS (cf.
 [ADR-0030](docs/architecture/decisions/0030-socle-vps-partage.md)) — `~/infra`
-(Caddy + Postgres, partagés), `~/keycloak` (SSO) et `~/mybook` (l'application
-seule). Déployer le site ne touche donc ni la base, ni le SSO.
+(Caddy + Postgres, partagés), `~/keycloak` (SSO, branche fixe `26.8`) et
+`~/mybook` (l'application seule). Déployer le site ne touche donc ni la base,
+ni le SSO. `~/infra` et `~/keycloak` sont versionnés dans le dépôt privé
+**`vps-socle`** (cf. [ADR-0034](docs/architecture/decisions/0034-administration-vps-socle-versionne.md)) ;
+`~/mybook` reste versionné ici.
+
+## Intervenir sur le VPS de production (IA)
+
+Le VPS (152.228.237.190) est **partagé** avec Life Manager
+(`maison.dorian-grelu.fr`) et Keycloak (`iabilis.fr`) : casser le socle casse
+tous les sites. La référence du serveur n'est pas ce dépôt mais
+`/home/ubuntu/AGENTS.md` et `~/admin/` (`INVENTAIRE.md`, `PROCEDURES.md`,
+`JOURNAL.md`), versionnés dans `vps-socle` (copie locale dans WSL :
+`~/projets/vps-socle`). En cas de contradiction, c'est `vps-socle` qui a raison.
+
+- **Connexion** : toujours `ssh ia@152.228.237.190` (clé `claude-deploy-mybook`),
+  **jamais `ubuntu@`** — la clé n'y est plus acceptée. Les fichiers (dont
+  `~/mybook`) appartiennent à `ubuntu` : travailler avec `sudo -iu ubuntu`, ou
+  envoyer un script : `ssh ia@152.228.237.190 "sudo -iu ubuntu bash -s" < script.sh`.
+  Les commandes `ssh ubuntu@…` de `docs/` sont destinées à Dorian, qui garde son
+  propre accès.
+- **Avant d'agir** : lire `/home/ubuntu/AGENTS.md`, lancer `~/admin/etat.sh`, lire
+  la fin de `~/admin/JOURNAL.md`. Respecter les niveaux d'autonomie : lecture
+  libre ; **déployer mybook = accord explicite de Dorian** ; Caddy, PostgreSQL,
+  Keycloak, cron, SSH = accord explicite aussi.
+- **Secrets** : ne jamais lire ni afficher `~/mybook/.env` ni aucun `.env*`,
+  `~/.ssh/*`, `rclone.conf`, `~/admin/.healthchecks-url`. Pour savoir si une
+  variable existe, chercher son **nom** seulement.
+- **Après chaque intervention** : une entrée dans `~/admin/JOURNAL.md` (date UTC,
+  qui, quoi, pourquoi, retour arrière, à vérifier) **et** un commit sur le
+  serveur, en `ubuntu`, dans `/home/ubuntu` (dépôt `vps-socle`) — jamais de
+  `git reset --hard`, `checkout -- .`, `stash` ni `clean` dedans. Le VPS n'a pas
+  accès à GitHub : signaler à Dorian qu'un relais est à lancer depuis WSL
+  (procédure 11 de `PROCEDURES.md`). Le code du site, lui, se commite ici et se
+  déploie par `scripts/deploy.sh` depuis `~/mybook` (procédure 5).
+- **Fail2ban** : regrouper les commandes en **une seule connexion SSH** par lot.
+  Dans un script envoyé par `ssh … bash -s`, tout `docker exec` /
+  `docker compose exec` / `~/infra/backup.sh` prend `</dev/null`, sinon il
+  « avale » la suite du script.
+- **Horaires** : serveur en UTC ; éviter d'intervenir entre 3 h et 5 h 30 UTC
+  (sauvegarde 3 h, copie OneDrive 3 h 30, correctifs Keycloak 4 h 15, mises à
+  jour système 5 h).
+- **Supervision** : Dozzle (https://docker.dorian-grelu.fr) et Beszel
+  (https://metrics.dorian-grelu.fr) sont réservés à Dorian ; une IA utilise
+  `docker logs`, `docker stats`, `journalctl`. Portainer est abandonné.
 
 Authentification back-office : Keycloak (OIDC, client confidentiel + PKCE, jetons
 opaques + introspection — cf. [ADR-0033](docs/architecture/decisions/0033-sso-keycloak-backoffice.md)),
